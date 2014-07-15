@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<title>test</title>
+<script src="require.js"></script>
+</head>
+<body>
+<input id="range" type="range" min=12 max=40>
+<button class="undo">Undo</button>
+<div class="test">Lorem ipsum dolor sit amet</div>
+<script>
+require.config({
+	baseUrl: '..',
+	paths: {
+		mori: 'node_modules/mori/mori',
+		nbd: 'node_modules/nbd'
+	}
+});
+
+require(['lib/CSSOperator'], function(Operator) {
+	var node = document.querySelector('.test');
+	var range = document.getElementById('range');
+	var undo = document.querySelector('.undo');
+	var op = new Operator(node);
+
+	op
+	.map(['fontSize', range.value+'px'])
+	.reduce();
+
+	range.addEventListener('input', function() {
+		op.map(['left', this.value+'px']);
+		requestAnimationFrame(function() {
+			op.reduce();
+		});
+	});
+	range.addEventListener('change', function() {
+		op.commit();
+	});
+	undo.addEventListener('click', function() {
+		op.revert(1);
+	});
+});
+</script>
+</body>
+</html>
