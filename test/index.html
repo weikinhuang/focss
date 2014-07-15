@@ -3,6 +3,11 @@
 <head>
 <title>test</title>
 <script src="require.js"></script>
+<style>
+.test {
+	position: relative;
+}
+</style>
 </head>
 <body>
 <input id="range" type="range" min=12 max=40>
@@ -17,27 +22,21 @@ require.config({
 	}
 });
 
-require(['lib/CSSOperator'], function(Operator) {
+require(['lib/Pipeline'], function(Pipeline) {
 	var node = document.querySelector('.test');
 	var range = document.getElementById('range');
 	var undo = document.querySelector('.undo');
-	var op = new Operator(node);
 
-	op
-	.map(['fontSize', range.value+'px'])
-	.reduce();
+	var shader = {
+		main: function(input, mori) {
+			return mori.assoc(this._state, 'marginLeft', input.left + 'px');
+		}
+	},
+	pipe = new Pipeline();
+	pipe.push(shader);
 
 	range.addEventListener('input', function() {
-		op.map(['left', this.value+'px']);
-		requestAnimationFrame(function() {
-			op.reduce();
-		});
-	});
-	range.addEventListener('change', function() {
-		op.commit();
-	});
-	undo.addEventListener('click', function() {
-		op.revert(1);
+		pipe.process({ left: this.value });
 	});
 });
 </script>
