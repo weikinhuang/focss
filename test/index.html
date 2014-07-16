@@ -31,6 +31,13 @@ require(['lib/CSSPipeline'], function(Pipeline) {
 	range.addEventListener('input', function() {
 		pipe.process(node, { margin: +this.value });
 	});
+	range.addEventListener('change', function() {
+		pipe.commit(node);
+	});
+
+	document.querySelector('.undo').addEventListener('click', function() {
+		pipe.revert(node, 1);
+	});
 
 	var topShader = {
 		main: function(input, mori) {
