@@ -10,8 +10,9 @@
 </style>
 </head>
 <body>
-<input id="range" type="range" min=12 max=40>
-<button class="undo">Undo</button>
+<input id="range" type="range" min=0 max=40 value=1>
+<button class="undo test">Undo</button>
+<div class="test">Lorem ipsum dolor sit amet</div>
 <div class="test">Lorem ipsum dolor sit amet</div>
 <script>
 require.config({
@@ -22,22 +23,34 @@ require.config({
 	}
 });
 
-require(['lib/Pipeline'], function(Pipeline) {
-	var node = document.querySelector('.test');
-	var range = document.getElementById('range');
-	var undo = document.querySelector('.undo');
+require(['lib/CSSPipeline'], function(Pipeline) {
+	var pipe = new Pipeline();
 
-	var shader = {
+	var node = document.querySelectorAll('.test');
+	var range = document.getElementById('range');
+	range.addEventListener('input', function() {
+		pipe.process(node, { margin: +this.value });
+	});
+
+	var topShader = {
 		main: function(input, mori) {
-			return mori.assoc(this._state, 'marginLeft', input.left + 'px');
+			return mori.assoc(this._state,
+				'top', input.margin + 'px',
+				'position', 'relative');
 		}
 	},
-	pipe = new Pipeline();
-	pipe.push(shader);
-
-	range.addEventListener('input', function() {
-		pipe.process({ left: this.value });
-	});
+	centerShader = {
+		main: function(input, mori) {
+			if (input.margin == 0) {
+				return mori.hash_map(
+					'width', '200px',
+					'marginLeft', 'auto',
+					'marginRight', 'auto',
+					'display', 'block');
+			}
+		}
+	};
+	pipe.push(topShader, centerShader);
 });
 </script>
 </body>
