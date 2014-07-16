@@ -1,7 +1,6 @@
 TODO
 ===
 
-1. NodeList of nodes
-2. units on CSSShader
-3. Pipeline
-4. shaders
+1. units on CSSOperator
+1. API wrapper for mori maps?
+1. A way to "unmerge" some keys in operator.reduce
