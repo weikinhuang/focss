@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/behance/DOMShader",
   "dependencies": {
-    "mori": "^0.2.8",
+    "mori": "^0.2.9",
     "nbd": "^1.0.3"
   }
 }
