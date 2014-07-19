@@ -4,16 +4,18 @@
 <title>test</title>
 <script src="require.js"></script>
 <style>
-.test {
-	position: relative;
+.box {
+	display: inline-block;
+	border: 1px solid black;
+	width: 10px;
+	height: 10px;
 }
 </style>
 </head>
 <body>
-<input id="range" type="range" min=0 max=40 value=1>
-<button class="undo test">Undo</button>
-<div class="test">Lorem ipsum dolor sit amet</div>
-<div class="test">Lorem ipsum dolor sit amet</div>
+<input id="range" type="range" min=0 max=40 value=0>
+<button class="undo test">Undo</button><br>
+<section></section>
 <script>
 require.config({
 	baseUrl: '..',
@@ -24,12 +26,23 @@ require.config({
 });
 
 require(['lib/CSSPipeline'], function(Pipeline) {
+	var section = document.querySelector('section');
+	section.style.position = "relative";
+
+	var box, i;
+	for (i = 0; i < 900; ++i) {
+		box = document.createElement('div');
+		box.className = "box";
+		section.appendChild(box);
+	}
+
 	var pipe = new Pipeline();
 
-	var node = document.querySelectorAll('.test');
+	var node = document.querySelectorAll('.box');
+
 	var range = document.getElementById('range');
 	range.addEventListener('input', function() {
-		pipe.process(node, { margin: +this.value });
+		pipe.process(node, { factor: +this.value });
 	});
 	range.addEventListener('change', function() {
 		pipe.commit(node);
@@ -39,25 +52,41 @@ require(['lib/CSSPipeline'], function(Pipeline) {
 		pipe.revert(node, 1);
 	});
 
-	var topShader = {
-		main: function(input, mori) {
-			return mori.assoc(this._state,
-				'top', input.margin + 'px',
-				'position', 'relative');
-		}
-	},
-	centerShader = {
-		main: function(input, mori) {
-			if (input.margin == 0) {
-				return mori.hash_map(
-					'width', '200px',
-					'marginLeft', 'auto',
-					'marginRight', 'auto',
-					'display', 'block');
+	var blat = {
+		count: 0,
+		d: 30,
+		main: function(input) {
+			this.count++;
+			if (this.count >= Math.pow(this.d, 2)) {
+				this.count -= Math.pow(this.d, 2);
 			}
+			var col = this.count % this.d,
+				row = this.count / this.d | 0,
+				x = (this.d-1)/2, y = (this.d-1)/2,
+				r = Math.sqrt(Math.pow(x - col, 2) + Math.pow(y - row, 2));
+			r *= input.factor;
+			return {
+				backgroundColor: 'hsl('+(r%360)+', 100%, 70%)',
+				transform: 'rotate('+r+'deg)',
+				position: 'absolute',
+				left: col * 20 + 'px',
+				top: row * 20 + 'px'
+			};
 		}
 	};
-	pipe.push(topShader, centerShader);
+
+	var topShader = {
+		main: function(input, mori) {
+			return {
+				'position': 'absolute',
+				'top': input.factor + 'px',
+				'left': input.factor + 'px'
+			};
+		}
+	};
+	pipe.push(blat);
+	pipe.process(node, { factor: +range.value });
+	pipe.commit(node);
 });
 </script>
 </body>
