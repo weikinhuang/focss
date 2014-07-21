@@ -3,6 +3,7 @@
 <head>
 <title>test</title>
 <script src="require.js"></script>
+<script src="stats.min.js"></script>
 <style>
 .box {
 	display: inline-block;
@@ -13,19 +14,9 @@
 </style>
 </head>
 <body>
-<input id="range" type="range" min=0 max=40 value=0>
-<button class="undo test">Undo</button><br>
+<h1>DOMShader w/ mutable pipeline</h1>
 <section></section>
 <script>
-require.config({
-	baseUrl: '..',
-	paths: {
-		mori: 'node_modules/mori/mori',
-		nbd: 'node_modules/nbd'
-	}
-});
-
-require(['lib/CSSPipeline'], function(Pipeline) {
 	var section = document.querySelector('section');
 	section.style.position = "relative";
 
@@ -36,21 +27,18 @@ require(['lib/CSSPipeline'], function(Pipeline) {
 		section.appendChild(box);
 	}
 
-	var pipe = new Pipeline();
+</script>
+<script>
+require.config({
+	baseUrl: '..',
+	paths: {
+		mori: 'node_modules/mori/mori',
+		nbd: 'node_modules/nbd'
+	}
+});
 
+require(['lib/CSSPipeline'], function(Pipeline) {
 	var node = document.querySelectorAll('.box');
-
-	var range = document.getElementById('range');
-	range.addEventListener('input', function() {
-		pipe.process(node, { factor: +this.value });
-	});
-	range.addEventListener('change', function() {
-		pipe.commit(node);
-	});
-
-	document.querySelector('.undo').addEventListener('click', function() {
-		pipe.revert(node, 1);
-	});
 
 	var blat = {
 		count: 0,
@@ -75,18 +63,27 @@ require(['lib/CSSPipeline'], function(Pipeline) {
 		}
 	};
 
-	var topShader = {
-		main: function(input, mori) {
-			return {
-				'position': 'absolute',
-				'top': input.factor + 'px',
-				'left': input.factor + 'px'
-			};
-		}
-	};
+	var pipe = new Pipeline();
 	pipe.push(blat);
-	pipe.process(node, { factor: +range.value });
-	pipe.commit(node);
+
+	var stats = new Stats();
+	stats.setMode(1); // 0: fps, 1: ms
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.right = '0px';
+	stats.domElement.style.top = '0px';
+	document.body.appendChild(stats.domElement);
+
+	var frame = 0;
+	setInterval(function() {
+		stats.begin();
+
+		var value = Math.sin(frame++ / 30) * 30;
+		pipe.process(node, {
+			factor: value
+		});
+
+		stats.end();
+	}, 1000 / 60);
 });
 </script>
 </body>
