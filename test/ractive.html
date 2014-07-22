@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>Ractive test</title>
+  <style>
+.box {
+	display: inline-block;
+	border: 1px solid black;
+	width: 10px;
+	height: 10px;
+	position: absolute;
+}
+  </style>
+  <script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+  <script src="stats.min.js"></script>
+</head>
+
+<body>
+  <h1>Ractive</h1>
+
+  <section style="position:relative"></section>
+
+  <script id='template' type='text/ractive'>
+{{#stuff}}
+  <div class="box" style="background-color: hsl({{r}}, 100%, 70%); transform: rotate({{r}}deg); left: {{left}}px; top: {{top}}px"></div>
+{{/stuff}}
+  </script>
+
+  <script>
+	var els = [], i, j, count;
+	for (var count = 0; count < 900; ++count) {
+		i = count % 30;
+		j = count / 30 | 0;
+		els.push({ x: i, y: j, top: i * 20, left: j * 20, r: 0 });
+	}
+
+var ractive = new Ractive({
+el: document.querySelector('section'),
+	template: '#template',
+	data: { stuff: els }
+});
+
+function blat(frame) {
+	var value = Math.sin(frame/30) * 30,
+		c = 29/2,
+		i, r;
+
+	for (i = 0; i < 900; ++i) {
+		r = Math.sqrt(Math.pow(c - ractive.get('stuff.'+i+'.x'), 2) +
+				Math.pow(c - ractive.get('stuff.'+i+'.y'), 2));
+		r *= value;
+		r %= 360;
+		ractive.set('stuff.'+i+'.r', r);
+	}
+}
+
+	var stats = new Stats();
+	stats.setMode(0); // 0: fps, 1: ms
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.right = '0px';
+	stats.domElement.style.top = '0px';
+	document.body.appendChild(stats.domElement);
+
+	var frame = 0;
+	setInterval(function() {
+		stats.begin();
+
+		blat(frame++);
+
+		stats.end();
+	}, 1000 / 60);
+
+  </script>
+</body>
