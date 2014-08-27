@@ -15,17 +15,20 @@
 </head>
 <body>
 <h1>DOMShader w/ mutable pipeline</h1>
+<button onclick="addMore()">Add 100 squares</button>
 <section></section>
 <script>
-	var section = document.querySelector('section');
-	section.style.position = "relative";
+var section = document.querySelector('section');
+section.style.position = "relative";
 
+function addMore() {
 	var box, i;
-	for (i = 0; i < 900; ++i) {
+	for (i = 0; i < 100; ++i) {
 		box = document.createElement('div');
 		box.className = "box";
 		section.appendChild(box);
 	}
+}
 
 </script>
 <script>
@@ -33,13 +36,17 @@ require.config({
 	baseUrl: '..',
 	paths: {
 		mori: 'node_modules/mori/mori',
+		specificity: 'node_modules/specificity/specificity',
 		nbd: 'node_modules/nbd'
+	},
+	shim: {
+		specificity: {
+			exports: 'SPECIFICITY'
+		}
 	}
 });
 
-require(['lib/CSSPipeline'], function(Pipeline) {
-	var node = document.querySelectorAll('.box');
-
+require(['lib/Selectors', 'lib/CSSPipeline'], function(Selectors, Pipeline) {
 	var blat = {
 		count: 0,
 		d: 30,
@@ -50,8 +57,8 @@ require(['lib/CSSPipeline'], function(Pipeline) {
 			}
 			var col = this.count % this.d,
 				row = this.count / this.d | 0,
-				x = (this.d-1)/2, y = (this.d-1)/2,
-				r = Math.sqrt(Math.pow(x - col, 2) + Math.pow(y - row, 2));
+				c = (this.d-1)/2,
+				r = Math.sqrt(Math.pow(c - col, 2) + Math.pow(c - row, 2));
 			r *= input.factor;
 			return {
 				backgroundColor: 'hsl('+(r%360)+', 100%, 70%)',
@@ -67,18 +74,47 @@ require(['lib/CSSPipeline'], function(Pipeline) {
 	pipe.push(blat);
 
 	var stats = new Stats();
-	stats.setMode(1); // 0: fps, 1: ms
+	stats.setMode(0); // 0: fps, 1: ms
 	stats.domElement.style.position = 'absolute';
 	stats.domElement.style.right = '0px';
 	stats.domElement.style.top = '0px';
 	document.body.appendChild(stats.domElement);
+
+
+	function apply(mutations) {
+		mutations.forEach(function(mutation) {
+			if (!(mutation.addedNodes.length || mutation.removedNodes.length)) {
+				return;
+			}
+
+			var i;
+			for (i = 0; i < mutation.addedNodes.length; ++i) {
+				Selectors.added(mutation.addedNodes[i]);
+			}
+			for (i = 0; i < mutation.removedNodes.length; ++i) {
+				Selectors.removed(mutation.removedNodes[i]);
+			}
+		});
+	}
+
+	function watch(target) {
+		var observer = new MutationObserver(apply);
+		observer.observe(target, {
+			childList: true,
+			attributes: false,
+			characterData: false,
+			subtree: true
+		});
+	}
+
+	watch(document.querySelector('section'));
 
 	var frame = 0;
 	setInterval(function() {
 		stats.begin();
 
 		var value = Math.sin(frame++ / 30) * 30;
-		pipe.process(node, {
+		pipe.process(Selectors.get('.box'), {
 			factor: value
 		});
 
