@@ -21,7 +21,6 @@
   "homepage": "https://github.com/behance/DOMShader",
   "dependencies": {
     "mori": "^0.2.9",
-    "nbd": "^1.0.3",
-    "specificity": "^0.1.4"
+    "nbd": "^1.0.5"
   }
 }
