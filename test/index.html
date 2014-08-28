@@ -29,27 +29,38 @@ function addMore() {
 		section.appendChild(box);
 	}
 }
-
+addMore();
+addMore();
+addMore();
+addMore();
+addMore();
+addMore();
+addMore();
+addMore();
+addMore();
 </script>
 <script>
 require.config({
 	baseUrl: '..',
 	paths: {
 		mori: 'node_modules/mori/mori',
-		specificity: 'node_modules/specificity/specificity',
-		nbd: 'node_modules/nbd'
+		nbd: 'node_modules/nbd',
+		jsep: 'node_modules/jsep/build/jsep'
 	},
 	shim: {
-		specificity: {
-			exports: 'SPECIFICITY'
+		jsep: {
+			exports: 'jsep'
 		}
 	}
 });
 
-require(['lib/Selectors', 'lib/CSSPipeline'], function(Selectors, Pipeline) {
-	var blat = {
+require(['lib/Rules', 'lib/CSSPipeline', 'lib/Compiler'], function(Rules, Pipeline, Compiler) {
+	Rules.attach();
+
+	var pipe = new Pipeline({
 		count: 0,
 		d: 30,
+		f: new Function('x', Compiler.compile("(30-~factor)*2", 'x')),
 		main: function(input) {
 			this.count++;
 			if (this.count >= Math.pow(this.d, 2)) {
@@ -60,18 +71,22 @@ require(['lib/Selectors', 'lib/CSSPipeline'], function(Selectors, Pipeline) {
 				c = (this.d-1)/2,
 				r = Math.sqrt(Math.pow(c - col, 2) + Math.pow(c - row, 2));
 			r *= input.factor;
+			c = this.f(input);
 			return {
+				borderColor: 'rgb('+[c,c,c].join()+')',
 				backgroundColor: 'hsl('+(r%360)+', 100%, 70%)',
 				transform: 'rotate('+r+'deg)',
-				position: 'absolute',
-				left: col * 20 + 'px',
-				top: row * 20 + 'px'
+				//position: 'absolute',
+				//left: col * 20 + 'px',
+				//top: row * 20 + 'px'
 			};
 		}
-	};
-
-	var pipe = new Pipeline();
-	pipe.push(blat);
+		}, {
+			main: Compiler.parse({
+				marginRight: { value: 'factor', unit: 'px' },
+				marginBottom: { value: 'factor', unit: 'px' }
+			})
+		});
 
 	var stats = new Stats();
 	stats.setMode(0); // 0: fps, 1: ms
@@ -80,46 +95,18 @@ require(['lib/Selectors', 'lib/CSSPipeline'], function(Selectors, Pipeline) {
 	stats.domElement.style.top = '0px';
 	document.body.appendChild(stats.domElement);
 
-
-	function apply(mutations) {
-		mutations.forEach(function(mutation) {
-			if (!(mutation.addedNodes.length || mutation.removedNodes.length)) {
-				return;
-			}
-
-			var i;
-			for (i = 0; i < mutation.addedNodes.length; ++i) {
-				Selectors.added(mutation.addedNodes[i]);
-			}
-			for (i = 0; i < mutation.removedNodes.length; ++i) {
-				Selectors.removed(mutation.removedNodes[i]);
-			}
-		});
-	}
-
-	function watch(target) {
-		var observer = new MutationObserver(apply);
-		observer.observe(target, {
-			childList: true,
-			attributes: false,
-			characterData: false,
-			subtree: true
-		});
-	}
-
-	watch(document.querySelector('section'));
+	var fightclub = Rules.insert('.box', pipe);
 
 	var frame = 0;
 	setInterval(function() {
 		stats.begin();
 
 		var value = Math.sin(frame++ / 30) * 30;
-		pipe.process(Selectors.get('.box'), {
-			factor: value
-		});
+		Rules.process(fightclub, { factor: value });
 
 		stats.end();
 	}, 1000 / 60);
+	window.Compiler = Compiler;
 });
 </script>
 </body>
