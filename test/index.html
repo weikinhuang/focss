@@ -16,6 +16,7 @@
 <body>
 <h1>DOMShader w/ mutable pipeline</h1>
 <button onclick="addMore()">Add 100 squares</button>
+<button onclick="toggle()">Pause/Unpause</button>
 <section></section>
 <script>
 var section = document.querySelector('section');
@@ -29,15 +30,11 @@ function addMore() {
 		section.appendChild(box);
 	}
 }
-addMore();
-addMore();
-addMore();
-addMore();
-addMore();
-addMore();
-addMore();
-addMore();
-addMore();
+
+var paused = false;
+function toggle() {
+	paused = !paused;
+}
 </script>
 <script>
 require.config({
@@ -54,10 +51,20 @@ require.config({
 	}
 });
 
+function getStats() {
+	var stats = new Stats();
+	stats.setMode(0); // 0: fps, 1: ms
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.right = '0px';
+	stats.domElement.style.top = '0px';
+	document.body.appendChild(stats.domElement);
+	return stats
+}
+
 require(['lib/Rules', 'lib/CSSPipeline', 'lib/Compiler'], function(Rules, Pipeline, Compiler) {
 	Rules.attach();
 
-	var pipe = new Pipeline({
+	var crazy = {
 		count: 0,
 		d: 30,
 		f: new Function('x', Compiler.compile("(30-~factor)*2", 'x')),
@@ -76,37 +83,31 @@ require(['lib/Rules', 'lib/CSSPipeline', 'lib/Compiler'], function(Rules, Pipeli
 				borderColor: 'rgb('+[c,c,c].join()+')',
 				backgroundColor: 'hsl('+(r%360)+', 100%, 70%)',
 				transform: 'rotate('+r+'deg)',
-				//position: 'absolute',
-				//left: col * 20 + 'px',
-				//top: row * 20 + 'px'
+				position: 'absolute',
+				left: col * 20 + 'px',
+				top: row * 20 + 'px'
 			};
 		}
-		}, {
-			main: Compiler.parse({
-				marginRight: { value: 'factor', unit: 'px' },
-				marginBottom: { value: 'factor', unit: 'px' }
-			})
-		});
+	},
+	spec = {
+		marginRight: { value: 'factor > 0 ? factor : -factor', unit: 'px' },
+		marginBottom: { value: 'factor > 0 ? factor : -factor', unit: 'px' }
+	};
 
-	var stats = new Stats();
-	stats.setMode(0); // 0: fps, 1: ms
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.right = '0px';
-	stats.domElement.style.top = '0px';
-	document.body.appendChild(stats.domElement);
+	var fightclub = Rules.insert('.box', Pipeline({ main: Compiler.parse(spec) }));
 
-	var fightclub = Rules.insert('.box', pipe);
-
-	var frame = 0;
+	var frame = 0
+	stats = getStats();
 	setInterval(function() {
 		stats.begin();
 
-		var value = Math.sin(frame++ / 30) * 30;
-		Rules.process(fightclub, { factor: value });
+		if (!paused) {
+			var value = Math.sin(frame++ / 30) * 30;
+			Rules.process(fightclub, { factor: value });
+		}
 
 		stats.end();
 	}, 1000 / 60);
-	window.Compiler = Compiler;
 });
 </script>
 </body>
