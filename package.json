@@ -1,5 +1,5 @@
 {
-  "name": "DOMShader",
+  "name": "focss",
   "version": "0.0.0",
   "description": "Graphics pipeline, but for the DOM",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/behance/DOMShader.git"
+    "url": "https://github.com/behance/focss.git"
   },
   "keywords": [
     "dom"
@@ -16,9 +16,9 @@
   "author": "Alex Lee (aintaer@aintaer.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/behance/DOMShader/issues"
+    "url": "https://github.com/behance/focss/issues"
   },
-  "homepage": "https://github.com/behance/DOMShader",
+  "homepage": "https://github.com/behance/focss",
   "dependencies": {
     "jsep": "^0.2.9",
     "mori": "^0.2.9",

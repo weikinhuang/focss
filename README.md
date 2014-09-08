@@ -1,4 +1,4 @@
-DOMShader
+focss
 =========
 
-Graphics pipeline, but for the DOM
+Dynamic CSS pipeline. For when you need CSS to be *alive*.
