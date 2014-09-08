@@ -61,40 +61,13 @@ function getStats() {
 	return stats
 }
 
-require(['lib/Rules', 'lib/CSSPipeline', 'lib/Compiler'], function(Rules, Pipeline, Compiler) {
+require(['lib/Rules'], function(Rules) {
 	Rules.attach();
 
-	var crazy = {
-		count: 0,
-		d: 30,
-		f: new Function('x', Compiler.compile("(30-~factor)*2", 'x')),
-		main: function(input) {
-			this.count++;
-			if (this.count >= Math.pow(this.d, 2)) {
-				this.count -= Math.pow(this.d, 2);
-			}
-			var col = this.count % this.d,
-				row = this.count / this.d | 0,
-				c = (this.d-1)/2,
-				r = Math.sqrt(Math.pow(c - col, 2) + Math.pow(c - row, 2));
-			r *= input.factor;
-			c = this.f(input);
-			return {
-				borderColor: 'rgb('+[c,c,c].join()+')',
-				backgroundColor: 'hsl('+(r%360)+', 100%, 70%)',
-				transform: 'rotate('+r+'deg)',
-				position: 'absolute',
-				left: col * 20 + 'px',
-				top: row * 20 + 'px'
-			};
-		}
-	},
-	spec = {
+	Rules.insert('.box', {
 		marginRight: { value: 'factor > 0 ? factor : -factor', unit: 'px' },
 		marginBottom: { value: 'factor > 0 ? factor : -factor', unit: 'px' }
-	};
-
-	var fightclub = Rules.insert('.box', Pipeline({ main: Compiler.parse(spec) }));
+	});
 
 	var frame = 0
 	stats = getStats();
@@ -103,7 +76,7 @@ require(['lib/Rules', 'lib/CSSPipeline', 'lib/Compiler'], function(Rules, Pipeli
 
 		if (!paused) {
 			var value = Math.sin(frame++ / 30) * 30;
-			Rules.process(fightclub, { factor: value });
+			Rules.process('.box', { factor: value });
 		}
 
 		stats.end();
