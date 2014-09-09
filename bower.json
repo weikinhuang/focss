@@ -1,0 +1,25 @@
+{
+  "name": "focss",
+  "main": "index.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/behance/focss",
+  "authors": [
+    "Alex Lee <axal@adobe.com>"
+  ],
+  "description": "Dynamic CSS Engine",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "css"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

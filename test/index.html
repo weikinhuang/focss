@@ -61,10 +61,8 @@ function getStats() {
 	return stats
 }
 
-require(['lib/Rules'], function(Rules) {
-	Rules.attach();
-
-	Rules.insert('.box', {
+require(['index'], function(focss) {
+	focss.insert('.box', {
 		marginRight: { value: 'factor > 0 ? factor : -factor', unit: 'px' },
 		marginBottom: { value: 'factor > 0 ? factor : -factor', unit: 'px' }
 	});
@@ -76,7 +74,7 @@ require(['lib/Rules'], function(Rules) {
 
 		if (!paused) {
 			var value = Math.sin(frame++ / 30) * 30;
-			Rules.process('.box', { factor: value });
+			focss.process('.box', { factor: value });
 		}
 
 		stats.end();
