@@ -21,5 +21,9 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "nbd.js": "~1.0.7",
+    "jsep": "~0.2.9"
+  }
 }
