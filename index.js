@@ -1,6 +1,6 @@
 define(['./lib/Rules'], function(Rules) {
-	'use strict';
+  'use strict';
 
-	Rules.attach();
-	return Rules;
+  Rules.attach();
+  return Rules;
 });
