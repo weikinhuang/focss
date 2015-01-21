@@ -21,7 +21,7 @@
   "homepage": "https://github.com/behance/focss",
   "dependencies": {
     "jsep": "^0.3.0",
-    "mori": "^0.2.9",
+    "mori": "^0.3.2",
     "nbd": "^1.0.5"
   }
 }

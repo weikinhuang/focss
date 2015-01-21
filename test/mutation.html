@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<title>test</title>
+<script src="require.js"></script>
+<script src="stats.min.js"></script>
+<style>
+div {
+  display: inline-block;
+  border: 1px solid black;
+  width: 10px;
+  height: 10px;
+}
+</style>
+</head>
+<body>
+<h1>DOM mutations</h1>
+<section></section>
+<script>
+var section = document.querySelector('section');
+section.style.position = "relative";
+
+function addMore() {
+	var box, i;
+	for (i = 0; i < 10; ++i) {
+		box = document.createElement('div');
+		box.className = "box";
+		section.appendChild(box);
+	}
+}
+
+var paused = false;
+function toggle() {
+	paused = !paused;
+}
+</script>
+<script>
+require.config({
+	baseUrl: '..',
+	paths: {
+		mori: 'node_modules/mori/mori',
+		nbd: 'node_modules/nbd',
+		jsep: 'node_modules/jsep/build/jsep'
+	},
+	shim: {
+		jsep: {
+			exports: 'jsep'
+		}
+	}
+});
+
+addMore();
+
+function getStats() {
+	var stats = new Stats();
+	stats.setMode(0); // 0: fps, 1: ms
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.right = '0px';
+	stats.domElement.style.top = '0px';
+	document.body.appendChild(stats.domElement);
+	return stats
+}
+
+require(['index', 'lib/Selectors'], function(Focss, Selectors) {
+  var fox = new Focss();
+  fox.insert('.box', {
+    'borderColor': 'foo'
+  });
+
+  fox.process({
+    foo: 'red'
+  });
+
+  window.fox = fox;
+  /*
+	var frame = 0
+	stats = getStats();
+	setInterval(function() {
+		stats.begin();
+
+		if (!paused) {
+			var value = Math.sin(frame++ / 30) * 30;
+			focss.process('.box', { factor: value });
+		}
+
+		stats.end();
+	}, 1000 / 60);
+    */
+});
+</script>
+</body>
+</html>
