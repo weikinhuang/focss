@@ -61,7 +61,7 @@ function getStats() {
 	return stats
 }
 
-require(['index', 'lib/Selectors'], function(Focss, Selectors) {
+require(['index'], function(Focss) {
   var fox = new Focss();
   fox.insert('.box', {
     'borderColor': 'foo'

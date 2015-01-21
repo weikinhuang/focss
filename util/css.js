@@ -1,4 +1,4 @@
-define(['nbd/util/extend', './Operator'], function(extend, Operator) {
+define(function() {
   'use strict';
 
   // From facebook/react
@@ -23,6 +23,17 @@ define(['nbd/util/extend', './Operator'], function(extend, Operator) {
     fillOpacity: true,
     strokeOpacity: true
   };
+
+  // Find the prefixed version of Element.prototype.matches()
+  var matches = (function(prot) {
+    var name, names = ['matches', 'webkitMatchesSelector', 'mozMatchesSelector', 'msMatchesSelector', 'oMatchesSelector'];
+
+    while (name = names.shift()) {
+      if (name in prot) {
+        return name;
+      }
+    }
+  })(Element.prototype);
 
   function styleProperty(property) {
     if (styleProperty.memo[property]) {
@@ -56,6 +67,10 @@ define(['nbd/util/extend', './Operator'], function(extend, Operator) {
         }
       }
       return arr;
+    },
+
+    matches: function(element, selector) {
+      return element[matches](selector);
     },
 
     apply: function(element, incoming) {
