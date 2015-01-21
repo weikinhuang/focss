@@ -5,7 +5,7 @@
 <script src="require.js"></script>
 <script src="stats.min.js"></script>
 <style>
-div {
+aside {
   display: inline-block;
   border: 1px solid black;
   width: 10px;
@@ -15,6 +15,7 @@ div {
 </head>
 <body>
 <h1>DOM mutations</h1>
+<button onclick="toggle()">Play/Pause</button>
 <section></section>
 <script>
 var section = document.querySelector('section');
@@ -22,14 +23,14 @@ section.style.position = "relative";
 
 function addMore() {
 	var box, i;
-	for (i = 0; i < 10; ++i) {
-		box = document.createElement('div');
+	for (i = 0; i < 100; ++i) {
+		box = document.createElement('aside');
 		box.className = "box";
 		section.appendChild(box);
 	}
 }
 
-var paused = false;
+var paused = true;
 function toggle() {
 	paused = !paused;
 }
@@ -63,29 +64,37 @@ function getStats() {
 
 require(['index'], function(Focss) {
   var fox = new Focss();
-  fox.insert('.box', {
-    'borderColor': 'foo'
-  });
-
-  fox.process({
-    foo: 'red'
+  fox.insert({
+    '.box': {
+      'border-color': 'hsl(hue, saturation, lightness)'
+    },
+    'aside:nth-child(${columns}n)': {
+      'margin-right': {
+        value: 'separation',
+        unit: '%'
+      }
+    }
   });
 
   window.fox = fox;
-  /*
-	var frame = 0
-	stats = getStats();
-	setInterval(function() {
-		stats.begin();
 
-		if (!paused) {
-			var value = Math.sin(frame++ / 30) * 30;
-			focss.process('.box', { factor: value });
-		}
+  var frame = 0, stats = getStats();
+  setInterval(function() {
+    stats.begin();
 
-		stats.end();
-	}, 1000 / 60);
-    */
+    if (!paused) {
+      var value = Math.sin(frame++ / 360) * 360;
+      fox.process({ 
+        hue: value,
+        saturation: '100%',
+        lightness: '50%',
+        separation: 10,
+        columns: 10
+      });
+    }
+
+    stats.end();
+  }, 1000 / 60);
 });
 </script>
 </body>

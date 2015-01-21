@@ -47,13 +47,6 @@ define(function() {
     return p1.toLocaleUpperCase();
   };
 
-  function cssNormalize(styleObj) {
-    var key, nStyle = {};
-    for (key in styleObj) {
-      nStyle[styleProperty(key)] = styleObj[key];
-    }
-    return nStyle;
-  }
 
   return {
     extract: function(element) {
@@ -71,6 +64,14 @@ define(function() {
 
     matches: function(element, selector) {
       return element[matches](selector);
+    },
+
+    normalize: function(styleObj) {
+      var key, nStyle = {};
+      for (key in styleObj) {
+        nStyle[styleProperty(key)] = styleObj[key];
+      }
+      return nStyle;
     },
 
     apply: function(element, incoming) {
