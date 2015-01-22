@@ -16,30 +16,39 @@ aside {
 <body>
 <h1>DOM mutations</h1>
 <button onclick="toggle()">Play/Pause</button>
-<section></section>
+<button onclick="addMore()">Add more</button>
+<section style="position:relative"></section>
 <script>
 var section = document.querySelector('section');
-section.style.position = "relative";
-
 function addMore() {
-	var box, i;
-	for (i = 0; i < 100; ++i) {
-		box = document.createElement('aside');
-		box.className = "box";
-		section.appendChild(box);
-	}
+  var box, i;
+  for (i = 0; i < 10; ++i) {
+    box = document.createElement('aside');
+    box.className = "box";
+    section.appendChild(box);
+  }
 }
+addMore();
 
 var paused = true;
 function toggle() {
-	paused = !paused;
+  paused = !paused;
+}
+
+function getStats() {
+  var stats = new Stats();
+  stats.setMode(0); // 0: fps, 1: ms
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.right = '0px';
+  stats.domElement.style.top = '0px';
+  document.body.appendChild(stats.domElement);
+  return stats
 }
 </script>
 <script>
 require.config({
 	baseUrl: '..',
 	paths: {
-		mori: 'node_modules/mori/mori',
 		nbd: 'node_modules/nbd',
 		jsep: 'node_modules/jsep/build/jsep'
 	},
@@ -50,54 +59,40 @@ require.config({
 	}
 });
 
-addMore();
-
-function getStats() {
-	var stats = new Stats();
-	stats.setMode(0); // 0: fps, 1: ms
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.right = '0px';
-	stats.domElement.style.top = '0px';
-	document.body.appendChild(stats.domElement);
-	return stats
-}
-
 require(['index'], function(Focss) {
+  var frame = 0;
   var fox = new Focss(),
   artifacts = fox.insert({
-    'aside:nth-child(${columns}n)': {
-      'border-color': '"rebeccapurple"'
+    'aside:nth-child(${columns}n+${offset})': {
+      'background-color': '"rebeccapurple"'
     },
     '.box': {
-      'border-color': 'hsl(hue, saturation, lightness)'
+      'border-color': 'hsl(hue, "100%", "50%")'
     }
   });
 
   fox.process({ 
-    hue: 0,
-    saturation: '100%',
-    lightness: '50%',
-    columns: 10
+    hue: Math.sin(frame/360)*360,
+    columns: 10,
+    offset: (frame/20|0)%10
   });
-
-  window.fox = fox;
-
-  var frame = 0, stats = getStats();
+  /*
+  var stats = getStats();
   setInterval(function() {
     stats.begin();
+    frame++;
 
     if (!paused) {
-      var value = Math.sin(frame++ / 360) * 360;
       fox.process({ 
-        hue: value,
-        saturation: '100%',
-        lightness: '50%',
-        columns: 10
+        hue: Math.sin(frame/360)*360,
+        columns: 10,
+        offset: (frame/20|0)%10
       });
     }
 
     stats.end();
   }, 1000 / 60);
+  */
 });
 </script>
 </body>
