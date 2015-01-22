@@ -41,6 +41,7 @@ define(function() {
     }
     return (styleProperty.memo[property] = property.replace(styleProperty.pattern, styleProperty.replacement));
   }
+  // Prepopulate map with the only exception 'float'
   styleProperty.memo = { float: 'cssFloat' };
   styleProperty.pattern = /-([a-z])/g;
   styleProperty.replacement = function(match, p1) {
@@ -60,6 +61,10 @@ define(function() {
         }
       }
       return arr;
+    },
+
+    find: function(selector) {
+      return document.querySelectorAll(selector);
     },
 
     matches: function(element, selector) {
