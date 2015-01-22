@@ -1,4 +1,4 @@
-define(['nbd/Class', './lib/Rules'], function(Class, Rules) {
+define(['nbd/Class', 'nbd/util/extend', './lib/Rules'], function(Class, extend, Rules) {
   'use strict';
 
   var Focss = Class.extend({
@@ -14,15 +14,17 @@ define(['nbd/Class', './lib/Rules'], function(Class, Rules) {
      */
     insert: function(selector, spec) {
       if (typeof selector === "object") {
+        var artifacts = {};
         for (var s in selector) {
           if (selector.hasOwnProperty(s)) {
-            this.insert(s, selector[s]);
+            extend(artifacts, this.insert(s, selector[s]));
           }
         }
-        return;
+        return artifacts;
       }
 
-      this.rules.insert(selector, spec);
+      var rule = this.rules.insert(selector, spec);
+      return rule.artifacts;
     },
 
     /**

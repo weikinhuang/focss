@@ -63,8 +63,8 @@ function getStats() {
 }
 
 require(['index'], function(Focss) {
-  var fox = new Focss();
-  fox.insert({
+  var fox = new Focss(),
+  artifacts = fox.insert({
     'aside:nth-child(${columns}n)': {
       'border-color': '"rebeccapurple"'
     },
