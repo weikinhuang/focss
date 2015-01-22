@@ -65,15 +65,19 @@ function getStats() {
 require(['index'], function(Focss) {
   var fox = new Focss();
   fox.insert({
+    'aside:nth-child(${columns}n)': {
+      'border-color': '"rebeccapurple"'
+    },
     '.box': {
       'border-color': 'hsl(hue, saturation, lightness)'
-    },
-    'aside:nth-child(${columns}n)': {
-      'margin-right': {
-        value: 'separation',
-        unit: '%'
-      }
     }
+  });
+
+  fox.process({ 
+    hue: 0,
+    saturation: '100%',
+    lightness: '50%',
+    columns: 10
   });
 
   window.fox = fox;
@@ -88,7 +92,6 @@ require(['index'], function(Focss) {
         hue: value,
         saturation: '100%',
         lightness: '50%',
-        separation: 10,
         columns: 10
       });
     }
