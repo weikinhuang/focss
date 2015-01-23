@@ -1,10 +1,10 @@
-define(['nbd/Class', 'nbd/util/extend', './lib/Rules'], function(Class, extend, Rules) {
+define(['nbd/Class', 'nbd/util/extend', './lib/Engine'], function(Class, extend, Engine) {
   'use strict';
 
   var Focss = Class.extend({
     init: function(root) {
-      this.rules = new Rules();
-      this.rules.bind(root);
+      this.engine = new Engine();
+      this.engine.bind(root);
     },
 
     /**
@@ -23,7 +23,7 @@ define(['nbd/Class', 'nbd/util/extend', './lib/Rules'], function(Class, extend, 
         return artifacts;
       }
 
-      var rule = this.rules.insert(selector, spec);
+      var rule = this.engine.insert(selector, spec);
       return rule.artifacts;
     },
 
@@ -33,12 +33,12 @@ define(['nbd/Class', 'nbd/util/extend', './lib/Rules'], function(Class, extend, 
      * @param data {Object} state data
      */
     process: function(data) {
-      this.rules.process(data);
+      this.engine.process(data);
     },
 
     destroy: function() {
-      this.rules.destroy();
-      this.rules = null;
+      this.engine.destroy();
+      this.engine = null;
     }
   }, {
     displayName: 'Focss'
