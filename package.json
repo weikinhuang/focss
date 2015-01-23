@@ -11,7 +11,7 @@
     "url": "https://github.com/behance/focss.git"
   },
   "keywords": [
-    "dom"
+    "dom", "css"
   ],
   "author": "Alex Lee (aintaer@aintaer.com)",
   "license": "MIT",
@@ -21,7 +21,6 @@
   "homepage": "https://github.com/behance/focss",
   "dependencies": {
     "jsep": "^0.3.0",
-    "mori": "^0.3.2",
     "nbd": "^1.0.5"
   }
 }

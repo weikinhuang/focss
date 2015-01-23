@@ -22,7 +22,7 @@ aside {
 var section = document.querySelector('section');
 function addMore() {
   var box, i;
-  for (i = 0; i < 10; ++i) {
+  for (i = 0; i < 100; ++i) {
     box = document.createElement('aside');
     box.className = "box";
     section.appendChild(box);
@@ -30,7 +30,7 @@ function addMore() {
 }
 addMore();
 
-var paused = true;
+var paused = false;
 function toggle() {
   paused = !paused;
 }
@@ -61,7 +61,7 @@ require.config({
 
 require(['index'], function(Focss) {
   var frame = 0;
-  var fox = new Focss(),
+  var fox = new Focss(section),
   artifacts = fox.insert({
     'aside:nth-child(${columns}n+${offset})': {
       'background-color': '"rebeccapurple"'
@@ -76,13 +76,14 @@ require(['index'], function(Focss) {
     columns: 10,
     offset: (frame/20|0)%10
   });
-  /*
+  window.fox = fox;
+
   var stats = getStats();
   setInterval(function() {
     stats.begin();
-    frame++;
 
     if (!paused) {
+      frame++;
       fox.process({ 
         hue: Math.sin(frame/360)*360,
         columns: 10,
@@ -92,7 +93,6 @@ require(['index'], function(Focss) {
 
     stats.end();
   }, 1000 / 60);
-  */
 });
 </script>
 </body>
