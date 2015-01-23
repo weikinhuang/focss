@@ -2,9 +2,9 @@ define(['nbd/Class', 'nbd/util/extend', './lib/Rules'], function(Class, extend, 
   'use strict';
 
   var Focss = Class.extend({
-    init: function() {
+    init: function(root) {
       this.rules = new Rules();
-      this.rules.bind();
+      this.rules.bind(root);
     },
 
     /**

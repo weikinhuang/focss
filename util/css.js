@@ -63,8 +63,8 @@ define(function() {
       return arr;
     },
 
-    find: function(selector) {
-      return document.querySelectorAll(selector);
+    find: function(selector, base) {
+      return (base || document).querySelectorAll(selector);
     },
 
     matches: function(element, selector) {
