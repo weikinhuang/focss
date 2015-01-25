@@ -1,4 +1,4 @@
-define(['nbd/util/extend', './Operator'], function(extend, Operator) {
+define(function() {
   'use strict';
 
   // From facebook/react
@@ -24,30 +24,34 @@ define(['nbd/util/extend', './Operator'], function(extend, Operator) {
     strokeOpacity: true
   };
 
+  // Find the prefixed version of Element.prototype.matches()
+  var matches = (function(prot) {
+    var name, names = ['matches', 'webkitMatchesSelector', 'mozMatchesSelector', 'msMatchesSelector', 'oMatchesSelector'];
+
+    while (name = names.shift()) {
+      if (name in prot) {
+        return name;
+      }
+    }
+  })(Element.prototype);
+
   function styleProperty(property) {
     if (styleProperty.memo[property]) {
       return styleProperty.memo[property];
     }
     return (styleProperty.memo[property] = property.replace(styleProperty.pattern, styleProperty.replacement));
   }
+  // Prepopulate map with the only exception 'float'
   styleProperty.memo = { float: 'cssFloat' };
   styleProperty.pattern = /-([a-z])/g;
   styleProperty.replacement = function(match, p1) {
     return p1.toLocaleUpperCase();
   };
 
-  function cssNormalize(styleObj) {
-    var key, nStyle = {};
-    for (key in styleObj) {
-      nStyle[styleProperty(key)] = styleObj[key];
-    }
-    return nStyle;
-  }
 
-  return Operator.extend({
+  return {
     extract: function(element) {
-      this.style = element.style;
-      var style = this.style;
+      var style = element.style;
 
       var arr = {}, prop;
       for (var i = 0; i < style.length; ++i) {
@@ -59,21 +63,23 @@ define(['nbd/util/extend', './Operator'], function(extend, Operator) {
       return arr;
     },
 
-    map: function(change) {
-      return this._super(cssNormalize(change));
+    find: function(selector, base) {
+      return (base || document).querySelectorAll(selector);
     },
 
-    prepare: function(incoming) {
-      var key, mutable = extend({}, incoming);
-      for (key in this.state) {
-        if (incoming.hasOwnProperty(key)) { continue; }
-        mutable[key] = '';
+    matches: function(element, selector) {
+      return element[matches](selector);
+    },
+
+    normalize: function(styleObj) {
+      var key, nStyle = {};
+      for (key in styleObj) {
+        nStyle[styleProperty(key)] = styleObj[key];
       }
-
-      return mutable;
+      return nStyle;
     },
 
-    apply: function(incoming) {
+    apply: function(element, incoming) {
       var key, value;
       for (key in incoming) {
         value = incoming[key];
@@ -85,21 +91,19 @@ define(['nbd/util/extend', './Operator'], function(extend, Operator) {
 
         // Undefined/null value
         if (value == null || value === '') {
-          this.style[key] = '';
+          element.style[key] = '';
           continue;
         }
 
         // Literal value
         if (isNaN(value) || isUnitlessNumber[key] || value === 0) {
-          this.style[key] = value;
+          element.style[key] = value;
           continue;
         }
 
         // Numbers without units
-        this.style[key] = value + 'px';
+        element.style[key] = value + 'px';
       }
     }
-  }, {
-    displayName: 'CSSOperator'
-  });
+  };
 });
