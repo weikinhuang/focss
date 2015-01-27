@@ -11,6 +11,7 @@ define(['nbd/Class', 'nbd/util/extend', './lib/Engine'], function(Class, extend,
      * Insert a focss rule
      * @param selector {String} CSS selector/dynamic selector
      * @param spec {Object} key/value map of CSS property to expression
+     * @returns Object Artifacts found while compiling the rule
      */
     insert: function(selector, spec) {
       if (typeof selector === "object") {

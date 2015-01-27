@@ -11,7 +11,8 @@
     "url": "https://github.com/behance/focss.git"
   },
   "keywords": [
-    "dom", "css"
+    "dom",
+    "css"
   ],
   "author": "Alex Lee (aintaer@aintaer.com)",
   "license": "MIT",
@@ -22,5 +23,13 @@
   "dependencies": {
     "jsep": "^0.3.0",
     "nbd": "^1.0.5"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.1.3",
+    "karma": "^0.12.31",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-requirejs": "^0.2.2",
+    "requirejs": "^2.1.15"
   }
 }
