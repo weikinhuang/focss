@@ -19,7 +19,7 @@ module.exports = function(config) {
       {pattern: 'node_modules/nbd/**/*.js', included: false},
       {pattern: 'node_modules/jsep/build/jsep.js', included: false},
       {pattern: 'index.js', included: false},
-      {pattern: 'lib/**/*.js', included: false},
+      {pattern: 'src/**/*.js', included: false},
       {pattern: 'util/**/*.js', included: false},
       {pattern: 'test/**/*.js', included: false}
     ],

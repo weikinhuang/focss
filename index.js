@@ -1,4 +1,4 @@
-define(['nbd/Class', 'nbd/util/extend', './lib/Engine'], function(Class, extend, Engine) {
+define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend, Engine) {
   'use strict';
 
   var Focss = Class.extend({
