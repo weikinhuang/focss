@@ -81,6 +81,7 @@ define([
       var affecting = this._affecting.get(el);
       if (!affecting) { return; }
 
+      // element, set, previous
       var sum = Object.create(affecting.base),
           last = this._states.get(el);
 
@@ -92,6 +93,10 @@ define([
         }
         this._states.set(el, sum);
       }
+      else {
+        // Cull non-affected nodes
+        this.remove(el);
+      }
 
       // Unset previous properties
       for (var prop in last) {
@@ -101,11 +106,6 @@ define([
       }
 
       css.apply(el, sum);
-
-      // Cull non-affected nodes
-      if (!affecting.size) {
-        this.remove(el);
-      }
     },
 
     remove: function(el) {
