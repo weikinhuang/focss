@@ -1,13 +1,4 @@
 define(['src/eltable'], function(eltable) {
-  var layer = {
-    specificity: [{
-      selector: '',
-      specificity: 0
-    }],
-    result: {
-    }
-  };
-
   describe('eltable', function() {
     var div = affix('div');
 

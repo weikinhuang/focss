@@ -81,7 +81,7 @@ define([
     },
 
     insert: function(selector, spec) {
-      var rule = new Rule(selector, spec);
+      var rule = new this.constructor.Rule(selector, spec);
       this.rules.push(rule);
 
       if (this._state) {
@@ -90,6 +90,7 @@ define([
       return rule;
     }
   }, {
+    Rule: Rule,
     displayName: 'FocssEngine'
   });
 
