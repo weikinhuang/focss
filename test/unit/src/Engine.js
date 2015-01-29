@@ -26,6 +26,7 @@ define(['src/Engine'], function(Engine) {
       beforeEach(function() {
         engine = new Engine();
       });
+
       it('runs individual rule.process()', function() {
         spyOn(Engine, 'Rule')
         .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy']));
@@ -43,11 +44,13 @@ define(['src/Engine'], function(Engine) {
       beforeEach(function() {
         engine = new Engine();
       });
+
       it('inserts a new Rule', function() {
         var rule = engine.insert('.selector', {});
         expect(rule).toBeDefined();
         expect(rule).toEqual(jasmine.any(Engine.Rule));
       });
+
       it('processes last process state', function() {
         var payload = {
           foo: 'bar'
