@@ -2,9 +2,10 @@ define(['index'], function(Focss) {
   describe('Focss', function() {
     var fox, payload = { foo: 'bar' };
 
-    fox = new Focss();
-
     it('is instanciable', function() {
+      expect(function() {
+        fox = new Focss();
+      }).not.toThrow();
       expect(fox).toBeDefined();
     });
 
