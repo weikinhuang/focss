@@ -58,15 +58,11 @@ define([
     },
 
     _markMutated: function(target) {
-      var rule, i, j;
+      var rule, i;
+
       for (i = 0; rule = this.rules[i]; ++i) {
         if (rule.computedSelector) {
-          for (j = 0; target = arguments[j]; ++j) {
-            if (!target.style) { continue; }
-            eltable.get(target)[
-              css.matches(target, rule.computedSelector) ? 'add' : 'delete'
-            ](rule);
-          }
+          rule.mark();
         }
       }
     },

@@ -59,15 +59,14 @@ define(['index'], function(Focss) {
 
     describe('DOM mutation', function() {
       beforeEach(function() {
-        fox.insert('.${foo}', {
+        fox.insert('.bar', {
           'max-width': 'width'
         });
+        fox.process({ width: 100 });
       });
 
       // Stuff that depends on MutationObserver are very tricky to time
       it('applies styles to new elements', function(done) {
-        fox.process({ foo: 'bar', width: 100 });
-
         var el = affix('.bar');
 
         setTimeout(function() {
@@ -77,8 +76,6 @@ define(['index'], function(Focss) {
       });
 
       it('adds element styles when their attributes change', function(done) {
-        fox.process({ foo: 'bar', width: 100 });
-
         var el = affix('.baz');
         requestAnimationFrame(function() {
           expect(el.css('max-width')).toBe('none');
@@ -92,8 +89,6 @@ define(['index'], function(Focss) {
       });
 
       it('removes element styles when their attributes change', function(done) {
-        fox.process({ foo: 'bar', width: 100 });
-
         var el = affix('.bar');
         setTimeout(function() {
           expect(el.css('max-width')).toBe('100px');
@@ -104,6 +99,23 @@ define(['index'], function(Focss) {
             done();
           }, 50);
         }, 50);
+      });
+
+      it('affects descendants when ancestors\' attributes change', function(done) {
+        fox.insert('.bar .stool', { 'max-height': 'width' });
+
+        var el = affix('.baz .stool');
+        var stool = el.find('.stool');
+
+        requestAnimationFrame(function() {
+          expect(stool.css('max-height')).toBe('none');
+          el.addClass('bar');
+
+          setTimeout(function() {
+            expect(stool.css('max-height')).toBe('100px');
+            done();
+          }, 50);
+        });
       });
     });
   });
