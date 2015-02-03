@@ -61,16 +61,12 @@ function getStats() {
 }
 
 require(['index'], function(Focss) {
-
-  var fox = new Focss();
+  var fox = new Focss(section);
 	fox.insert('.box', {
 		marginRight: { value: 'factor > 0 ? factor : -factor', unit: 'px' },
 		marginBottom: { value: 'factor > 0 ? factor : -factor', unit: 'px' }
 	});
 
-			fox.process({ factor: 10 });
-  addMore();
-  /*
 	var frame = 0
 	stats = getStats();
 	setInterval(function() {
@@ -83,7 +79,6 @@ require(['index'], function(Focss) {
 
 		stats.end();
 	}, 1000 / 60);
-  */
 });
 </script>
 </body>
