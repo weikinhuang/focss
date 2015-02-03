@@ -3,16 +3,16 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
   // e.g. ::first-letter, ::before, ::after
   var fox, timeout = 100;
 
-  beforeEach(function() {
-    fox = new Focss();
-  });
-
-  afterEach(function() {
-    fox.destroy();
-    fox = null;
-  });
-
   describe('positional pseudo class selectors', function() {
+    beforeEach(function() {
+      fox = new Focss();
+    });
+
+    afterEach(function() {
+      fox.destroy();
+      fox = null;
+    });
+
     describe(':first-child', function() {
       it('affects only the first child', function(done) {
         var ul = affix('ul li+li+li');

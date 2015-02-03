@@ -60,12 +60,17 @@ function getStats() {
 	return stats
 }
 
-require(['index'], function(focss) {
-	focss.insert('.box', {
+require(['index'], function(Focss) {
+
+  var fox = new Focss();
+	fox.insert('.box', {
 		marginRight: { value: 'factor > 0 ? factor : -factor', unit: 'px' },
 		marginBottom: { value: 'factor > 0 ? factor : -factor', unit: 'px' }
 	});
 
+			fox.process({ factor: 10 });
+  addMore();
+  /*
 	var frame = 0
 	stats = getStats();
 	setInterval(function() {
@@ -73,11 +78,12 @@ require(['index'], function(focss) {
 
 		if (!paused) {
 			var value = Math.sin(frame++ / 30) * 30;
-			focss.process('.box', { factor: value });
+			fox.process({ factor: value });
 		}
 
 		stats.end();
 	}, 1000 / 60);
+  */
 });
 </script>
 </body>

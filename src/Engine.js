@@ -1,11 +1,24 @@
 /* global Symbol */
 define([
   'nbd/Class',
+  'nbd/util/async',
   './Rule',
   './eltable',
   '../util/css'
-], function(Class, Rule, eltable, css) {
+], function(Class, async, Rule, eltable, css) {
   'use strict';
+
+  function debounce(fn, ctxt) {
+    if (debounce.last === fn) {
+      return;
+    }
+
+    async(function() {
+      fn.call(ctxt);
+      delete debounce.last;
+    });
+    debounce.last = fn;
+  }
 
   /**
    * @requires MutationObserver
@@ -43,11 +56,11 @@ define([
       for (i = 0; i < mutations.length; ++i) {
         mutation = mutations[i];
         if (mutation.type === 'attributes' && mutation.attributeName !== "style") {
-          this._markMutated(mutation.target);
+          debounce(this._markMutated, this);
           continue;
         }
         if (mutation.type === 'childList' && mutation.addedNodes.length) {
-          this._markMutated.apply(this, mutation.addedNodes);
+          debounce(this._markMutated, this);
         }
         if (mutation.type === 'childList' && mutation.removedNodes.length) {
           for (j = 0; target = mutation.removedNodes[j]; ++j) {
@@ -57,7 +70,7 @@ define([
       }
     },
 
-    _markMutated: function(target) {
+    _markMutated: function() {
       var rule, i;
 
       for (i = 0; rule = this.rules[i]; ++i) {

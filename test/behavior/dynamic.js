@@ -1,15 +1,16 @@
 define(['index'], function(Focss) {
   var fox;
 
-  beforeEach(function() {
-    fox = new Focss();
-  });
-  afterEach(function() {
-    fox.destroy();
-    fox = null;
-  });
-
   describe('dynamic rules', function() {
+    beforeEach(function() {
+      fox = new Focss();
+    });
+
+    afterEach(function() {
+      fox.destroy();
+      fox = null;
+    });
+
     describe('computed selector', function() {
       it('has no effect before process call', function(done) {
         var el = affix('div.bar');
