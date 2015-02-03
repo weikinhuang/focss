@@ -1,7 +1,7 @@
 define(['index', 'src/eltable'], function(Focss, eltable) {
   // IMPORTANT: We can't do pseudo-elements!
   // e.g. ::first-letter, ::before, ::after
-  var fox, timeout = 100;
+  var fox, timeout = 120;
 
   describe('positional pseudo class selectors', function() {
     beforeEach(function() {
@@ -36,12 +36,12 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
 
         ul[0].insertBefore(second[0], first[0]);
 
-        requestAnimationFrame(function() {
+        setTimeout(function() {
           expect(first.css('max-width')).toBe('none');
           expect(second.css('max-width')).toBe('100px');
           expect(last.css('max-width')).toBe('none');
           done();
-        });
+        }, timeout);
       });
     });
 
@@ -68,12 +68,12 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
 
         ul[0].appendChild(second[0]);
 
-        requestAnimationFrame(function() {
+        setTimeout(function() {
           expect(last.css('max-width')).toBe('none');
           expect(second.css('max-width')).toBe('100px');
           expect(first.css('max-width')).toBe('none');
           done();
-        });
+        }, timeout);
       });
     });
 
@@ -102,11 +102,11 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
         var span = document.createElement('span');
         ul[0].insertBefore(span, ul[0].childNodes[0]);
 
-        requestAnimationFrame(function() {
+        setTimeout(function() {
           expect(target.css('max-width')).toBe('none');
           expect($(span).css('max-width')).toBe('100px');
           done();
-        });
+        }, timeout);
       });
     });
 
@@ -135,11 +135,11 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
         var span = document.createElement('span');
         ul[0].appendChild(span);
 
-        requestAnimationFrame(function() {
+        setTimeout(function() {
           expect(target.css('max-width')).toBe('none');
           expect($(span).css('max-width')).toBe('100px');
           done();
-        });
+        }, timeout);
       });
     });
 
@@ -165,7 +165,7 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
         fox.insert('div:only-of-type', { 'max-width': 'foo' });
         fox.process({ foo: 100 });
 
-        requestAnimationFrame(function() {
+        setTimeout(function() {
           expect(target.css('max-width')).toBe('100px');
           var div = document.createElement('div');
           ul[0].appendChild(div);
@@ -175,18 +175,127 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
             expect($(div).css('max-width')).toBe('none');
             done();
           }, timeout);
-        });
+        }, timeout);
       });
     });
-    describe(':nth-child()', function() {});
-    describe(':nth-of-type()', function() {});
-    describe(':nth-last-of-type()', function() {});
-    describe(':nth-last-child()', function() {});
+
+    describe(':nth-child()', function() {
+      it('affects only the nth element', function(done) {
+        var ul = affix('ul li+li+li+li');
+
+        fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+        fox.process({ foo: 100 });
+
+        requestAnimationFrame(function() {
+          expect(ul.find('li:eq(0)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(1)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(2)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(3)').css('max-width')).toBe('100px');
+          done();
+        });
+      });
+
+      it('tracks when new element shifts positions', function(done) {
+        var ul = affix('ul li+li+li+li');
+
+        fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+        fox.process({ foo: 100 });
+
+        ul[0].insertBefore(document.createElement('li'), ul[0].childNodes[0]);
+
+        setTimeout(function() {
+          expect(ul.find('li:eq(0)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(1)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(2)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(3)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(4)').css('max-width')).toBe('none');
+          done();
+        }, timeout);
+      });
+
+      it('tracks when positions shift', function(done) {
+        var ul = affix('ul li+li+li+li');
+
+        fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+        fox.process({ foo: 100 });
+
+        ul[0].insertBefore(ul[0].childNodes[1], ul[0].childNodes[0]);
+
+        setTimeout(function() {
+          expect(ul.find('li:eq(0)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(1)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(2)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(3)').css('max-width')).toBe('100px');
+          done();
+        }, timeout);
+      });
+    });
+
+    describe(':nth-last-child()', function() {
+      it('affects only the nth element in reverse', function(done) {
+        var ul = affix('ul li+li+li+li');
+
+        fox.insert('li:nth-last-child(2n)', { 'max-width': 'foo' });
+        fox.process({ foo: 100 });
+
+        requestAnimationFrame(function() {
+          expect(ul.find('li:eq(0)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(1)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(2)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(3)').css('max-width')).toBe('none');
+          done();
+        });
+      });
+
+      it('tracks when new element shifts positions', function(done) {
+        var ul = affix('ul li+li+li+li');
+
+        fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+        fox.process({ foo: 100 });
+
+        ul[0].appendChild(document.createElement('li'));
+
+        setTimeout(function() {
+          expect(ul.find('li:eq(0)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(1)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(2)').css('max-width')).toBe('none');
+          expect(ul.find('li:eq(3)').css('max-width')).toBe('100px');
+          expect(ul.find('li:eq(4)').css('max-width')).toBe('none');
+          done();
+        }, timeout);
+      });
+    });
   });
 
   describe('relational pseudo class selectors', function() {
-    describe(':not()', function() {});
-    describe(':empty', function() {});
+    beforeEach(function() {
+      fox = new Focss();
+    });
+
+    afterEach(function() {
+      fox.destroy();
+      fox = null;
+    });
+
+    describe(':empty', function() {
+      it('matches only empty elements', function(done) {
+        var ul = affix('ul');
+
+        fox.insert('ul:empty', { 'max-width': 'foo' });
+        fox.process({ foo: 100 });
+
+        requestAnimationFrame(function() {
+          expect(ul.css('max-width')).toBe('100px');
+
+          ul[0].appendChild(document.createElement('li'));
+
+          setTimeout(function() {
+            expect(ul.css('max-width')).toBe('none');
+            done();
+          }, timeout);
+        });
+      });
+    });
   });
 
   /*
