@@ -250,7 +250,7 @@ define(['index', 'src/eltable'], function(Focss, eltable) {
       it('tracks when new element shifts positions', function(done) {
         var ul = affix('ul li+li+li+li');
 
-        fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+        fox.insert('li:nth-last-child(2n)', { 'max-width': 'foo' });
         fox.process({ foo: 100 });
 
         ul[0].appendChild(document.createElement('li'));
