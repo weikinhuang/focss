@@ -60,8 +60,9 @@ function getStats() {
 	return stats
 }
 
-require(['index'], function(focss) {
-	focss.insert('.box', {
+require(['index'], function(Focss) {
+  var fox = new Focss(section);
+	fox.insert('.box', {
 		marginRight: { value: 'factor > 0 ? factor : -factor', unit: 'px' },
 		marginBottom: { value: 'factor > 0 ? factor : -factor', unit: 'px' }
 	});
@@ -73,7 +74,7 @@ require(['index'], function(focss) {
 
 		if (!paused) {
 			var value = Math.sin(frame++ / 30) * 30;
-			focss.process('.box', { factor: value });
+			fox.process({ factor: value });
 		}
 
 		stats.end();

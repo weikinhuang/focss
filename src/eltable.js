@@ -1,8 +1,9 @@
 define([
   'nbd/Class',
+  'nbd/trait/pubsub',
   'nbd/util/extend',
   '../util/css'
-], function(Class, extend, css) {
+], function(Class, pubsub, extend, css) {
   'use strict';
 
   function bySpecificity(a, b) {
@@ -41,6 +42,9 @@ define([
 
     sweep: function() {
       this._dirty.forEach(this._reduce.bind(this));
+      if (this._dirty.size) {
+        this.trigger('sweep');
+      }
       this._dirty.clear();
     },
 
@@ -71,7 +75,6 @@ define([
           result: layer.result,
           index: i++
         });
-
       });
 
       return _results;
@@ -120,7 +123,8 @@ define([
       this._affecting = null;
       this._states = null;
     }
-  });
+  })
+  .mixin(pubsub);
 
   return new ResultTable();
 });

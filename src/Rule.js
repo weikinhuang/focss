@@ -30,8 +30,8 @@ define([
       }
     },
 
-    process: function(data) {
-      var selector = this.selector, extensions = this.constructor.extensions;
+    process: function(data, extensions) {
+      var selector = this.selector;
 
       if (this.isComputed) {
         // Compile the selector
@@ -44,17 +44,24 @@ define([
       this.computedSelector = selector;
       this.result = css.normalize(this.body(data, extensions));
 
-      var elements, i;
-      // For computed rules, undo previous matching
-      if (this.isComputed && this._lastAffected) {
-        elements = this._lastAffected;
-        for (i = 0; i < elements.length; ++i) {
-          eltable.get(elements[i]).delete(this);
+      this.mark();
+    },
+
+    mark: function() {
+      var elements = css.find(this.computedSelector);
+
+      var element, i;
+      // Undo previous matching if no longer matching
+      if (this._lastAffected) {
+        for (i = 0; i < this._lastAffected.length; ++i) {
+          element = this._lastAffected[i];
+          if (!~Array.prototype.indexOf.call(elements, element)) {
+            eltable.get(element).delete(this);
+          }
         }
       }
 
       // Map the operation to each selector
-      elements = css.find(selector);
       for (i = 0; i < elements.length; ++i) {
         eltable.get(elements[i]).add(this);
       }
@@ -71,10 +78,7 @@ define([
       }
     }
   }, {
-    displayName: 'FocssRule',
-    extensions: {
-      Math: Math
-    }
+    displayName: 'FocssRule'
   });
 
   Object.defineProperty(Rule, 'computed', { value: computed });

@@ -1,16 +1,8 @@
 define(['index'], function(Focss) {
-  var fox;
-
-  beforeEach(function() {
-    fox = new Focss();
-  });
-  afterEach(function() {
-    fox.destroy();
-    fox = null;
-  });
+  var fox, timeout = 100;
 
   function insertSpecs(selector) {
-    it('affects existing elements', function(done) {
+    it(selector + ' affects existing elements', function(done) {
       affix(selector);
 
       fox.insert(selector, {
@@ -19,13 +11,13 @@ define(['index'], function(Focss) {
 
       fox.process({ width: 100 });
 
-      requestAnimationFrame(function() {
+      setTimeout(function() {
         expect($(selector).css('max-width')).toBe('100px');
         done();
-      });
+      }, timeout);
     });
 
-    it('affects new elements', function(done) {
+    it(selector + ' affects new elements', function(done) {
       fox.insert(selector, {
         'max-width': 'width'
       });
@@ -34,13 +26,13 @@ define(['index'], function(Focss) {
 
       affix(selector);
 
-      requestAnimationFrame(function() {
+      setTimeout(function() {
         expect($(selector).css('max-width')).toBe('100px');
         done();
-      });
+      }, timeout);
     });
 
-    it('affects existing elements with newly inserted rule', function(done) {
+    it(selector + ' affects existing elements with newly inserted rule', function(done) {
       fox.process({ width: 100 });
 
       affix(selector);
@@ -49,13 +41,13 @@ define(['index'], function(Focss) {
         'max-width': 'width'
       });
 
-      requestAnimationFrame(function() {
+      setTimeout(function() {
         expect($(selector).css('max-width')).toBe('100px');
         done();
-      });
+      }, timeout);
     });
 
-    it('affects new elements with newly inserted rule', function(done) {
+    it(selector + ' affects new elements with newly inserted rule', function(done) {
       fox.process({ width: 100 });
 
       fox.insert(selector, {
@@ -64,14 +56,23 @@ define(['index'], function(Focss) {
 
       affix(selector);
 
-      requestAnimationFrame(function() {
+      setTimeout(function() {
         expect($(selector).css('max-width')).toBe('100px');
         done();
-      });
+      }, timeout);
     });
   }
 
   describe('static rules', function() {
+    beforeEach(function() {
+      fox = new Focss();
+    });
+
+    afterEach(function() {
+      fox.destroy();
+      fox = null;
+    });
+
     describe('id selectors', function() {
       insertSpecs('#foo');
     });
