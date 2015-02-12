@@ -1,13 +1,18 @@
 define([
   'nbd/Class',
   'nbd/util/extend',
+  'nbd/util/diff',
   './eltable',
   '../util/css',
   '../util/expression',
   '../util/specificity'
-], function(Class, extend, eltable, css, expression, specificity) {
+], function(Class, extend, diff, eltable, css, expression, specificity) {
   'use strict';
   var computed = /\$\{([^\}]*?)\}/ig;
+
+  function lookup(obj, prop) {
+    return obj && obj[prop];
+  }
 
   var Rule = Class.extend({
     init: function(selector, spec) {
@@ -31,6 +36,22 @@ define([
     },
 
     process: function(data, extensions) {
+      var artifacts = Object.keys(this.artifacts)
+      .reduce(function archaeology(artifacts, path) {
+        artifacts[path] = path.split('.').reduce(lookup, data);
+        return artifacts;
+      }, {});
+
+      var different = !this._lastArtifacts ||
+        Object.keys(diff(artifacts, this._lastArtifacts)).length;
+
+      if (different) {
+        this._process(data, extensions);
+      }
+      this._lastArtifacts = artifacts;
+    },
+
+    _process: function(data, extensions) {
       var selector = this.selector;
 
       if (this.isComputed) {
@@ -44,19 +65,25 @@ define([
       this.computedSelector = selector;
       this.result = css.normalize(this.body(data, extensions));
 
-      this.mark();
+      this.mark(true);
     },
 
-    mark: function() {
-      var elements = css.find(this.computedSelector);
+    mark: function(fresh) {
+      var affected = css.find(this.computedSelector),
+          elements = Array.prototype.slice.call(affected);
 
-      var element, i;
+      var element, i, index;
       // Undo previous matching if no longer matching
       if (this._lastAffected) {
         for (i = 0; i < this._lastAffected.length; ++i) {
           element = this._lastAffected[i];
-          if (!~Array.prototype.indexOf.call(elements, element)) {
+          index = elements.indexOf(element);
+
+          if (index === -1) {
             eltable.get(element).delete(this);
+          }
+          else if (!fresh) {
+            Array.prototype.splice.call(elements, index, 1);
           }
         }
       }
@@ -66,7 +93,7 @@ define([
         eltable.get(elements[i]).add(this);
       }
 
-      this._lastAffected = elements;
+      this._lastAffected = affected;
     },
 
     destroy: function() {
