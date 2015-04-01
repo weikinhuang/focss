@@ -83,7 +83,7 @@ define([
             eltable.get(element).delete(this);
           }
           else if (!fresh) {
-            Array.prototype.splice.call(elements, index, 1);
+            elements.splice(index, 1);
           }
         }
       }
