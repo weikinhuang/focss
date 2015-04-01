@@ -63,9 +63,7 @@ define([
           debounce(this._markMutated, this);
         }
         if (mutation.type === 'childList' && mutation.removedNodes.length) {
-          for (j = 0; target = mutation.removedNodes[j]; ++j) {
-            eltable.remove(target);
-          }
+          debounce(this._markMutated, this);
         }
       }
     },
