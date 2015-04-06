@@ -69,8 +69,15 @@ define([
     },
 
     mark: function(fresh) {
-      var affected = css.find(this.computedSelector),
-          elements = Array.prototype.slice.call(affected);
+      var affected, elements;
+
+      if (this.specificity.length) {
+        affected = css.find(this.computedSelector);
+        elements = Array.prototype.slice.call(affected);
+      }
+      else {
+        affected = elements = [];
+      }
 
       var element, i, index;
       // Undo previous matching if no longer matching
