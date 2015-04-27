@@ -1,7 +1,7 @@
 {
   "name": "focss",
   "main": "index.js",
-  "version": "0.1.1",
+  "version": "0.1.6",
   "homepage": "https://github.com/behance/focss",
   "authors": [
     "Alex Lee <axal@adobe.com>"
@@ -22,7 +22,7 @@
     "tests"
   ],
   "dependencies": {
-    "nbd": "nbd.js~1.1.0",
+    "nbd": "nbd.js#~1.1.0",
     "jsep": "~0.3.0"
   }
 }
