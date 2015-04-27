@@ -22,7 +22,7 @@
   "homepage": "https://github.com/behance/focss",
   "dependencies": {
     "jsep": "^0.3.0",
-    "nbd": "^1.0.5"
+    "nbd": "^1.1.0"
   },
   "devDependencies": {
     "jasmine-core": "^2.1.3",

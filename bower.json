@@ -22,7 +22,7 @@
     "tests"
   ],
   "dependencies": {
-    "nbd.js": "~1.0.10",
+    "nbd": "nbd.js~1.1.0",
     "jsep": "~0.3.0"
   }
 }
