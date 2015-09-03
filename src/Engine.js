@@ -21,8 +21,10 @@ define([
       this.style.setAttribute('scoped', 'scoped');
       target.insertBefore(this.style, target.firstChild);
 
-      this._prefix = '';
-      if (!compat.scopeSupported) {
+      if (compat.scopeSupported || target === document.body) {
+        this._prefix = '';
+      }
+      else {
         this._prefix = '#' + (root.id || (root.id = genId())) + ' ';
       }
     },
