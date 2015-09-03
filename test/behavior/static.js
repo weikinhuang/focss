@@ -1,8 +1,8 @@
 define(['index'], function(Focss) {
-  var fox, timeout = 100;
+  var fox;
 
   function insertSpecs(selector) {
-    it(selector + ' affects existing elements', function(done) {
+    it(selector + ' affects existing elements', function() {
       affix(selector);
 
       fox.insert(selector, {
@@ -11,13 +11,10 @@ define(['index'], function(Focss) {
 
       fox.process({ width: 100 });
 
-      setTimeout(function() {
-        expect($(selector).css('max-width')).toBe('100px');
-        done();
-      }, timeout);
+      expect($(selector).css('max-width')).toBe('100px');
     });
 
-    it(selector + ' affects new elements', function(done) {
+    it(selector + ' affects new elements', function() {
       fox.insert(selector, {
         'max-width': 'width'
       });
@@ -26,13 +23,10 @@ define(['index'], function(Focss) {
 
       affix(selector);
 
-      setTimeout(function() {
-        expect($(selector).css('max-width')).toBe('100px');
-        done();
-      }, timeout);
+      expect($(selector).css('max-width')).toBe('100px');
     });
 
-    it(selector + ' affects existing elements with newly inserted rule', function(done) {
+    it(selector + ' affects existing elements with newly inserted rule', function() {
       fox.process({ width: 100 });
 
       affix(selector);
@@ -41,13 +35,10 @@ define(['index'], function(Focss) {
         'max-width': 'width'
       });
 
-      setTimeout(function() {
-        expect($(selector).css('max-width')).toBe('100px');
-        done();
-      }, timeout);
+      expect($(selector).css('max-width')).toBe('100px');
     });
 
-    it(selector + ' affects new elements with newly inserted rule', function(done) {
+    it(selector + ' affects new elements with newly inserted rule', function() {
       fox.process({ width: 100 });
 
       fox.insert(selector, {
@@ -56,10 +47,7 @@ define(['index'], function(Focss) {
 
       affix(selector);
 
-      setTimeout(function() {
-        expect($(selector).css('max-width')).toBe('100px');
-        done();
-      }, timeout);
+      expect($(selector).css('max-width')).toBe('100px');
     });
   }
 

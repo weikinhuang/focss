@@ -14,14 +14,6 @@ define(['src/Engine'], function(Engine) {
       }).not.toThrow();
     });
 
-    it('observes DOM mutations', function() {
-      spyOn(window, 'MutationObserver')
-      .and.returnValue(jasmine.createSpyObj('mutation', ['disconnect']));
-
-      engine = new Engine();
-      expect(window.MutationObserver).toHaveBeenCalledWith(jasmine.any(Function));
-    });
-
     describe('#process()', function() {
       beforeEach(function() {
         engine = new Engine();

@@ -8,14 +8,11 @@ define([
   'use strict';
 
   var Engine = Class.extend({
-    init: function() {
+    init: function(root) {
+      var target = root || document.body;
       this.rules = [];
       this.style = document.createElement('style');
       this.style.setAttribute('scoped', 'scoped');
-    },
-
-    bind: function(root) {
-      var target = root || document.body;
       target.insertBefore(this.style, target.firstChild);
     },
 
@@ -24,6 +21,7 @@ define([
         rule.destroy();
       });
       this.rules.length = 0;
+      this.style.parentNode.removeChild(this.style);
     },
 
     process: function(payload) {

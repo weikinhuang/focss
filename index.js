@@ -3,8 +3,7 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
 
   var Focss = Class.extend({
     init: function(root) {
-      this.engine = new Engine();
-      this.engine.bind(root);
+      this.engine = new Engine(root);
     },
 
     /**
