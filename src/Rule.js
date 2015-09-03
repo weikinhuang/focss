@@ -34,6 +34,14 @@ define([
       }
     },
 
+    getSelector: function(prefix) {
+      if (!prefix) { return this.computedSelector || this.selector; }
+
+      return this.specificity.map(function(part) {
+        return prefix + part.selector;
+      }, this).join(',');
+    },
+
     process: function(data, extensions) {
       var artifacts = Object.keys(this.artifacts)
       .reduce(function archaeology(artifacts, path) {

@@ -21,7 +21,7 @@ define(['src/Engine'], function(Engine) {
 
       it('runs individual rule.process()', function() {
         spyOn(Engine, 'Rule')
-        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy']));
+        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy', 'getSelector']));
 
         var payload = {
           foo: 'bar'
@@ -50,7 +50,7 @@ define(['src/Engine'], function(Engine) {
         engine.process(payload);
 
         spyOn(Engine, 'Rule')
-        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy']));
+        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy', 'getSelector']));
         var rule = engine.insert('.selector', {});
         expect(rule.process).toHaveBeenCalledWith(payload);
       });

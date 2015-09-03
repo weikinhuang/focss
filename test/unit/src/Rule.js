@@ -68,5 +68,26 @@ define(['src/Rule'], function(Rule) {
         }));
       });
     });
+
+    describe('#getSelector()', function() {
+      it('returns all selector parts', function() {
+        rule = new Rule('.foo1,.foo2,.foo3', {});
+        rule.process();
+
+        var res = rule.getSelector();
+        expect(res.split(',').length).toBe(3);
+        expect(res).toEqual(rule.selector);
+      });
+
+      it('prefixes all selector parts', function() {
+        rule = new Rule('.foo1, .foo2, .foo3', {});
+        rule.process();
+        var res = rule.getSelector('bar').split(',');
+        expect(res.length).toBe(3);
+        expect(res[0]).toMatch(/^bar/);
+        expect(res[1]).toMatch(/^bar/);
+        expect(res[2]).toMatch(/^bar/);
+      });
+    });
   });
 });

@@ -3,9 +3,15 @@ define([
   'nbd/Class',
   'nbd/util/async',
   './Rule',
-  '../util/css'
-], function(Class, async, Rule, css) {
+  '../util/css',
+  '../util/detectScoped'
+], function(Class, async, Rule, css, compat) {
   'use strict';
+
+  function genId() {
+    return '__focss__' + genId.i++;
+  }
+  genId.i = 1;
 
   var Engine = Class.extend({
     init: function(root) {
@@ -14,6 +20,11 @@ define([
       this.style = document.createElement('style');
       this.style.setAttribute('scoped', 'scoped');
       target.insertBefore(this.style, target.firstChild);
+
+      this._prefix = '';
+      if (!compat.scopeSupported) {
+        this._prefix = '#' + (root.id || (root.id = genId())) + ' ';
+      }
     },
 
     destroy: function() {
@@ -30,14 +41,19 @@ define([
     },
 
     _process: function(rule, i) {
-      var sheet = this.style.sheet;
       rule.process(this._state);
+      var selector = rule.getSelector(this._prefix);
       // Selector has changed
-      if (rule.computedSelector !== sheet.cssRules[i].selectorText) {
-        sheet.deleteRule(i);
-        sheet.insertRule(rule.computedSelector + '{}', i);
+      if (selector !== this.cssRules[i].selectorText) {
+        if (compat.changeSelectorTextAllowed) {
+          this.cssRules[i].selectorText = selector;
+        }
+        else {
+          this.sheet.deleteRule(i);
+          this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
+        }
       }
-      css.apply(sheet.cssRules[i], rule.result);
+      css.apply(this.cssRules[i], rule.result);
     },
 
     insert: function(selector, spec) {
@@ -45,10 +61,11 @@ define([
           i = this.rules.length;
 
       if (rule.isComputed) {
-        this.style.sheet.insertRule(':scope {}', i);
+        // Placeholder rule
+        this.sheet.insertRule(':scope {}', i);
       }
       else {
-        this.style.sheet.insertRule(rule.selector + '{}', i);
+        this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
       }
       this.rules.push(rule);
 
@@ -60,6 +77,14 @@ define([
   }, {
     Rule: Rule,
     displayName: 'FocssEngine'
+  })
+  .mixin({
+    get sheet() {
+      return this.style[compat.sheet];
+    },
+    get cssRules() {
+      return this.sheet[compat.rules];
+    }
   });
 
   // ES6 future-proofing
