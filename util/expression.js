@@ -193,11 +193,7 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
         var inner = this.parse(expr);
         extend(artifacts, inner.artifacts);
 
-        if (unit) {
-          inner.body += '+ "' + unit + '"';
-        }
-
-        return '_["'+ property +'"]' + '=' + inner.body;
+        return '_["'+ property +'"]' + '=' + inner.body + (unit ? '+"' + unit + '"' : '');
       }, this)
       .join(';');
 

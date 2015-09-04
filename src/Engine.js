@@ -1,104 +1,93 @@
 /* global Symbol */
 define([
   'nbd/Class',
-  'nbd/util/async',
   './Rule',
-  './eltable',
-  '../util/css'
-], function(Class, async, Rule, eltable, css) {
+  '../util/css',
+  '../util/detectScoped'
+], function(Class, Rule, css, compat) {
   'use strict';
 
-  function debounce(fn, ctxt) {
-    if (debounce.last === fn) {
-      return;
-    }
-
-    async(function() {
-      fn.call(ctxt);
-      delete debounce.last;
-    });
-    debounce.last = fn;
+  function genId() {
+    return '__focss__' + genId.i++;
   }
+  genId.i = 1;
 
-  /**
-   * @requires MutationObserver
-   */
   var Engine = Class.extend({
-    init: function() {
-      this.observer = new MutationObserver(this._update.bind(this));
-      this.rules = [];
-    },
-
-    bind: function(root) {
+    init: function(root) {
       var target = root || document.body;
-      this.observer.observe(target, {
-        childList: true,
-        attributes: true,
-        characterData: false,
-        subtree: true
-      });
+      this.rules = [];
+      this.extensions = Object.create(this.extensions);
+      this.style = document.createElement('style');
+      this.style.setAttribute('scoped', 'scoped');
+      target.insertBefore(this.style, target.firstChild);
+
+      if (compat.scopeSupported || target === document.body) {
+        this._prefix = '';
+      }
+      else {
+        this._prefix = '#' + (root.id || (root.id = genId())) + ' ';
+      }
     },
 
     destroy: function() {
-      this.observer.disconnect();
-      this.observer = null;
-      this.rules.forEach(function(rule) {
-        rule.destroy();
-      });
       this.rules.length = 0;
-    },
-
-    /**
-     * Context-bound mutation update callback
-     */
-    _update: function mutationUpdate(mutations, observer) {
-      var mutation, i, target, j;
-      for (i = 0; i < mutations.length; ++i) {
-        mutation = mutations[i];
-        if (mutation.type === 'attributes' && mutation.attributeName !== "style") {
-          debounce(this._markMutated, this);
-          continue;
-        }
-        if (mutation.type === 'childList' && mutation.addedNodes.length) {
-          debounce(this._markMutated, this);
-        }
-        if (mutation.type === 'childList' && mutation.removedNodes.length) {
-          debounce(this._markMutated, this);
-        }
-      }
-    },
-
-    _markMutated: function() {
-      var rule, i;
-
-      for (i = 0; rule = this.rules[i]; ++i) {
-        if (rule.computedSelector) {
-          rule.mark();
-        }
-      }
+      this.style.parentNode.removeChild(this.style);
     },
 
     process: function(payload) {
       this._state = payload;
+      this.rules.forEach(this._process, this);
+    },
 
-      // for (let rule of this) rule.process(payload)
-      this.rules.forEach(function(rule) {
-        rule.process(this._state);
-      }, this);
+    _process: function(rule, i) {
+      rule.process(this._state, this.extensions);
+      var selector = rule.getSelector(this._prefix);
+      // Selector has changed
+      if (selector !== this.cssRules[i].selectorText) {
+        if (compat.changeSelectorTextAllowed) {
+          this.cssRules[i].selectorText = selector;
+        }
+        else {
+          this.sheet.deleteRule(i);
+          this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
+        }
+      }
+      css.apply(this.cssRules[i], rule.result);
     },
 
     insert: function(selector, spec) {
-      var rule = new this.constructor.Rule(selector, spec);
+      var rule = new this.constructor.Rule(selector, spec),
+          i = this.rules.length;
+
+      if (rule.isComputed) {
+        // Placeholder rule
+        this.sheet.insertRule(':scope {}', i);
+      }
+      else {
+        this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
+      }
       this.rules.push(rule);
 
       if (this._state) {
-        rule.process(this._state);
+        this._process(rule, i);
       }
       return rule;
+    },
+
+    extensions: {
+      Math: Math
     }
   }, {
     Rule: Rule,
     displayName: 'FocssEngine'
+  })
+  .mixin({
+    get sheet() {
+      return this.style[compat.sheet];
+    },
+    get cssRules() {
+      return this.sheet[compat.rules];
+    }
   });
 
   // ES6 future-proofing

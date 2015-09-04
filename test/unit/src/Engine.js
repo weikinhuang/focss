@@ -14,14 +14,6 @@ define(['src/Engine'], function(Engine) {
       }).not.toThrow();
     });
 
-    it('observes DOM mutations', function() {
-      spyOn(window, 'MutationObserver')
-      .and.returnValue(jasmine.createSpyObj('mutation', ['disconnect']));
-
-      engine = new Engine();
-      expect(window.MutationObserver).toHaveBeenCalledWith(jasmine.any(Function));
-    });
-
     describe('#process()', function() {
       beforeEach(function() {
         engine = new Engine();
@@ -29,14 +21,14 @@ define(['src/Engine'], function(Engine) {
 
       it('runs individual rule.process()', function() {
         spyOn(Engine, 'Rule')
-        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy']));
+        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
 
         var payload = {
           foo: 'bar'
         },
         rule = engine.insert('selector', {});
         engine.process(payload);
-        expect(rule.process).toHaveBeenCalledWith(payload);
+        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
       });
     });
 
@@ -58,9 +50,9 @@ define(['src/Engine'], function(Engine) {
         engine.process(payload);
 
         spyOn(Engine, 'Rule')
-        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy']));
+        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
         var rule = engine.insert('.selector', {});
-        expect(rule.process).toHaveBeenCalledWith(payload);
+        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
       });
     });
   });

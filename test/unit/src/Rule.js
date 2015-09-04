@@ -63,9 +63,49 @@ define(['src/Rule'], function(Rule) {
           foo: 'bar'
         });
         rule.process({ bar: 'baz' });
-        expect(rule.result).toEqual(jasmine.objectContaining({
-          foo: 'baz'
-        }));
+        expect(rule.result).toEqual({ foo: 'baz' });
+      });
+
+      it('calculates result with extensions', function() {
+        rule = new Rule('.extended', {
+          foo: 'bar()'
+        });
+
+        var bar = jasmine.createSpy('extension').and.returnValue('baz');
+        rule.process({}, { bar: bar });
+
+        expect(bar).toHaveBeenCalled();
+        expect(rule.result).toEqual({ foo: 'baz' });
+      });
+
+      it('ignores missing extensions', function() {
+        rule = new Rule('.extended', {
+          foo: 'bar()'
+        });
+        rule.process({});
+
+        expect(rule.result).toEqual({ foo: 'bar()' });
+      });
+    });
+
+    describe('#getSelector()', function() {
+      it('returns all selector parts', function() {
+        rule = new Rule('.foo1,.foo2,.foo3', {});
+        rule.process();
+
+        var res = rule.getSelector();
+        expect(res.split(',').length).toBe(3);
+        expect(res).toEqual(rule.selector);
+      });
+
+      it('prefixes all selector parts', function() {
+        rule = new Rule('.foo1, .foo2, .foo3', {});
+        rule.process();
+        var res = rule.getSelector('bar').split(',');
+        expect(res.length).toBe(3);
+        expect(res[0]).toMatch(/^bar/);
+        expect(res[1]).toMatch(/^bar/);
+        expect(res[2]).toMatch(/^bar/);
       });
     });
   });

@@ -2,11 +2,10 @@ define([
   'nbd/Class',
   'nbd/util/extend',
   'nbd/util/diff',
-  './eltable',
   '../util/css',
   '../util/expression',
   '../util/specificity'
-], function(Class, extend, diff, eltable, css, expression, specificity) {
+], function(Class, extend, diff, css, expression, specificity) {
   'use strict';
   var computed = /\$\{([^\}]*?)\}/ig;
 
@@ -33,6 +32,14 @@ define([
       if (!this.isComputed) {
         this.specificity = specificity.calculate(this.selector);
       }
+    },
+
+    getSelector: function(prefix) {
+      if (!prefix) { return this.computedSelector || this.selector; }
+
+      return this.specificity.map(function(part) {
+        return prefix + part.selector;
+      }, this).join(',');
     },
 
     process: function(data, extensions) {
@@ -64,52 +71,6 @@ define([
 
       this.computedSelector = selector;
       this.result = css.normalize(this.body(data, extensions));
-
-      this.mark(true);
-    },
-
-    mark: function(fresh) {
-      var affected, elements;
-
-      if (this.specificity.length) {
-        affected = css.find(this.computedSelector);
-        elements = Array.prototype.slice.call(affected);
-      }
-      else {
-        affected = elements = [];
-      }
-
-      var element, i, index;
-      // Undo previous matching if no longer matching
-      if (this._lastAffected) {
-        for (i = 0; i < this._lastAffected.length; ++i) {
-          element = this._lastAffected[i];
-          index = elements.indexOf(element);
-
-          if (index === -1) {
-            eltable.get(element).delete(this);
-          }
-          else if (!fresh) {
-            elements.splice(index, 1);
-          }
-        }
-      }
-
-      // Map the operation to each selector
-      for (i = 0; i < elements.length; ++i) {
-        eltable.get(elements[i]).add(this);
-      }
-
-      this._lastAffected = affected;
-    },
-
-    destroy: function() {
-      var elements = this._lastAffected, i;
-      if (elements) {
-        for (i = 0; i < elements.length; ++i) {
-          eltable.get(elements[i]).delete(this);
-        }
-      }
     }
   }, {
     displayName: 'FocssRule'

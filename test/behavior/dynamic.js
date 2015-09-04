@@ -1,6 +1,10 @@
 define(['index'], function(Focss) {
   var fox;
 
+  function css(el, prop) {
+    return window.getComputedStyle(el[0] || el)[prop];
+  }
+
   describe('dynamic rules', function() {
     beforeEach(function() {
       fox = new Focss();
@@ -12,20 +16,17 @@ define(['index'], function(Focss) {
     });
 
     describe('computed selector', function() {
-      it('has no effect before process call', function(done) {
+      it('has no effect before process call', function() {
         var el = affix('div.bar');
 
         fox.insert('.${foo}', {
           'max-width': 'width'
         });
 
-        requestAnimationFrame(function() {
-          expect(el.css('max-width')).toBe('none');
-          done();
-        });
+        expect(css(el, 'max-width')).toBe('none');
       });
 
-      it('evaluates the selector', function(done) {
+      it('evaluates the selector', function() {
         var el = affix('div.bar');
 
         fox.process({ foo: 'bar', width: 100 });
@@ -33,28 +34,20 @@ define(['index'], function(Focss) {
           'max-width': 'width'
         });
 
-        requestAnimationFrame(function() {
-          expect(el.css('max-width')).toBe('100px');
-          done();
-        });
+        expect(css(el, 'max-width')).toBe('100px');
       });
 
-      it('removes styles when selector no longer matches', function(done) {
+      it('removes styles when selector no longer matches', function() {
         var el = affix('div.bar');
         fox.insert('.${foo}', {
           'max-width': 'width'
         });
 
         fox.process({ foo: 'bar', width: 100 });
-        requestAnimationFrame(function() {
-          expect(el.css('max-width')).toBe('100px');
-          fox.process({ foo: 'baz', width: 40 });
+        expect(css(el, 'max-width')).toBe('100px');
 
-          requestAnimationFrame(function() {
-            expect(el.css('max-width')).toBe('none');
-            done();
-          });
-        });
+        fox.process({ foo: 'baz', width: 40 });
+        expect(css(el, 'max-width')).toBe('none');
       });
     });
 
@@ -67,56 +60,34 @@ define(['index'], function(Focss) {
       });
 
       // Stuff that depends on MutationObserver are very tricky to time
-      it('applies styles to new elements', function(done) {
+      it('applies styles to new elements', function() {
         var el = affix('.bar');
-
-        setTimeout(function() {
-          expect(el.css('max-width')).toBe('100px');
-          done();
-        }, 50);
+        expect(css(el, 'max-width')).toBe('100px');
       });
 
-      it('adds element styles when their attributes change', function(done) {
+      it('adds element styles when their attributes change', function() {
         var el = affix('.baz');
-        requestAnimationFrame(function() {
-          expect(el.css('max-width')).toBe('none');
-          el.addClass('bar');
-
-          setTimeout(function() {
-            expect(el.css('max-width')).toBe('100px');
-            done();
-          }, 50);
-        });
+        expect(css(el, 'max-width')).toBe('none');
+        el.addClass('bar');
+        expect(css(el, 'max-width')).toBe('100px');
       });
 
-      it('removes element styles when their attributes change', function(done) {
+      it('removes element styles when their attributes change', function() {
         var el = affix('.bar');
-        setTimeout(function() {
-          expect(el.css('max-width')).toBe('100px');
-          el.removeClass('bar');
-
-          setTimeout(function() {
-            expect(el.css('max-width')).toBe('none');
-            done();
-          }, 50);
-        }, 50);
+        expect(css(el, 'max-width')).toBe('100px');
+        el.removeClass('bar');
+        expect(css(el, 'max-width')).toBe('none');
       });
 
-      it('affects descendants when ancestors\' attributes change', function(done) {
+      it('affects descendants when ancestors\' attributes change', function() {
         fox.insert('.bar .stool', { 'max-height': 'width' });
 
         var el = affix('.baz .stool');
         var stool = el.find('.stool');
 
-        requestAnimationFrame(function() {
-          expect(stool.css('max-height')).toBe('none');
-          el.addClass('bar');
-
-          setTimeout(function() {
-            expect(stool.css('max-height')).toBe('100px');
-            done();
-          }, 50);
-        });
+        expect(css(stool, 'max-height')).toBe('none');
+        el.addClass('bar');
+        expect(css(stool, 'max-height')).toBe('100px');
       });
     });
   });
