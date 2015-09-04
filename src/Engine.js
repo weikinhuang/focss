@@ -1,11 +1,10 @@
 /* global Symbol */
 define([
   'nbd/Class',
-  'nbd/util/async',
   './Rule',
   '../util/css',
   '../util/detectScoped'
-], function(Class, async, Rule, css, compat) {
+], function(Class, Rule, css, compat) {
   'use strict';
 
   function genId() {
