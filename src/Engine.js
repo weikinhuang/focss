@@ -16,6 +16,7 @@ define([
     init: function(root) {
       var target = root || document.body;
       this.rules = [];
+      this.extensions = Object.create(this.extensions);
       this.style = document.createElement('style');
       this.style.setAttribute('scoped', 'scoped');
       target.insertBefore(this.style, target.firstChild);
@@ -29,9 +30,6 @@ define([
     },
 
     destroy: function() {
-      this.rules.forEach(function(rule) {
-        rule.destroy();
-      });
       this.rules.length = 0;
       this.style.parentNode.removeChild(this.style);
     },
@@ -42,7 +40,7 @@ define([
     },
 
     _process: function(rule, i) {
-      rule.process(this._state);
+      rule.process(this._state, this.extensions);
       var selector = rule.getSelector(this._prefix);
       // Selector has changed
       if (selector !== this.cssRules[i].selectorText) {
@@ -74,6 +72,10 @@ define([
         this._process(rule, i);
       }
       return rule;
+    },
+
+    extensions: {
+      Math: Math
     }
   }, {
     Rule: Rule,

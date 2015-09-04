@@ -21,14 +21,14 @@ define(['src/Engine'], function(Engine) {
 
       it('runs individual rule.process()', function() {
         spyOn(Engine, 'Rule')
-        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy', 'getSelector']));
+        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
 
         var payload = {
           foo: 'bar'
         },
         rule = engine.insert('selector', {});
         engine.process(payload);
-        expect(rule.process).toHaveBeenCalledWith(payload);
+        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
       });
     });
 
@@ -50,9 +50,9 @@ define(['src/Engine'], function(Engine) {
         engine.process(payload);
 
         spyOn(Engine, 'Rule')
-        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'destroy', 'getSelector']));
+        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
         var rule = engine.insert('.selector', {});
-        expect(rule.process).toHaveBeenCalledWith(payload);
+        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
       });
     });
   });

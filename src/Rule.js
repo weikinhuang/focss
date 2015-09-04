@@ -71,9 +71,7 @@ define([
 
       this.computedSelector = selector;
       this.result = css.normalize(this.body(data, extensions));
-    },
-
-    destroy: function() {}
+    }
   }, {
     displayName: 'FocssRule'
   });
