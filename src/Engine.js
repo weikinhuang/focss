@@ -13,15 +13,19 @@ define([
   genId.i = 1;
 
   var Engine = Class.extend({
-    init: function(root) {
+    init: function(root, scoped) {
       var target = root || document.body;
       this.rules = [];
       this.extensions = Object.create(this.extensions);
       this.style = document.createElement('style');
-      this.style.setAttribute('scoped', 'scoped');
+
+      if (scoped) {
+        this.style.setAttribute('scoped', 'scoped');
+      }
+
       target.insertBefore(this.style, target.firstChild);
 
-      if (compat.scopeSupported || target === document.body) {
+      if (!scoped || compat.scopeSupported || target === document.body) {
         this._prefix = '';
       }
       else {

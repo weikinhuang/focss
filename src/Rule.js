@@ -8,6 +8,7 @@ define([
 ], function(Class, extend, diff, css, expression, specificity) {
   'use strict';
   var computed = /\$\{([^\}]*?)\}/ig;
+  var scoped = /^\w*:scope/;
 
   function lookup(obj, prop) {
     return obj && obj[prop];
@@ -38,7 +39,7 @@ define([
       if (!prefix) { return this.computedSelector || this.selector; }
 
       return this.specificity.map(function(part) {
-        return prefix + part.selector;
+        return scoped.test(part.selector) ? part.selector : prefix + part.selector;
       }, this).join(',');
     },
 
