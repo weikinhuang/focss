@@ -44,19 +44,15 @@ define([
     },
 
     process: function(data, extensions) {
-      var artifacts = Object.keys(this.artifacts)
-      .reduce(function archaeology(artifacts, path) {
-        artifacts[path] = path.split('.').reduce(lookup, data);
-        return artifacts;
-      }, {});
+      // First find out the new results
+      this._process(data, extensions);
 
-      var different = !this._lastArtifacts ||
-        Object.keys(diff(artifacts, this._lastArtifacts)).length;
+      // Then diff the results with last results
+      var different = !this._lastResult ||
+        Object.keys(diff(this.result, this._lastResult)).length;
 
-      if (different) {
-        this._process(data, extensions);
-      }
-      this._lastArtifacts = artifacts;
+      this._lastResult = this.result;
+      return different ? this.result : null;
     },
 
     _process: function(data, extensions) {

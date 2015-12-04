@@ -44,8 +44,9 @@ define([
     },
 
     _process: function(rule, i) {
-      rule.process(this._state, this.extensions);
-      var selector = rule.getSelector(this._prefix);
+      var result = rule.process(this._state, this.extensions),
+          selector = rule.getSelector(this._prefix);
+
       // Selector has changed
       if (selector !== this.cssRules[i].selectorText) {
         if (compat.changeSelectorTextAllowed) {
@@ -56,7 +57,11 @@ define([
           this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
         }
       }
-      css.apply(this.cssRules[i], rule.result);
+
+      // Results have changed
+      if (result) {
+        css.apply(this.cssRules[i], result);
+      }
     },
 
     insert: function(selector, spec) {
