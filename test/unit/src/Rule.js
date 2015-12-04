@@ -78,6 +78,20 @@ define(['src/Rule'], function(Rule) {
         expect(rule.result).toEqual({ foo: 'baz' });
       });
 
+      it('calculates non-idempotent extensions', function() {
+        rule = new Rule('.extended', {
+          foo: 'bar()'
+        });
+
+        var bar = jasmine.createSpy('extension').and.returnValues('bar', 'baz');
+
+        rule.process({}, { bar: bar });
+        expect(rule.result).toEqual({ foo: 'bar' });
+
+        rule.process({}, { bar: bar });
+        expect(rule.result).toEqual({ foo: 'baz' });
+      });
+
       it('ignores missing extensions', function() {
         rule = new Rule('.extended', {
           foo: 'bar()'
