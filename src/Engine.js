@@ -55,12 +55,14 @@ define([
         else {
           this.sheet.deleteRule(i);
           this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
+          // If the rule has been replaced, we must re-apply the rule body
+          result = true;
         }
       }
 
       // Results have changed
       if (result) {
-        css.apply(this.cssRules[i], result);
+        css.apply(this.cssRules[i], rule.result);
       }
     },
 

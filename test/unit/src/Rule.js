@@ -7,6 +7,12 @@ define(['src/Rule'], function(Rule) {
       expect(rule).toBeDefined();
     });
 
+    it('normalizes CSS2 pseudo-element selectors', function() {
+      rule = new Rule('section:after, section:before, section:first-line, section:first-letter', {});
+
+      expect(rule.selector).toBe('section::after, section::before, section::first-line, section::first-letter');
+    });
+
     it('needs a selector and body', function() {
       expect(function() {
         rule = new Rule();

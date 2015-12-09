@@ -14,12 +14,19 @@ define([
     return obj && obj[prop];
   }
 
+  // CSS3 introduces the double colon syntax for pseudos
+  var css2PseudoEl = /:(after|before|first-letter|first-line)|::/g;
+  function prefixPseudo(a, b) { return b ? ':' + a : a; }
+  function normalizePseudoElement(selector) {
+    return selector.replace(css2PseudoEl, prefixPseudo);
+  }
+
   var Rule = Class.extend({
     init: function(selector, spec) {
       if (typeof selector !== 'string') {
         throw new TypeError('selector must be a string.');
       }
-      this.selector = selector;
+      this.selector = normalizePseudoElement(selector);
 
       this.body = expression.compileSpec(spec);
       this.artifacts = extend({}, this.body.artifacts);
