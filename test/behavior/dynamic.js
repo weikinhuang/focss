@@ -49,6 +49,19 @@ define(['index'], function(Focss) {
         fox.process({ foo: 'baz', width: 40 });
         expect(css(el, 'max-width')).toBe('none');
       });
+
+      it('maintains styles when selector changes', function() {
+        var el = affix('div.bar.baz');
+        fox.insert('.${foo}', {
+          'max-width': 'width'
+        });
+
+        fox.process({ foo: 'bar', width: 100 });
+        expect(css(el, 'max-width')).toBe('100px');
+
+        fox.process({ foo: 'baz', width: 100 });
+        expect(css(el, 'max-width')).toBe('100px');
+      });
     });
 
     describe('DOM mutation', function() {
