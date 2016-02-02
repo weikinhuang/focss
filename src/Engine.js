@@ -72,7 +72,7 @@ define([
 
       if (rule.isComputed) {
         // Placeholder rule
-        this.sheet.insertRule(':scope {}', i);
+        this.sheet.insertRule(':root {}', i);
       }
       else {
         this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);

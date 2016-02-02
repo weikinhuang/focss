@@ -35,6 +35,15 @@ define(function() {
       testStyle.selectorText = 'd';
     } catch (e) { }
 
+    // Edge will report that it supports the scoped attribute, but it doesn't support the scope selector.
+    // Try inserting a :scope rule into the sheet to see if it is supported
+    try {
+      testSheet.insertRule(':scope {}', 1);
+    }
+    catch(missingScope) {
+      scopeSupported = false;
+    }
+
     // check if the selectorText has changed to the value we tried to set it to
     // toLowerCase() it to account for browsers who change the text
     var changeSelectorTextAllowed = 'd' === testStyle.selectorText.toLowerCase();
