@@ -3,7 +3,7 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
 
   var Focss = Class.extend({
     init: function(root, extensions, scoped) {
-      scoped = scoped === undefined ? true : false;
+      scoped = scoped === undefined ? true : !!scoped;
       this.engine = new Engine(root, scoped);
       extend(this.engine.extensions, extensions);
     },
