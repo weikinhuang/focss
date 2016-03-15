@@ -46,6 +46,10 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
             current.right = true;
             if (current.node.computed) {
               stack.unshift({ node: current.node.property });
+              body = current.node.property.value;
+              if (symbol) {
+                symbol.push(current.node.property.value);
+              }
               break;
             }
             if (symbol) {
@@ -180,7 +184,7 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
       fn.artifacts = res.artifacts;
       return (this._cache[expr].fn = fn);
     },
-    compileSpec: function(spec) {
+    compileSpec: function(spec, arrayMemberExpr) {
       var artifacts = {},
       body = Object.keys(spec)
       .map(function(property) {
@@ -193,7 +197,12 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
         var inner = this.parse(expr);
         extend(artifacts, inner.artifacts);
 
-        return '_["'+ property +'"]' + '=' + inner.body + (unit ? '+"' + unit + '"' : '');
+        var body = inner.body;
+        if (arrayMemberExpr) {
+          body = body.replace(/\$/g, '$.' + arrayMemberExpr);
+        }
+
+        return '_["'+ property +'"]' + '=' + body + (unit ? '+"' + unit + '"' : '');
       }, this)
       .join(';');
 

@@ -22,14 +22,15 @@ define([
   }
 
   var Rule = Class.extend({
-    init: function(selector, spec) {
+    init: function(selector, spec, arrayMemberExpr) {
       if (typeof selector !== 'string') {
         throw new TypeError('selector must be a string.');
       }
       this.selector = normalizePseudoElement(selector);
 
-      this.body = expression.compileSpec(spec);
+      this.body = expression.compileSpec(spec, arrayMemberExpr);
       this.artifacts = extend({}, this.body.artifacts);
+      this.isArrayRule = !!arrayMemberExpr;
 
       // Perform a while loop here because a computed selector can
       // contain *multiple* template strings in a row.
