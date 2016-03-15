@@ -31,6 +31,8 @@ define([
       this.body = expression.compileSpec(spec);
       this.artifacts = extend({}, this.body.artifacts);
 
+      // Perform a while loop here because a computed selector can
+      // contain *multiple* template strings in a row.
       var expr;
       while ((expr = computed.exec(this.selector)) !== null) {
         this.isComputed = true;

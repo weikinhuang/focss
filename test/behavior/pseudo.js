@@ -363,7 +363,7 @@ define(['index'], function(Focss) {
         var el = affix('div');
 
         fox.insert('div:before', { 'content': 'foo' });
-        expect(css(el, 'content', ':before')).toBe('none');
+        expect(css(el, 'content', ':before')).not.toBe('"bar"');
 
         fox.process({ foo: '"bar"' });
         expect(css(el, 'content', ':before')).toBe('"bar"');
@@ -374,7 +374,7 @@ define(['index'], function(Focss) {
         var el = affix('div');
 
         fox.insert('div:after', { 'content': 'foo' });
-        expect(css(el, 'content', ':after')).toBe('none');
+        expect(css(el, 'content', ':after')).not.toBe('"bar"');
 
         fox.process({ foo: '"bar"' });
         expect(css(el, 'content', ':after')).toBe('"bar"');

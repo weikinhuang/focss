@@ -37,6 +37,28 @@ define(['index'], function(Focss) {
         expect(css(el, 'max-width')).toBe('100px');
       });
 
+      it('evaluates the selector with nested replacements', function() {
+        var el = affix('div.bar');
+
+        fox.process({ foo: { baz: 'bar' }, width: 100 });
+        fox.insert('.${foo.baz}', {
+          'max-width': 'width'
+        });
+
+        expect(css(el, 'max-width')).toBe('100px');
+      });
+
+      it('evaluates the selector with multiple replacements', function() {
+        var el = affix('div.bar');
+
+        fox.process({ foo: 'ba', baz: 'r', width: 100 });
+        fox.insert('.${foo}${baz}', {
+          'max-width': 'width'
+        });
+
+        expect(css(el, 'max-width')).toBe('100px');
+      });
+
       it('removes styles when selector no longer matches', function() {
         var el = affix('div.bar');
         fox.insert('.${foo}', {
