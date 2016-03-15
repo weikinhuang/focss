@@ -72,7 +72,9 @@ define(['util/css'], function(css) {
         css.apply(div[0], {
           width: 4,
           height: 5,
-          zIndex: 1
+          zIndex: 1,
+          // required for zIndex to come back as 1 in Chrome
+          position: 'absolute'
         });
 
         expect(div.css('width')).toEqual('4px');
