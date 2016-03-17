@@ -15,20 +15,19 @@ define(['index'], function(Focss) {
       fox = null;
     });
 
-    describe('computed array selector', function() {
+    describe('%forEach selector', function() {
       beforeEach(function() {
         this._el = affix('div.bar[data-id="3"]');
         this._el2 = affix('div.bar[data-id="4"]');
+        this._el3 = affix('div.baz[data-id="5"]');
         this._artifacts = {};
       });
 
       describe('insert/process call ordering', function() {
-        it('has no effect when insert is called before process', function() {
-          var artifacts;
-
-          artifacts = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
-            'max-width': 'width'
-          });
+        it('has no effect when insert is called without calling process', function() {
+          var artifacts = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
+                'max-width': 'width'
+              });
 
           expect(css(this._el, 'max-width')).toBe('none');
           expect(artifacts).toEqual({ foo: true });
@@ -91,12 +90,49 @@ define(['index'], function(Focss) {
       });
 
       describe('when process is called', function() {
-        it('can evaluate selector with nested property lookup from spec', function() {
-          var artifacts;
+        it('can evaluate selector with a comma in the target selector', function() {
+          var artifacts = fox.insert('%forEach(foo, .baz[data-id="${id}"], .bar[data-id="${id}"])', {
+                'max-width': 'width'
+              });
 
-          artifacts = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
-            'max-width': 'data.width'
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
           });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('200px');
+          expect(css(this._el3, 'max-width')).toBe('300px');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('can evaluate selector with a closing parens in the target selector', function() {
+          var artifacts = fox.insert('%forEach(foo, .bar[data-id="${id}"]:nth-child(odd))', {
+                'max-width': 'width'
+              });
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('none');
+          expect(css(this._el3, 'max-width')).toBe('none');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('can evaluate selector with nested property lookup from spec', function() {
+          var artifacts  = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
+                'max-width': 'data.width'
+              });
+
           fox.process({
             foo: [
               { id: 3, data: { width: 100 } },
@@ -110,11 +146,10 @@ define(['index'], function(Focss) {
         });
 
         it('can evaluate selector with missing property lookup from spec', function() {
-          var artifacts;
+          var artifacts  = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
+                'max-width': 'width'
+              });
 
-          artifacts = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
-            'max-width': 'width'
-          });
           fox.process({
             foo: [
               { id: 3, width: 100 },
@@ -128,11 +163,10 @@ define(['index'], function(Focss) {
         });
 
         it('can evaluate selector with expressions from spec', function() {
-          var artifacts;
+          var artifacts  = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
+                'max-width': 'width + padding'
+              });
 
-          artifacts = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
-            'max-width': 'width + padding'
-          });
           fox.process({
             foo: [
               { id: 3, width: 100, padding: 100 },
@@ -147,11 +181,10 @@ define(['index'], function(Focss) {
 
         // TODO: when the use case is required, allow for nested missing property lookup
         xit('can evaluate selector with nested missing property lookup from spec', function() {
-          var artifacts;
+          var artifacts = fox.insert('%forEach(foo.baz, .bar[data-id="${id}"])', {
+                'max-width': 'data.width'
+              });
 
-          artifacts = fox.insert('%forEach(foo.baz, .bar[data-id="${id}"])', {
-            'max-width': 'data.width'
-          });
           fox.process({
             foo: {
               baz: [
@@ -167,11 +200,10 @@ define(['index'], function(Focss) {
         });
 
         it('can evaluate selector with nested array lookup', function() {
-          var artifacts;
+          var artifacts = fox.insert('%forEach(foo.baz, .bar[data-id="${id}"])', {
+                'max-width': 'width'
+              });
 
-          artifacts = fox.insert('%forEach(foo.baz, .bar[data-id="${id}"])', {
-            'max-width': 'width'
-          });
           fox.process({
             foo: {
               baz: [
@@ -188,11 +220,10 @@ define(['index'], function(Focss) {
 
         // TODO: when the use case is required, allow for nested property lookup
         xit('can evaluate selector with nested array lookup and nested property lookup', function() {
-          var artifacts;
+          var artifacts = fox.insert('%forEach(foo.baz, .bar[data-id="${data.id}"])', {
+                'max-width': 'width'
+              });
 
-          artifacts = fox.insert('%forEach(foo.baz, .bar[data-id="${data.id}"])', {
-            'max-width': 'width'
-          });
           fox.process({
             foo: {
               baz: [
@@ -209,8 +240,161 @@ define(['index'], function(Focss) {
       });
     });
 
+    describe('%filterEach selector', function() {
+      beforeEach(function() {
+        this._el = affix('div.bar[data-id="3"]');
+        this._el2 = affix('div.bar[data-id="4"]');
+        this._el3 = affix('div.baz[data-id="5"]');
+        this._artifacts = {};
+      });
+
+      describe('insert/process call ordering', function() {
+        it('has no effect when insert is called without calling process', function() {
+          var artifacts = fox.insert('%filterEach(foo, true, .bar[data-id="${id}"])', {
+                'max-width': 'width'
+              });
+
+          expect(css(this._el, 'max-width')).toBe('none');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('evaluates the selector when process is called before insert', function() {
+          var artifacts;
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 }
+            ]
+          });
+          artifacts = fox.insert('%filterEach(foo, true, .bar[data-id="${id}"])', {
+            'max-width': 'width'
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('200px');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('evaluates the selector multiple times when process is called multiple times', function() {
+          var artifacts;
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 }
+            ]
+          });
+          artifacts = fox.insert('%filterEach(foo, true, .bar[data-id="${id}"])', {
+            'max-width': 'width'
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('none');
+          expect(artifacts).toEqual({ foo: true });
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 300 }
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('300px');
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 350 }
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('350px');
+        });
+      });
+
+      describe('when process is called', function() {
+        it('can evaluate selector with a comma in the target selector', function() {
+          var artifacts = fox.insert('%filterEach(foo, true, .baz[data-id="${id}"], .bar[data-id="${id}"])', {
+                'max-width': 'width'
+              });
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('200px');
+          expect(css(this._el3, 'max-width')).toBe('300px');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('can evaluate selectors with a truthy filter value', function() {
+          var artifacts = fox.insert('%filterEach(foo, true, div[data-id="${id}"])', {
+                'max-width': 'width'
+              });
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('200px');
+          expect(css(this._el3, 'max-width')).toBe('300px');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('can evaluate selectors with a falsey filter value', function() {
+          var artifacts = fox.insert('%filterEach(foo, false, div[data-id="${id}"])', {
+                'max-width': 'width'
+              });
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('none');
+          expect(css(this._el2, 'max-width')).toBe('none');
+          expect(css(this._el3, 'max-width')).toBe('none');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('can evaluate selectors with a complex filter value', function() {
+          var artifacts = fox.insert('%filterEach(foo, width > 200, div[data-id="${id}"])', {
+                'max-width': 'width'
+              });
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('none');
+          expect(css(this._el2, 'max-width')).toBe('none');
+          expect(css(this._el3, 'max-width')).toBe('300px');
+          expect(artifacts).toEqual({ foo: true });
+        });
+      });
+    });
+
     describe('computed selector', function() {
-      it('has no effect before process call', function() {
+      it('has no effect without calling process', function() {
         var el = affix('div.bar'),
             artifacts = fox.insert('.${foo}', {
               'max-width': 'width'
