@@ -15,10 +15,11 @@ define(['index'], function(Focss) {
       fox = null;
     });
 
-    describe('computed array selector', function() {
+    describe('%forEach selector', function() {
       beforeEach(function() {
         this._el = affix('div.bar[data-id="3"]');
         this._el2 = affix('div.bar[data-id="4"]');
+        this._el3 = affix('div.baz[data-id="5"]');
         this._artifacts = {};
       });
 
@@ -91,6 +92,46 @@ define(['index'], function(Focss) {
       });
 
       describe('when process is called', function() {
+        it('can evaluate selector with a comma in the target selector', function() {
+          var artifacts;
+
+          artifacts = fox.insert('%forEach(foo, .baz[data-id="${id}"], .bar[data-id="${id}"])', {
+            'max-width': 'width'
+          });
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('200px');
+          expect(css(this._el3, 'max-width')).toBe('300px');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
+        it('can evaluate selector with a closing parens in the target selector', function() {
+          var artifacts;
+
+          artifacts = fox.insert('%forEach(foo, .bar[data-id="${id}"]:nth-child(odd))', {
+            'max-width': 'width'
+          });
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4, width: 200 },
+              { id: 5, width: 300 },
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('none');
+          expect(css(this._el3, 'max-width')).toBe('none');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
         it('can evaluate selector with nested property lookup from spec', function() {
           var artifacts;
 

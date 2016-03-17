@@ -13,7 +13,7 @@ define([
   }
   genId.i = 1;
 
-  var arraySelectorRegex = /%forEach\(([^,]+),([^)]+)\)/i;
+  var arraySelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
 
   var Engine = Class.extend({
     init: function(root, scoped) {
