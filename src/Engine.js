@@ -13,9 +13,11 @@ define([
   }
   genId.i = 1;
 
-  var arraySelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
+  var foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
+      filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i,
+      Engine;
 
-  var Engine = Class.extend({
+  Engine = Class.extend({
     init: function(root, scoped) {
       var target = root || document.body;
       this.rules = [];
@@ -78,20 +80,27 @@ define([
     },
 
     insert: function(selector, spec) {
-      var expr = arraySelectorRegex.exec(selector);
+      var expr;
 
+      expr = foreachSelectorRegex.exec(selector);
       if (expr !== null) {
         return this._insertArrayDescriptor(expr[2], expr[1], spec);
+      }
+
+      expr = filterEachSelectorRegex.exec(selector);
+      if (expr !== null) {
+        return this._insertArrayDescriptor(expr[3], expr[1], spec, expr[2]);
       }
 
       return this._insert(selector, spec);
     },
 
-    _insertArrayDescriptor: function(selector, expr, spec) {
+    _insertArrayDescriptor: function(selector, expr, spec, filterExpr) {
       var descriptor = {
             selector: selector,
             expr: expr,
             spec: spec,
+            filterExpr: filterExpr
           },
           artifacts = {};
 
@@ -121,9 +130,16 @@ define([
         return;
       }
 
-      var arrayDataFromState = expression.compile(descriptor.expr)(this._state, this._extensions);
+      var arrayDataFromState = expression.compile(descriptor.expr)(this._state, this._extensions),
+          filterFunction = descriptor.filterExpr ? expression.compile(descriptor.filterExpr) : false;
 
       arrayDataFromState.forEach(function(item, index) {
+        // Filtering must happen here instead of a separate filter step to ensure that
+        // `index` is consistent between the data from process and the index provided to _insert below
+        if (filterFunction && !filterFunction(item)) {
+          return;
+        }
+
         var selectorForItem = descriptor.selector.replace(this.constructor.Rule.computed, function(match, column) {
           return item[column];
         });

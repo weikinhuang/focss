@@ -179,36 +179,45 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
       if (this._cache[expr] && this._cache[expr].fn) {
         return this._cache[expr].fn;
       }
+
       var res = this.parse(expr),
-      fn = new Function(base, callbase, 'return ' + res.body);
+          fn = new Function(base, callbase, 'return ' + res.body);
+
       fn.artifacts = res.artifacts;
       return (this._cache[expr].fn = fn);
     },
     compileSpec: function(spec, arrayMemberExpr) {
       var artifacts = {},
+          body,
+          result;
+
       body = Object.keys(spec)
       .map(function(property) {
-        var expr = spec[property], unit;
+        var expr = spec[property],
+            unit,
+            inner,
+            innerBody;
+
         if (typeof expr !== 'string') {
           unit = expr.unit;
           expr = expr.value;
         }
 
-        var inner = this.parse(expr);
+        inner = this.parse(expr);
         extend(artifacts, inner.artifacts);
 
-        var body = inner.body;
+        innerBody = inner.body;
         if (arrayMemberExpr) {
-          body = body.replace(/\$/g, '$.' + arrayMemberExpr);
+          innerBody = innerBody.replace(/\$/g, '$.' + arrayMemberExpr);
         }
 
-        return '_["'+ property +'"]' + '=' + body + (unit ? '+"' + unit + '"' : '');
+        return '_["'+ property +'"]' + '=' + innerBody + (unit ? '+"' + unit + '"' : '');
       }, this)
       .join(';');
 
       body = 'var _={};' + body + ';return _;';
 
-      var result = new Function(base, callbase, body);
+      result = new Function(base, callbase, body);
       result.artifacts = artifacts;
       return result;
     },
