@@ -1,6 +1,6 @@
 {
   "name": "focss",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Graphics pipeline, but for the DOM",
   "main": "index.js",
   "scripts": {
