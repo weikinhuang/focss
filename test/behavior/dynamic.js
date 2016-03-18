@@ -162,6 +162,23 @@ define(['index'], function(Focss) {
           expect(artifacts).toEqual({ foo: true });
         });
 
+        it('can evaluate selector with extension use in the spec', function() {
+          var artifacts  = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
+                'max-width': 'Math.floor(width)'
+              });
+
+          fox.process({
+            foo: [
+              { id: 3, width: 100 },
+              { id: 4 }
+            ]
+          });
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('none');
+          expect(artifacts).toEqual({ foo: true });
+        });
+
         it('can evaluate selector with expressions from spec', function() {
           var artifacts  = fox.insert('%forEach(foo, .bar[data-id="${id}"])', {
                 'max-width': 'width + padding'

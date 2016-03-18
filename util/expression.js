@@ -173,7 +173,7 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
     };
   }
 
-  var base = '$', callbase = '$$';
+  var base = '$', callbase = '__';
   return {
     compile: function(expr) {
       if (this._cache[expr] && this._cache[expr].fn) {
