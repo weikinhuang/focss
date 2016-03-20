@@ -1,4 +1,5 @@
 {
   "boss": true,
-  "evil": true
+  "evil": true,
+  "eqnull": true
 }
