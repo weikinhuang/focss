@@ -13,8 +13,22 @@ define([
   }
   genId.i = 1;
 
+  function getVendorPrefixRegex() {
+    var otherVendorPrefixesMap = {
+          moz: ['webkit', 'ms'],
+          webkit: ['moz', 'ms'],
+          ms: ['webkit', 'moz'],
+        },
+        ua = navigator.userAgent.toLowerCase(),
+        vendorPrefix = ua.indexOf('trident') > -1 ? 'ms' : ( ua.indexOf('webkit') > -1 ? 'webkit' : 'moz' ),
+        otherVendorPrefixes = otherVendorPrefixesMap[vendorPrefix];
+
+    return new RegExp(':-(' + otherVendorPrefixes.join('|') + ')-');
+  }
+
   var foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
       filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i,
+      otherPrefixRegex = getVendorPrefixRegex(),
       Engine;
 
   Engine = Class.extend({
@@ -81,6 +95,15 @@ define([
 
     insert: function(selector, spec) {
       var expr;
+
+      // ignore rules that contain the other vendor prefix, as trying to
+      // insert them into a stylesheet will cause an exception to be thrown
+      // @see: http://stackoverflow.com/questions/23050001/insert-multiple-css-rules-into-a-stylesheet
+      if (otherPrefixRegex.test(selector)) {
+        return {
+          artifacts: {}
+        };
+      }
 
       expr = foreachSelectorRegex.exec(selector);
       if (expr !== null) {

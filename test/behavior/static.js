@@ -90,5 +90,24 @@ define(['index'], function(Focss) {
       insertSpecs('article#foo');
       insertSpecs('section.bar');
     });
+
+    describe('vendor-prefixed selectors', function() {
+      it('rules that contain the incorrect vendor prefix are ignored', function() {
+        affix('input');
+
+        var incorrectPrefix = navigator.userAgent.toLowerCase().indexOf('webkit') > -1 ? 'moz' : 'webkit',
+            selector = 'input',
+            $el = affix(selector),
+            oldValue = $el.css('fontSize'),
+            artifacts = fox.insert('input, input::-' + incorrectPrefix + '-input-placeholder', {
+              'font-size': 'size'
+            });
+
+        fox.process({ size: '20px' });
+
+        expect($el.css('fontSize')).toBe(oldValue);
+        expect(artifacts).toEqual({});
+      });
+    });
   });
 });
