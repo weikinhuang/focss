@@ -1,11 +1,12 @@
 /* global Symbol */
 define([
   'nbd/Class',
+  'nbd/util/extend',
   './Rule',
   '../util/css',
   '../util/detectScoped',
   '../util/expression'
-], function(Class, Rule, css, compat, expression) {
+], function(Class, extend, Rule, css, compat, expression) {
   'use strict';
 
   function genId() {
@@ -26,7 +27,8 @@ define([
     return new RegExp(':-(' + otherVendorPrefixes.join('|') + ')-');
   }
 
-  var foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
+  var arrayPropertyRegex = /%([^%]+?)%/g,
+      foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
       filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i,
       otherPrefixRegex = getVendorPrefixRegex(),
       Engine;
@@ -125,12 +127,11 @@ define([
             spec: spec,
             filterExpr: filterExpr
           },
-          artifacts = {};
+          artifacts = this._generateRulesFromArrayRuleDescriptor(descriptor);
 
       artifacts[expr] = true;
 
       this.arrayRuleDescriptors.push(descriptor);
-      this._generateRulesFromArrayRuleDescriptor(descriptor);
 
       return {
         artifacts: artifacts
@@ -147,15 +148,30 @@ define([
       }, this);
     },
 
-    _generateRulesFromArrayRuleDescriptor: function(descriptor) {
-      // occurs when .insert is called before .process
-      if (!this._state) {
-        return;
+    _getArtifactsFromSelector: function(selector) {
+      var artifacts = {},
+          expr;
+
+      while ((expr = this.constructor.Rule.computed.exec(selector)) !== null) {
+        extend(artifacts, expression.parse(expr[1]).artifacts);
       }
 
-      var arrayDataFromState = expression.compile(descriptor.expr)(this._state, this._extensions),
-          filterFunction = descriptor.filterExpr ? expression.compile(descriptor.filterExpr) : false;
+      return artifacts;
+    },
 
+    _generateRulesFromArrayRuleDescriptor: function(descriptor) {
+      var artifacts = this._getArtifactsFromSelector(descriptor.selector),
+          arrayDataFromState,
+          filterFunction;
+
+      // occurs when .insert is called before .process
+      if (!this._state) {
+        return artifacts;
+      }
+
+      filterFunction = descriptor.filterExpr ? expression.compile(descriptor.filterExpr) : false;
+
+      arrayDataFromState = expression.compile(descriptor.expr)(this._state, this._extensions);
       arrayDataFromState.forEach(function(item, index) {
         // Filtering must happen here instead of a separate filter step to ensure that
         // `index` is consistent between the data from process and the index provided to _insert below
@@ -163,12 +179,14 @@ define([
           return;
         }
 
-        var selectorForItem = descriptor.selector.replace(this.constructor.Rule.computed, function(match, column) {
+        var selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
           return item[column];
         });
 
         this._insert(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']');
       }, this);
+
+      return artifacts;
     },
 
     _insert: function(selector, spec, arrayMemberExpr) {
