@@ -29,6 +29,10 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
       return rule.artifacts;
     },
 
+    toggleSelector: function(key, isToggled) {
+      this.engine.toggleSelector(key, isToggled);
+    },
+
     /**
      * Run the current set of rules against state data
      * Previous state data is overridden.
@@ -41,9 +45,14 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
     destroy: function() {
       this.engine.destroy();
       this.engine = null;
-    }
+    },
   }, {
     displayName: 'Focss'
+  })
+  .mixin({
+    get traces() {
+      return this.engine.traces;
+    }
   });
 
   return Focss;

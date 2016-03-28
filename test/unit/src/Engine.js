@@ -28,7 +28,7 @@ define(['src/Engine'], function(Engine) {
         },
         rule = engine.insert('selector', {});
         engine.process(payload);
-        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
+        expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
       });
     });
 
@@ -52,7 +52,7 @@ define(['src/Engine'], function(Engine) {
         spyOn(Engine, 'Rule')
         .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
         var rule = engine.insert('.selector', {});
-        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
+        expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
       });
     });
   });

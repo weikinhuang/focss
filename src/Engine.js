@@ -30,17 +30,23 @@ define([
   var arrayPropertyRegex = /%([^%]+?)%/g,
       foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
       filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i,
+      toggleSelectorPsuedoRegex = /:(hover|active)/,
+      toggleSelectorClassRegex = /\.(__[^ ]+)/,
       otherPrefixRegex = getVendorPrefixRegex(),
       Engine;
 
   Engine = Class.extend({
     init: function(root, scoped) {
       var target = root || document.body;
+
       this.rules = [];
       this.arrayRuleDescriptors = [];
-
       this.extensions = Object.create(this.extensions);
       this.style = document.createElement('style');
+      this.traces = {};
+
+      this._toggleSelectorKeys = {};
+      this._uuid = 0;
 
       if (scoped) {
         this.style.setAttribute('scoped', 'scoped');
@@ -72,8 +78,42 @@ define([
       }
     },
 
+    toggleSelector: function(key, isToggled) {
+      var isCurrentlyToggled = this._toggleSelectorKeys[key];
+      this._toggleSelectorKeys[key] = isToggled;
+
+      if (isToggled !== isCurrentlyToggled) {
+        this.process(this._state);
+      }
+    },
+
+    _getToggleSelectorInfo: function(selector) {
+      var toggleSelectorKeys = [],
+          self = this;
+
+      [toggleSelectorPsuedoRegex, toggleSelectorClassRegex].forEach(function(toggleSelectorRegex) {
+        selector = selector.replace(toggleSelectorRegex, function(match, name) {
+          var key = name + (++self._uuid);
+          toggleSelectorKeys.push(key);
+          return "${__toggled__." + key + "?':not(" + match + ")':'" + match + "'}";
+        });
+      });
+
+      return {
+        selector: selector,
+        toggleSelectorKeys: toggleSelectorKeys
+      };
+    },
+
+    _getStateWithToggles: function() {
+      var state = Object.create(this._state);
+      state.__toggled__ = this._toggleSelectorKeys;
+
+      return state;
+    },
+
     _process: function(rule, i) {
-      var result = rule.process(this._state, this.extensions),
+      var result = rule.process(this._getStateWithToggles(), this.extensions),
           selector = rule.getSelector(this._prefix);
 
       // Selector has changed
@@ -117,7 +157,20 @@ define([
         return this._insertArrayDescriptor(expr[3], expr[1], spec, expr[2]);
       }
 
-      return this._insert(selector, spec);
+      return this._insertPossibleToggleSelector(selector, spec);
+    },
+
+    _insertPossibleToggleSelector: function(selector, spec) {
+      var selectorInfo = this._getToggleSelectorInfo(selector),
+          rule = this._insert(selectorInfo.selector, spec),
+          self = this,
+          key;
+
+      selectorInfo.toggleSelectorKeys.forEach(function(key) {
+        self.traces[key] = rule.artifacts;
+      });
+
+      return rule;
     },
 
     _insertArrayDescriptor: function(selector, expr, spec, filterExpr) {
