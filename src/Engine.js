@@ -79,7 +79,7 @@ define([
     },
 
     toggleSelector: function(key, isToggled) {
-      var isCurrentlyToggled = this._toggleKeys[key];
+      var isCurrentlyToggled = this._toggleKeys[key] || false;
       this._toggleKeys[key] = isToggled;
 
       if (isToggled !== isCurrentlyToggled) {
@@ -157,18 +157,16 @@ define([
         return this._insertArrayDescriptor(expr[3], expr[1], spec, expr[2]);
       }
 
-      return this._insertPossibleToggleSelector(selector, spec);
+      return this._insertSingleSelector(selector, spec);
     },
 
-    _insertPossibleToggleSelector: function(selector, spec, arrayMemberExpr) {
+    _insertSingleSelector: function(selector, spec) {
       var selectorInfo = this._getToggleSelectorInfo(selector),
-          rule = this._insert(selectorInfo.selector, spec, arrayMemberExpr),
-          self = this,
-          key;
+          rule = this._insert(selectorInfo.selector, spec);
 
       selectorInfo.toggleKeys.forEach(function(key) {
-        self.traces[key] = rule.artifacts;
-      });
+        this.traces[key] = rule.artifacts;
+      }, this);
 
       return rule;
     },
@@ -234,11 +232,10 @@ define([
           return;
         }
 
-        var self = this,
-            toggleKeys = [],
-            toggleSuffix = '_',
+        var toggleKeys = [],
+            toggleSuffix = '',
             selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
-              toggleSuffix += column + '_' + item[column];
+              toggleSuffix += '_' + column + '_' + item[column];
               return item[column];
             }),
             rule;
@@ -252,8 +249,8 @@ define([
         rule = this._insert(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']');
 
         toggleKeys.forEach(function(key) {
-          self.traces[key] = rule.artifacts;
-        });
+          this.traces[key] = rule.artifacts;
+        }, this);
       }, this);
 
       return artifacts;

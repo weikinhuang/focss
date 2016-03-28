@@ -32,6 +32,15 @@ define(['index'], function(Focss) {
       });
     });
 
+    describe('#toggleSelector()', function() {
+      it('calls its engine', function() {
+        spyOn(fox.engine, 'toggleSelector');
+
+        fox.toggleSelector('hover1', true);
+        expect(fox.engine.toggleSelector).toHaveBeenCalledWith('hover1', true);
+      });
+    });
+
     describe('#destroy()', function() {
       it('exists', function() {
         expect(fox.destroy).toEqual(jasmine.any(Function));

@@ -45,7 +45,7 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
     destroy: function() {
       this.engine.destroy();
       this.engine = null;
-    },
+    }
   }, {
     displayName: 'Focss'
   })
