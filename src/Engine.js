@@ -30,17 +30,23 @@ define([
   var arrayPropertyRegex = /%([^%]+?)%/g,
       foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
       filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i,
+      toggleSelectorPsuedoRegex = /:(hover|active)/,
+      toggleSelectorClassRegex = /\.(__[^ ]+)/,
       otherPrefixRegex = getVendorPrefixRegex(),
       Engine;
 
   Engine = Class.extend({
     init: function(root, scoped) {
       var target = root || document.body;
+
       this.rules = [];
       this.arrayRuleDescriptors = [];
-
       this.extensions = Object.create(this.extensions);
       this.style = document.createElement('style');
+      this.traces = {};
+
+      this._toggleKeys = {};
+      this._uuid = 0;
 
       if (scoped) {
         this.style.setAttribute('scoped', 'scoped');
@@ -72,8 +78,42 @@ define([
       }
     },
 
+    toggleSelector: function(key, isToggled) {
+      var isCurrentlyToggled = this._toggleKeys[key] || false;
+      this._toggleKeys[key] = isToggled;
+
+      if (isToggled !== isCurrentlyToggled) {
+        this.process(this._state);
+      }
+    },
+
+    _getToggleSelectorInfo: function(selector, toggleKey) {
+      var toggleKeys = [],
+          self = this;
+
+      [toggleSelectorPsuedoRegex, toggleSelectorClassRegex].forEach(function(toggleSelectorRegex) {
+        selector = selector.replace(toggleSelectorRegex, function(match, name) {
+          var key = name + (++self._uuid);
+          toggleKeys.push(key);
+          return "${__toggled__." + key + "?':not(" + match + ")':'" + match + "'}";
+        });
+      });
+
+      return {
+        selector: selector,
+        toggleKeys: toggleKeys
+      };
+    },
+
+    _getStateWithToggles: function() {
+      var state = Object.create(this._state);
+      state.__toggled__ = this._toggleKeys;
+
+      return state;
+    },
+
     _process: function(rule, i) {
-      var result = rule.process(this._state, this.extensions),
+      var result = rule.process(this._getStateWithToggles(), this.extensions),
           selector = rule.getSelector(this._prefix);
 
       // Selector has changed
@@ -117,15 +157,28 @@ define([
         return this._insertArrayDescriptor(expr[3], expr[1], spec, expr[2]);
       }
 
-      return this._insert(selector, spec);
+      return this._insertSingleSelector(selector, spec);
+    },
+
+    _insertSingleSelector: function(selector, spec) {
+      var selectorInfo = this._getToggleSelectorInfo(selector),
+          rule = this._insert(selectorInfo.selector, spec);
+
+      selectorInfo.toggleKeys.forEach(function(key) {
+        this.traces[key] = rule.artifacts;
+      }, this);
+
+      return rule;
     },
 
     _insertArrayDescriptor: function(selector, expr, spec, filterExpr) {
-      var descriptor = {
-            selector: selector,
+      var toggleSelectorInfo = this._getToggleSelectorInfo(selector),
+          descriptor = {
+            selector: toggleSelectorInfo.selector,
             expr: expr,
             spec: spec,
-            filterExpr: filterExpr
+            filterExpr: filterExpr,
+            toggleKeys: toggleSelectorInfo.toggleKeys
           },
           artifacts = this._generateRulesFromArrayRuleDescriptor(descriptor);
 
@@ -179,11 +232,25 @@ define([
           return;
         }
 
-        var selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
-          return item[column];
+        var toggleKeys = [],
+            toggleSuffix = '',
+            selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
+              toggleSuffix += '_' + column + '_' + item[column];
+              return item[column];
+            }),
+            rule;
+
+        descriptor.toggleKeys.forEach(function(toggleKey) {
+          var newToggleKey = toggleKey + toggleSuffix;
+          toggleKeys.push(newToggleKey);
+          selectorForItem = selectorForItem.replace(toggleKey + '?', newToggleKey + '?');
         });
 
-        this._insert(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']');
+        rule = this._insert(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']');
+
+        toggleKeys.forEach(function(key) {
+          this.traces[key] = rule.artifacts;
+        }, this);
       }, this);
 
       return artifacts;

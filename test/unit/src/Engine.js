@@ -1,24 +1,22 @@
 define(['src/Engine'], function(Engine) {
   describe('Engine', function() {
-    var engine;
+    beforeEach(function() {
+      this._engine = new Engine();
+    });
+
     afterEach(function() {
-      if (engine) {
-        engine.destroy();
+      if (this._engine) {
+        this._engine.destroy();
       }
-      engine = null;
     });
 
     it('is a constructor', function() {
       expect(function() {
-        engine = new Engine();
+        var engine = new Engine();
       }).not.toThrow();
     });
 
     describe('#process()', function() {
-      beforeEach(function() {
-        engine = new Engine();
-      });
-
       it('runs individual rule.process()', function() {
         spyOn(Engine, 'Rule')
         .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
@@ -26,19 +24,39 @@ define(['src/Engine'], function(Engine) {
         var payload = {
           foo: 'bar'
         },
-        rule = engine.insert('selector', {});
-        engine.process(payload);
-        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
+        rule = this._engine.insert('selector', {});
+        this._engine.process(payload);
+        expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
+      });
+    });
+
+    describe('#toggleSelector()', function() {
+      beforeEach(function() {
+        this._engine.insert('selector', {});
+        this._engine.process({});
+        this._engine.toggleSelector('key1', true);
+        spyOn(this._engine, 'process');
+      });
+
+      it('it does not run rule.process() if the keys value has not changed', function() {
+        this._engine.toggleSelector('key1', true);
+        expect(this._engine.process).not.toHaveBeenCalled();
+      });
+
+      it('it runs rule.process() if the keys value has changed', function() {
+        this._engine.toggleSelector('key1', false);
+        expect(this._engine.process).toHaveBeenCalled();
+      });
+
+      it('it does not run rule.process() if the keys value is falsey and has not been set before', function() {
+        this._engine.toggleSelector('newkey2', false);
+        expect(this._engine.process).not.toHaveBeenCalled();
       });
     });
 
     describe('#insert()', function() {
-      beforeEach(function() {
-        engine = new Engine();
-      });
-
       it('inserts a new Rule', function() {
-        var rule = engine.insert('.selector', {});
+        var rule = this._engine.insert('.selector', {});
         expect(rule).toBeDefined();
         expect(rule).toEqual(jasmine.any(Engine.Rule));
       });
@@ -47,12 +65,12 @@ define(['src/Engine'], function(Engine) {
         var payload = {
           foo: 'bar'
         };
-        engine.process(payload);
+        this._engine.process(payload);
 
         spyOn(Engine, 'Rule')
         .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
-        var rule = engine.insert('.selector', {});
-        expect(rule.process).toHaveBeenCalledWith(payload, jasmine.anything());
+        var rule = this._engine.insert('.selector', {});
+        expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
       });
     });
   });
