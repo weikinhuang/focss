@@ -31,8 +31,7 @@ define(['index'], function(Focss) {
         it('creates a trace linking the selector to the specs modifying it', function() {
           expect(this._fox.traces).toEqual({
             hover1: {
-              width: true,
-              '__toggled__.hover1': true
+              width: true
             }
           });
         });
@@ -59,8 +58,7 @@ define(['index'], function(Focss) {
         it('creates a trace linking the selector to the specs modifying it', function() {
           expect(this._fox.traces).toEqual({
             hover1: {
-              width: true,
-              '__toggled__.hover1': true
+              width: true
             }
           });
         });
@@ -87,8 +85,7 @@ define(['index'], function(Focss) {
         it('creates a trace linking the selector to the specs modifying it', function() {
           expect(this._fox.traces).toEqual({
             __sent1: {
-              width: true,
-              '__toggled__.__sent1': true
+              width: true
             }
           });
         });
@@ -129,16 +126,35 @@ define(['index'], function(Focss) {
         it('creates a trace linking the selector to the specs modifying it', function() {
           expect(this._fox.traces).toEqual({
             hover1_id_3: {
-              width: true,
-              '__toggled__.hover1_id_3': true
+              'foo.0.width': true
             },
             hover1_id_4: {
-              width: true,
-              '__toggled__.hover1_id_4': true
+              'foo.1.width': true
             },
             hover1_id_5: {
-              width: true,
-              '__toggled__.hover1_id_5': true
+              'foo.2.width': true
+            }
+          });
+        });
+
+        it('modifies traces when array order changes', function() {
+          this._fox.process({
+            foo: [
+              { id: 4, width: 200 },
+              { id: 3, width: 100 },
+              { id: 5, width: 300 }
+            ]
+          });
+
+          expect(this._fox.traces).toEqual({
+            hover1_id_4: {
+              'foo.0.width': true
+            },
+            hover1_id_3: {
+              'foo.1.width': true
+            },
+            hover1_id_5: {
+              'foo.2.width': true
             }
           });
         });

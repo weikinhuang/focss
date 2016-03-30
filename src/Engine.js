@@ -164,9 +164,7 @@ define([
       var selectorInfo = this._getToggleSelectorInfo(selector),
           rule = this._insert(selectorInfo.selector, spec);
 
-      selectorInfo.toggleKeys.forEach(function(key) {
-        this.traces[key] = rule.artifacts;
-      }, this);
+      this._addTraces(rule, selectorInfo.toggleKeys);
 
       return rule;
     },
@@ -232,28 +230,42 @@ define([
           return;
         }
 
-        var toggleKeys = [],
-            toggleSuffix = '',
+        var toggleSuffix = '',
             selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
               toggleSuffix += '_' + column + '_' + item[column];
               return item[column];
             }),
+            newToggleKeys,
             rule;
 
-        descriptor.toggleKeys.forEach(function(toggleKey) {
+        newToggleKeys = descriptor.toggleKeys.map(function(toggleKey) {
           var newToggleKey = toggleKey + toggleSuffix;
-          toggleKeys.push(newToggleKey);
           selectorForItem = selectorForItem.replace(toggleKey + '?', newToggleKey + '?');
+          return newToggleKey;
         });
 
         rule = this._insert(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']');
-
-        toggleKeys.forEach(function(key) {
-          this.traces[key] = rule.artifacts;
-        }, this);
+        this._addTraces(rule, newToggleKeys, descriptor.expr + '.' + index + '.');
       }, this);
 
       return artifacts;
+    },
+
+    _addTraces: function(rule, toggleKeys, prefix) {
+      prefix = prefix || '';
+
+      var artifactsPrefixed = {},
+          key;
+
+      for (key in rule.artifacts) {
+        if (key.indexOf('__toggled__') !== 0) {
+          artifactsPrefixed[prefix + key] = rule.artifacts[key];
+        }
+      }
+
+      toggleKeys.forEach(function(key) {
+        this.traces[key] = artifactsPrefixed;
+      }, this);
     },
 
     _insert: function(selector, spec, arrayMemberExpr) {
