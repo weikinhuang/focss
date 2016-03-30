@@ -436,10 +436,11 @@ define(['index'], function(Focss) {
 
     describe('computed selector', function() {
       it('has no effect without calling process', function() {
-        var el = affix('div.bar'),
-            artifacts = fox.insert('.${foo}', {
-              'max-width': 'width'
-            });
+        var el = affix('div.bar');
+
+        fox.insert('.${foo}', {
+          'max-width': 'width'
+        });
 
         expect(css(el, 'max-width')).toBe('none');
       });

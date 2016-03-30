@@ -12,7 +12,7 @@ define(['src/Engine'], function(Engine) {
 
     it('is a constructor', function() {
       expect(function() {
-        var engine = new Engine();
+        new Engine();
       }).not.toThrow();
     });
 

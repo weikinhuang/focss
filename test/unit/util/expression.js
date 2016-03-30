@@ -14,8 +14,8 @@ define(['util/expression'], function(expression) {
       });
 
       it('returns the same parse results for the same input', function() {
-        var res1 = expression.parse('foo');
-        res2 = expression.parse('foo');
+        var res1 = expression.parse('foo'),
+            res2 = expression.parse('foo');
 
         expect(res1.body).toEqual(res2.body);
         expect(res1.artifacts).toEqual(jasmine.objectContaining(res2.artifacts));

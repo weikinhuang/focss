@@ -10,10 +10,6 @@ define([
   var computed = /\$\{([^\}]*?)\}/ig;
   var scoped = /^\w*:scope/;
 
-  function lookup(obj, prop) {
-    return obj && obj[prop];
-  }
-
   // CSS3 introduces the double colon syntax for pseudos
   var css2PseudoEl = /:(after|before|first-letter|first-line)|::/g;
   function prefixPseudo(a, b) { return b ? ':' + a : a; }
@@ -70,7 +66,7 @@ define([
 
       if (this.isComputed) {
         // Compile the selector
-        selector = this.selector.replace(computed, function(match, expr, pos) {
+        selector = this.selector.replace(computed, function(match, expr) {
           return expression.compile(expr)(data, extensions);
         });
         this.specificity = specificity.calculate(selector);

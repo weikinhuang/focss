@@ -1,5 +1,9 @@
 {
   "extends": "../.jshintrc",
   "devel": true,
-  "jasmine": true
+  "jasmine": true,
+  "jquery": true,
+  "predef": {
+    "affix": false
+  }
 }
