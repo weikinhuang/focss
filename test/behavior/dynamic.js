@@ -15,6 +15,35 @@ define(['index'], function(Focss) {
       fox = null;
     });
 
+    describe('engine.arrayRuleDescriptors', function() {
+      beforeEach(function() {
+        fox.process({
+          foo: [
+            { id: 3, width: 100 },
+            { id: 4, width: 200 }
+          ]
+        });
+      });
+
+      it('forEach contains the correct artifacts', function() {
+        fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
+          'max-width': 'width'
+        });
+
+        expect(fox.engine.arrayRuleDescriptors.length).toBe(1);
+        expect(fox.engine.arrayRuleDescriptors[0].artifacts).toEqual({ foo: true });
+      });
+
+      it('filterEach contains the correct artifacts', function() {
+        fox.insert('%forEach(foo, true, .bar[data-id="%id%"])', {
+          'max-width': 'width'
+        });
+
+        expect(fox.engine.arrayRuleDescriptors.length).toBe(1);
+        expect(fox.engine.arrayRuleDescriptors[0].artifacts).toEqual({ foo: true });
+      });
+    });
+
     describe('%forEach selector', function() {
       beforeEach(function() {
         this._el = affix('div.bar[data-id="3"]');

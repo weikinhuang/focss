@@ -176,17 +176,16 @@ define([
             expr: expr,
             spec: spec,
             filterExpr: filterExpr,
-            toggleKeys: toggleSelectorInfo.toggleKeys
-          },
-          artifacts = this._generateRulesFromArrayRuleDescriptor(descriptor);
+            toggleKeys: toggleSelectorInfo.toggleKeys,
+            artifacts: this._getArtifactsFromSelector(toggleSelectorInfo.selector)
+          };
 
-      artifacts[expr] = true;
+      descriptor.artifacts[expr] = true;
 
+      this._generateRulesFromArrayRuleDescriptor(descriptor);
       this.arrayRuleDescriptors.push(descriptor);
 
-      return {
-        artifacts: artifacts
-      };
+      return descriptor;
     },
 
     _regenerateArrayRules: function() {
@@ -211,13 +210,12 @@ define([
     },
 
     _generateRulesFromArrayRuleDescriptor: function(descriptor) {
-      var artifacts = this._getArtifactsFromSelector(descriptor.selector),
-          arrayDataFromState,
+      var arrayDataFromState,
           filterFunction;
 
       // occurs when .insert is called before .process
       if (!this._state) {
-        return artifacts;
+        return;
       }
 
       filterFunction = descriptor.filterExpr ? expression.compile(descriptor.filterExpr) : false;
@@ -247,8 +245,6 @@ define([
         rule = this._insert(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']');
         this._addTraces(rule, newToggleKeys, descriptor.expr + '.' + index + '.');
       }, this);
-
-      return artifacts;
     },
 
     _addTraces: function(rule, toggleKeys, prefix) {
