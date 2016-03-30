@@ -1,5 +1,12 @@
 {
   "boss": true,
   "evil": true,
-  "eqnull": true
+  "eqnull": true,
+  "undef": true,
+  "unused": true,
+  "browser": true,
+  "predef": {
+    "define": false,
+    "require": false
+  }
 }

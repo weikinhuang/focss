@@ -87,7 +87,7 @@ define([
       }
     },
 
-    _getToggleSelectorInfo: function(selector, toggleKey) {
+    _getToggleSelectorInfo: function(selector) {
       var toggleKeys = [],
           self = this;
 
