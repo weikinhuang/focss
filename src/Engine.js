@@ -31,7 +31,7 @@ define([
       foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
       filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i,
       toggleSelectorPsuedoRegex = /:(hover|active)/,
-      toggleSelectorClassRegex = /\.(__[^ ]+)/,
+      toggleSelectorClassRegex = /\.(__[^ :]+)/,
       otherPrefixRegex = getVendorPrefixRegex(),
       Engine;
 

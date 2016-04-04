@@ -1,6 +1,6 @@
 define(['index'], function(Focss) {
-  function css(el, prop) {
-    return window.getComputedStyle(el[0] || el)[prop];
+  function css(el, prop, psuedoEl) {
+    return window.getComputedStyle(el[0] || el, psuedoEl)[prop];
   }
 
   describe('toggleSelectors rules', function() {
@@ -16,7 +16,8 @@ define(['index'], function(Focss) {
     describe('for normal selectors', function() {
       beforeEach(function() {
         this._fox.process({
-          width: 20
+          width: 20,
+          foo: 'foo'
         });
       });
 
@@ -98,6 +99,30 @@ define(['index'], function(Focss) {
 
           this._fox.toggleSelector('__sent1', false);
           expect(css(this._el, 'max-width')).toBe('20px');
+        });
+      });
+
+      describe('with togglable class selector with psuedo element', function() {
+        beforeEach(function() {
+          this._el = affix('div.bar.__sent');
+          this._fox.insert('.bar.__sent:before', {
+            'max-width': 'width'
+          });
+        });
+
+        it('creates a trace linking the selector to the specs modifying it', function() {
+          expect(this._fox.traces).toEqual({
+            __sent1: {
+              width: true
+            }
+          });
+        });
+
+        it('can be toggled to simulate a forced psuedo state', function() {
+          expect(css(this._el, 'max-width', ':before')).toBe('20px');
+
+          this._fox.toggleSelector('__sent1', true);
+          expect(css(this._el, 'max-width', ':before')).toBe('none');
         });
       });
     });
