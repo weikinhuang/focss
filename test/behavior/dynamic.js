@@ -263,6 +263,33 @@ define(['index'], function(Focss) {
           expect(css(this._el2, 'max-width')).toBe('200px');
           expect(artifacts).toEqual({ 'foo.baz': true });
         });
+
+        it('does not modify the rule iteration for processing', function() {
+          var $nonArray = affix('.my-rule'),
+              data = {
+                foo: {
+                  width: 500,
+                  baz: [
+                    { id: 3, width: 100 },
+                    { id: 4, width: 200 }
+                  ]
+                }
+              };
+
+          fox.insert('%forEach(foo.baz, .bar[data-id="%id%"])', {
+            'max-width': 'width'
+          });
+          fox.process(data);
+
+          fox.insert('.my-rule', {
+            'width': 'foo.width'
+          });
+          fox.process(data);
+
+          expect(css(this._el, 'max-width')).toBe('100px');
+          expect(css(this._el2, 'max-width')).toBe('200px');
+          expect(css($nonArray, 'width')).toBe('500px');
+        });
       });
     });
 
