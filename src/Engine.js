@@ -118,18 +118,11 @@ define([
 
       // Selector has changed
       if (selector !== this.cssRules[i].selectorText) {
-        if (compat.changeSelectorTextAllowed) {
-          this.cssRules[i].selectorText = selector;
-        }
-        else {
-          this.sheet.deleteRule(i);
-          this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
-          // If the rule has been replaced, we must re-apply the rule body
-          result = true;
-        }
+        this.sheet.deleteRule(i);
+        this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
+        result = true;
       }
 
-      // Results have changed
       if (result) {
         css.apply(this.cssRules[i], rule.result);
       }
