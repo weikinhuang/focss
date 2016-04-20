@@ -95,7 +95,7 @@ define([
         selector = selector.replace(toggleSelectorRegex, function(match, name) {
           var key = name + (++self._uuid);
           toggleKeys.push(key);
-          return "${__toggled__." + key + "?':not(" + match + ")':'" + match + "'}";
+          return "${__toggled__['" + key + "']?':not(" + match + ")':'" + match + "'}";
         });
       });
 
@@ -231,7 +231,7 @@ define([
 
         newToggleKeys = descriptor.toggleKeys.map(function(toggleKey) {
           var newToggleKey = toggleKey + toggleSuffix;
-          selectorForItem = selectorForItem.replace(toggleKey + '?', newToggleKey + '?');
+          selectorForItem = selectorForItem.replace(toggleKey + "']?", newToggleKey + "']?");
           return newToggleKey;
         });
 

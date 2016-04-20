@@ -129,12 +129,12 @@ define(['index'], function(Focss) {
 
     describe('for arrayLike selectors', function() {
       beforeEach(function() {
-        this._el = affix('div.bar[data-id="3"]');
+        this._el = affix('div.bar[data-id="-1"]');
         this._el2 = affix('div.bar[data-id="4"]');
         this._el3 = affix('div.bar[data-id="5"]');
         this._fox.process({
           foo: [
-            { id: 3, width: 100 },
+            { id: -1, width: 100 },
             { id: 4, width: 200 },
             { id: 5, width: 300 }
           ]
@@ -150,7 +150,7 @@ define(['index'], function(Focss) {
 
         it('creates a trace linking the selector to the specs modifying it', function() {
           expect(this._fox.traces).toEqual({
-            hover1_id_3: {
+            'hover1_id_-1': {
               'foo.0.width': true
             },
             hover1_id_4: {
@@ -166,7 +166,7 @@ define(['index'], function(Focss) {
           this._fox.process({
             foo: [
               { id: 4, width: 200 },
-              { id: 3, width: 100 },
+              { id: -1, width: 100 },
               { id: 5, width: 300 }
             ]
           });
@@ -175,7 +175,7 @@ define(['index'], function(Focss) {
             hover1_id_4: {
               'foo.0.width': true
             },
-            hover1_id_3: {
+            'hover1_id_-1': {
               'foo.1.width': true
             },
             hover1_id_5: {
@@ -189,7 +189,7 @@ define(['index'], function(Focss) {
           expect(css(this._el2, 'max-width')).toBe('none');
           expect(css(this._el3, 'max-width')).toBe('none');
 
-          this._fox.toggleSelector('hover1_id_3', true);
+          this._fox.toggleSelector('hover1_id_-1', true);
           expect(css(this._el, 'max-width')).toBe('100px');
           expect(css(this._el2, 'max-width')).toBe('none');
           expect(css(this._el3, 'max-width')).toBe('none');
@@ -204,7 +204,7 @@ define(['index'], function(Focss) {
           expect(css(this._el2, 'max-width')).toBe('200px');
           expect(css(this._el3, 'max-width')).toBe('300px');
 
-          this._fox.toggleSelector('hover1_id_3', false);
+          this._fox.toggleSelector('hover1_id_-1', false);
           this._fox.toggleSelector('hover1_id_4', false);
           this._fox.toggleSelector('hover1_id_5', false);
           expect(css(this._el, 'max-width')).toBe('none');
@@ -213,7 +213,7 @@ define(['index'], function(Focss) {
         });
 
         it('preserves state even when array order changes', function() {
-          this._fox.toggleSelector('hover1_id_3', true);
+          this._fox.toggleSelector('hover1_id_-1', true);
           this._fox.toggleSelector('hover1_id_4', true);
           this._fox.toggleSelector('hover1_id_5', true);
           expect(css(this._el, 'max-width')).toBe('100px');
@@ -223,7 +223,7 @@ define(['index'], function(Focss) {
           this._fox.process({
             foo: [
               { id: 4, width: 200 },
-              { id: 3, width: 100 },
+              { id: -1, width: 100 },
               { id: 5, width: 300 }
             ]
           });
