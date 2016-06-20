@@ -1,6 +1,7 @@
 define(['index'], function(Focss) {
   describe('Focss', function() {
-    var fox, payload = { foo: 'bar' };
+    var fox;
+    var payload = { foo: 'bar' };
 
     it('is instanciable', function() {
       expect(function() {

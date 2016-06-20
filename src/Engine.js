@@ -16,24 +16,24 @@ define([
 
   function getVendorPrefixRegex() {
     var otherVendorPrefixesMap = {
-          moz: ['webkit', 'ms'],
-          webkit: ['moz', 'ms'],
-          ms: ['webkit', 'moz'],
-        },
-        ua = navigator.userAgent.toLowerCase(),
-        vendorPrefix = ua.indexOf('trident') > -1 ? 'ms' : ( ua.indexOf('webkit') > -1 ? 'webkit' : 'moz' ),
-        otherVendorPrefixes = otherVendorPrefixesMap[vendorPrefix];
+      moz: ['webkit', 'ms'],
+      webkit: ['moz', 'ms'],
+      ms: ['webkit', 'moz'],
+    };
+    var ua = navigator.userAgent.toLowerCase();
+    var vendorPrefix = ua.indexOf('trident') > -1 ? 'ms' : (ua.indexOf('webkit') > -1 ? 'webkit' : 'moz');
+    var otherVendorPrefixes = otherVendorPrefixesMap[vendorPrefix];
 
     return new RegExp(':-(' + otherVendorPrefixes.join('|') + ')-');
   }
 
-  var arrayPropertyRegex = /%([^%]+?)%/g,
-      foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i,
-      filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i,
-      toggleSelectorPsuedoRegex = /:(hover|active)/,
-      toggleSelectorClassRegex = /\.(__[^ :]+)/,
-      otherPrefixRegex = getVendorPrefixRegex(),
-      Engine;
+  var arrayPropertyRegex = /%([^%]+?)%/g;
+  var foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
+  var filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i;
+  var toggleSelectorPsuedoRegex = /:(hover|active)/;
+  var toggleSelectorClassRegex = /\.(__[^ :]+)/;
+  var otherPrefixRegex = getVendorPrefixRegex();
+  var Engine;
 
   Engine = Class.extend({
     init: function(root, scoped) {
@@ -88,8 +88,8 @@ define([
     },
 
     _getToggleSelectorInfo: function(selector) {
-      var toggleKeys = [],
-          self = this;
+      var toggleKeys = [];
+      var self = this;
 
       [toggleSelectorPsuedoRegex, toggleSelectorClassRegex].forEach(function(toggleSelectorRegex) {
         selector = selector.replace(toggleSelectorRegex, function(match, name) {
@@ -113,8 +113,8 @@ define([
     },
 
     _process: function(rule, i) {
-      var result = rule.process(this._getStateWithToggles(), this.extensions),
-          selector = rule.getSelector(this._prefix);
+      var result = rule.process(this._getStateWithToggles(), this.extensions);
+      var selector = rule.getSelector(this._prefix);
 
       // Selector has changed
       if (selector !== this.cssRules[i].selectorText) {
@@ -154,8 +154,8 @@ define([
     },
 
     _insertSingleSelector: function(selector, spec) {
-      var selectorInfo = this._getToggleSelectorInfo(selector),
-          rule = this._insert(selectorInfo.selector, spec);
+      var selectorInfo = this._getToggleSelectorInfo(selector);
+      var rule = this._insert(selectorInfo.selector, spec);
 
       this._addTraces(rule, selectorInfo.toggleKeys);
 
@@ -163,15 +163,15 @@ define([
     },
 
     _insertArrayDescriptor: function(selector, expr, spec, filterExpr) {
-      var toggleSelectorInfo = this._getToggleSelectorInfo(selector),
-          descriptor = {
-            selector: toggleSelectorInfo.selector,
-            expr: expr,
-            spec: spec,
-            filterExpr: filterExpr,
-            toggleKeys: toggleSelectorInfo.toggleKeys,
-            artifacts: this._getArtifactsFromSelector(toggleSelectorInfo.selector)
-          };
+      var toggleSelectorInfo = this._getToggleSelectorInfo(selector);
+      var descriptor = {
+        selector: toggleSelectorInfo.selector,
+        expr: expr,
+        spec: spec,
+        filterExpr: filterExpr,
+        toggleKeys: toggleSelectorInfo.toggleKeys,
+        artifacts: this._getArtifactsFromSelector(toggleSelectorInfo.selector)
+      };
 
       descriptor.artifacts[expr] = true;
 
@@ -192,8 +192,8 @@ define([
     },
 
     _getArtifactsFromSelector: function(selector) {
-      var artifacts = {},
-          expr;
+      var artifacts = {};
+      var expr;
 
       while ((expr = this.constructor.Rule.computed.exec(selector)) !== null) {
         extend(artifacts, expression.parse(expr[1]).artifacts);
@@ -203,8 +203,8 @@ define([
     },
 
     _generateRulesFromArrayRuleDescriptor: function(descriptor) {
-      var arrayDataFromState,
-          filterFunction;
+      var arrayDataFromState;
+      var filterFunction;
 
       // occurs when .insert is called before .process
       if (!this._state) {
@@ -221,13 +221,13 @@ define([
           return;
         }
 
-        var toggleSuffix = '',
-            selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
-              toggleSuffix += '_' + column + '_' + item[column];
-              return item[column];
-            }),
-            newToggleKeys,
-            rule;
+        var toggleSuffix = '';
+        var selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
+          toggleSuffix += '_' + column + '_' + item[column];
+          return item[column];
+        });
+        var newToggleKeys;
+        var rule;
 
         newToggleKeys = descriptor.toggleKeys.map(function(toggleKey) {
           var newToggleKey = toggleKey + toggleSuffix;
@@ -243,8 +243,8 @@ define([
     _addTraces: function(rule, toggleKeys, prefix) {
       prefix = prefix || '';
 
-      var artifactsPrefixed = {},
-          key;
+      var artifactsPrefixed = {};
+      var key;
 
       for (key in rule.artifacts) {
         if (key.indexOf('__toggled__') !== 0) {
@@ -258,8 +258,8 @@ define([
     },
 
     _insert: function(selector, spec, arrayMemberExpr) {
-      var rule = new this.constructor.Rule(selector, spec, arrayMemberExpr),
-          i = this.rules.length;
+      var rule = new this.constructor.Rule(selector, spec, arrayMemberExpr);
+      var i = this.rules.length;
 
       if (rule.isComputed) {
         // Placeholder rule

@@ -122,7 +122,8 @@ define(['index'], function(Focss) {
           expect(css(this._el, 'max-width', ':before')).toBe('20px');
 
           this._fox.toggleSelector('__sent1', true);
-          expect(css(this._el, 'max-width', ':before')).toBe('none');
+          const maxWidth = css(this._el, 'max-width', ':before');
+          expect(maxWidth === '' || maxWidth === 'none').toBeTruthy();
         });
       });
     });

@@ -9,17 +9,20 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
     var base = scope;
     var tree = jsep(expr);
 
-    var symbol, symbols = [];
+    var symbol;
+    var symbols = [];
 
     // Performs DFS walk of tree
-    var body, current, stack = [{ node: tree }];
+    var body;
+    var current;
+    var stack = [{ node: tree }];
 
     while (current = stack[0]) {
       // cases from jsep
-      switch(current.node.type) {
+      switch (current.node.type) {
         // leaf types
         case 'Identifier':
-          body = base ? base + '["'+current.node.name+'"]' : current.node.name;
+          body = base ? base + '["' + current.node.name + '"]' : current.node.name;
           symbol = null;
           if (base !== null) {
             symbols.push(symbol = [current.node.name]);
@@ -56,10 +59,10 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
               symbol.push(current.node.property.name || current.node.property.value);
             }
             body = current.node.property.name !== undefined ?
-              '"'+current.node.property.name+'"' :
+              '"' + current.node.property.name + '"' :
               current.node.property.value;
           }
-          body = current.left+'['+body+']';
+          body = current.left + '[' + body + ']';
           stack.shift();
           break;
         case 'UnaryExpression':
@@ -68,7 +71,7 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
             stack.unshift({ node: current.node.argument });
             break;
           }
-          body = current.node.operator + '('+body+')';
+          body = current.node.operator + '(' + body + ')';
           stack.shift();
           break;
         case 'BinaryExpression':
@@ -84,7 +87,7 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
             stack.unshift({ node: current.node.right });
             break;
           }
-          body = '('+current.left + current.node.operator + body+')';
+          body = '(' + current.left + current.node.operator + body + ')';
           stack.shift();
           break;
         case 'ConditionalExpression':
@@ -105,7 +108,7 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
             stack.unshift({ node: current.node.alternate });
             break;
           }
-          body = '('+current.test + '?' + current.consequent + ':' + body+')';
+          body = '(' + current.test + '?' + current.consequent + ':' + body + ')';
           stack.shift();
           break;
         case 'ArrayExpression':
@@ -147,15 +150,15 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
                 isArgs: true,
                 elements: current.node.arguments
               }
-           });
-           break;
+            });
+            break;
           }
           current.arguments = body;
           body = '(function() {try {return ' +
             (callPrefix ? callPrefix + '.' + current.callee : current.callee) +
-            '('+current.arguments+');} ' +
+            '(' + current.arguments + ');} ' +
             'catch(e) {return \'' + current.callee +
-            '(\'+['+current.arguments+'].join()+\')\';}})()';
+            '(\'+[' + current.arguments + '].join()+\')\';}})()';
           stack.shift();
           break;
         default:
@@ -173,30 +176,31 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
     };
   }
 
-  var base = '$', callbase = '__';
+  var base = '$';
+  var callbase = '__';
   return {
     compile: function(expr) {
       if (this._cache[expr] && this._cache[expr].fn) {
         return this._cache[expr].fn;
       }
 
-      var res = this.parse(expr),
-          fn = new Function(base, callbase, 'return ' + res.body);
+      var res = this.parse(expr);
+      var fn = new Function(base, callbase, 'return ' + res.body);
 
       fn.artifacts = res.artifacts;
       return (this._cache[expr].fn = fn);
     },
     compileSpec: function(spec, arrayMemberExpr) {
-      var artifacts = {},
-          body,
-          result;
+      var artifacts = {};
+      var body;
+      var result;
 
       body = Object.keys(spec)
       .map(function(property) {
-        var expr = spec[property],
-            unit,
-            inner,
-            innerBody;
+        var expr = spec[property];
+        var unit;
+        var inner;
+        var innerBody;
 
         if (typeof expr !== 'string') {
           unit = expr.unit;
@@ -211,7 +215,7 @@ define(['jsep', 'nbd/util/extend'], function(jsep, extend) {
           innerBody = innerBody.replace(/\$/g, '$.' + arrayMemberExpr);
         }
 
-        return '_["'+ property +'"]' + '=' + innerBody + (unit ? '+"' + unit + '"' : '');
+        return '_["' + property + '"]' + '=' + innerBody + (unit ? '+"' + unit + '"' : '');
       }, this)
       .join(';');
 

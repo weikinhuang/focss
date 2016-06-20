@@ -15,7 +15,7 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
      * @returns Object Artifacts found while compiling the rule
      */
     insert: function(selector, spec) {
-      if (typeof selector === "object") {
+      if (typeof selector === 'object') {
         var artifacts = {};
         for (var s in selector) {
           if (selector.hasOwnProperty(s)) {
