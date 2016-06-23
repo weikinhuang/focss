@@ -26,14 +26,15 @@ define(function() {
 
   // Find the prefixed version of Element.prototype.matches()
   var matches = (function(prot) {
-    var name, names = ['matches', 'webkitMatchesSelector', 'mozMatchesSelector', 'msMatchesSelector', 'oMatchesSelector'];
+    var name;
+    var names = ['matches', 'webkitMatchesSelector', 'mozMatchesSelector', 'msMatchesSelector', 'oMatchesSelector'];
 
     while (name = names.shift()) {
       if (name in prot) {
         return name;
       }
     }
-  })(Element.prototype);
+  }(Element.prototype));
 
   function styleProperty(property) {
     if (styleProperty.memo[property]) {
@@ -53,7 +54,8 @@ define(function() {
     extract: function(element) {
       var style = element.style;
 
-      var arr = {}, prop;
+      var arr = {};
+      var prop;
       for (var i = 0; i < style.length; ++i) {
         prop = styleProperty(style[i]);
         if (style[prop] != null) {
@@ -72,7 +74,8 @@ define(function() {
     },
 
     normalize: function(styleObj) {
-      var key, nStyle = {};
+      var key;
+      var nStyle = {};
       for (key in styleObj) {
         nStyle[styleProperty(key)] = styleObj[key];
       }
@@ -80,7 +83,8 @@ define(function() {
     },
 
     apply: function(element, incoming) {
-      var key, value;
+      var key;
+      var value;
       for (key in incoming) {
         value = incoming[key];
 

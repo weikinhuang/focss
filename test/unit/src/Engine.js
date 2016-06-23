@@ -23,8 +23,8 @@ define(['src/Engine'], function(Engine) {
 
         var payload = {
           foo: 'bar'
-        },
-        rule = this._engine.insert('selector', {});
+        };
+        var rule = this._engine.insert('selector', {});
         this._engine.process(payload);
         expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
       });

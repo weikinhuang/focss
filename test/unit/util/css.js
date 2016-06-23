@@ -42,7 +42,7 @@ define(['util/css'], function(css) {
     describe('.normalize()', function() {
       it('normalizes object keys from CSS property names to DOM property names', function() {
         var res = css.normalize({
-          'float': 'left',
+          float: 'left',
           'max-width': '100%'
         });
 

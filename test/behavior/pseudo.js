@@ -18,7 +18,9 @@ define(['index'], function(Focss) {
     describe(':first-child', function() {
       it('affects only the first child', function() {
         var ul = affix('ul li+li+li');
-        var first = ul.find('li:first-child'), second = first.next(), last = second.next();
+        var first = ul.find('li:first-child');
+        var second = first.next();
+        var last = second.next();
         fox.insert('li:first-child', { 'max-width': 'foo' });
         fox.process({ foo: 100 });
 
@@ -29,7 +31,9 @@ define(['index'], function(Focss) {
 
       it('tracks positions', function() {
         var ul = affix('ul li+li+li');
-        var first = ul.find('li:first-child'), second = first.next(), last = second.next();
+        var first = ul.find('li:first-child');
+        var second = first.next();
+        var last = second.next();
         fox.insert('li:first-child', { 'max-width': 'foo' });
         fox.process({ foo: 100 });
 
@@ -44,7 +48,9 @@ define(['index'], function(Focss) {
     describe(':last-child', function() {
       it('affects only the last child', function() {
         var ul = affix('ul li+li+li');
-        var last = ul.find('li:last-child'), second = last.prev(), first = second.prev();
+        var last = ul.find('li:last-child');
+        var second = last.prev();
+        var first = second.prev();
         fox.insert('li:last-child', { 'max-width': 'foo' });
         fox.process({ foo: 100 });
 
@@ -55,7 +61,9 @@ define(['index'], function(Focss) {
 
       it('tracks positions', function() {
         var ul = affix('ul li+li+li');
-        var last = ul.find('li:last-child'), second = last.prev(), first = second.prev();
+        var last = ul.find('li:last-child');
+        var second = last.prev();
+        var first = second.prev();
         fox.insert('li:last-child', { 'max-width': 'foo' });
         fox.process({ foo: 100 });
 
@@ -362,22 +370,22 @@ define(['index'], function(Focss) {
       it('sets pseudo element content', function() {
         var el = affix('div');
 
-        fox.insert('div:before', { 'content': 'foo' });
-        expect(css(el, 'content', ':before')).not.toBe('"bar"');
+        fox.insert('div:before', { content: 'foo' });
+        expect(css(el, 'content', ':before')).not.toBe('bar');
 
         fox.process({ foo: '"bar"' });
-        expect(css(el, 'content', ':before')).toBe('"bar"');
+        expect(css(el, 'content', ':before')).toBe('bar');
       });
     });
     describe(':after', function() {
       it('sets pseudo element content', function() {
         var el = affix('div');
 
-        fox.insert('div:after', { 'content': 'foo' });
-        expect(css(el, 'content', ':after')).not.toBe('"bar"');
+        fox.insert('div:after', { content: 'foo' });
+        expect(css(el, 'content', ':after')).not.toBe('bar');
 
         fox.process({ foo: '"bar"' });
-        expect(css(el, 'content', ':after')).toBe('"bar"');
+        expect(css(el, 'content', ':after')).toBe('bar');
       });
     });
   });

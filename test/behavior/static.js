@@ -95,13 +95,13 @@ define(['index'], function(Focss) {
       it('rules that contain the incorrect vendor prefix are ignored', function() {
         affix('input');
 
-        var incorrectPrefix = navigator.userAgent.toLowerCase().indexOf('webkit') > -1 ? 'moz' : 'webkit',
-            selector = 'input',
-            $el = affix(selector),
-            oldValue = $el.css('fontSize'),
-            artifacts = fox.insert('input, input::-' + incorrectPrefix + '-input-placeholder', {
-              'font-size': 'size'
-            });
+        var incorrectPrefix = navigator.userAgent.toLowerCase().indexOf('webkit') > -1 ? 'moz' : 'webkit';
+        var selector = 'input';
+        var $el = affix(selector);
+        var oldValue = $el.css('fontSize');
+        var artifacts = fox.insert('input, input::-' + incorrectPrefix + '-input-placeholder', {
+          'font-size': 'size'
+        });
 
         fox.process({ size: '20px' });
 
