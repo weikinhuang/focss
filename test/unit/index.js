@@ -33,6 +33,20 @@ define(['index'], function(Focss) {
       });
     });
 
+    describe('#toString()', function() {
+      it('returns a string of processed styles', function() {
+        var payload = {
+          a: 100,
+          b: 200
+        };
+
+        fox.insert('.foo', {
+          'max-width': 'a + b'
+        });
+        expect(fox.toString(payload)).toEqual('.foo{max-width:300px;}');
+      });
+    });
+
     describe('#toggleSelector()', function() {
       it('calls its engine', function() {
         spyOn(fox.engine, 'toggleSelector');

@@ -70,6 +70,37 @@ define(function() {
         // Numbers without units
         element.style.setProperty(key, value + 'px');
       }
+    },
+
+
+    toString: function(selector, incoming) {
+      var key;
+      var value;
+      var result = selector + '{';
+      for (key in incoming) {
+        value = incoming[key];
+
+        // Array value (CSS space separated)
+        if (Array.isArray(value)) {
+          value = value.join(' ').trim();
+        }
+
+        // Undefined/null value
+        if (value == null || value === '') {
+          continue;
+        }
+
+        // Literal value
+        if (isNaN(value) || isUnitlessNumber[key] || value === 0) {
+          result += key + ':' + value + ';';
+          continue;
+        }
+
+        // Numbers without units
+        result += key + ':' + value + 'px;';
+      }
+      result += '}';
+      return result;
     }
   };
 });

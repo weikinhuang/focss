@@ -78,6 +78,21 @@ define([
       }
     },
 
+    toString: function(payload) {
+      var result = '';
+      var i;
+
+      this._state = payload;
+      this._regenerateArrayRules();
+
+      for (i = 0; i < this.rules.length; i++) {
+        this.rules[i].process(this._getStateWithToggles(), this.extensions);
+        result += css.toString(this.rules[i].selector, this.rules[i].result);
+      }
+
+      return result;
+    },
+
     toggleSelector: function(key, isToggled) {
       var isCurrentlyToggled = this._toggleKeys[key] || false;
       this._toggleKeys[key] = isToggled;

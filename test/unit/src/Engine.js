@@ -30,6 +30,53 @@ define(['src/Engine'], function(Engine) {
       });
     });
 
+    describe('#toString()', function() {
+      beforeEach(function() {
+        this.payload = {
+          a: 100,
+          b: 200,
+          c: 300
+        };
+      });
+
+      it('returns an empty string if no rules are inserted', function() {
+        expect(this._engine.toString(this.payload)).toEqual('');
+      });
+
+      it('returns processed styles in the order in which they are inserted', function() {
+        this._engine.insert('.foo', {
+          'max-width': 'a + b'
+        });
+        this._engine.insert('.bar', {
+          width: 'c'
+        });
+        this._engine.insert('.baz', {
+          height: 'a + c'
+        });
+        expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;}.bar{width:300px;}.baz{height:400px;}');
+      });
+
+      it('returns processed styles when the inserted rules contain multiple properties', function() {
+        this._engine.insert('.foo', {
+          'max-width': 'a + b',
+          width: 'b - a',
+          height: 'a + c'
+        });
+        expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;width:100px;height:400px;}');
+      });
+
+      it('does not delete previously inserted rules when called', function() {
+        this._engine.insert('.foo', {
+          'max-width': 'a + b'
+        });
+        expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;}');
+        this._engine.insert('.bar', {
+          width: 'c'
+        });
+        expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;}.bar{width:300px;}');
+      });
+    });
+
     describe('#toggleSelector()', function() {
       beforeEach(function() {
         this._engine.insert('selector', {});
