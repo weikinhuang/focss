@@ -1,20 +1,5 @@
 define(['util/css'], function(css) {
   describe('css helper', function() {
-    describe('.extract()', function() {
-      it('pulls existing styles into an object', function() {
-        var div = affix('div');
-        div.css({
-          display: 'none',
-          float: 'left'
-        });
-
-        expect(css.extract(div[0])).toEqual(jasmine.objectContaining({
-          display: 'none',
-          cssFloat: 'left'
-        }));
-      });
-    });
-
     describe('.find()', function() {
       it('searches the DOM tree for a selector', function() {
         var div = affix('div.foo');
@@ -39,20 +24,6 @@ define(['util/css'], function(css) {
       });
     });
 
-    describe('.normalize()', function() {
-      it('normalizes object keys from CSS property names to DOM property names', function() {
-        var res = css.normalize({
-          float: 'left',
-          'max-width': '100%'
-        });
-
-        expect(res).toEqual(jasmine.objectContaining({
-          cssFloat: 'left',
-          maxWidth: '100%'
-        }));
-      });
-    });
-
     describe('.apply()', function() {
       it('applies CSS style directly to element', function() {
         var div = affix('div');
@@ -72,8 +43,8 @@ define(['util/css'], function(css) {
         css.apply(div[0], {
           width: 4,
           height: 5,
-          zIndex: 1,
-          // required for zIndex to come back as 1 in Chrome
+          'z-index': 1,
+          // required for z-index to come back as 1 in Chrome
           position: 'absolute'
         });
 

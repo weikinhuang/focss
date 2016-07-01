@@ -1,27 +1,26 @@
 define(function() {
   'use strict';
 
-  // From facebook/react
   /**
    * CSS properties which accept numbers but are not in units of "px".
    */
   var isUnitlessNumber = {
-    columnCount: true,
+    'column-count': true,
     flex: true,
-    flexGrow: true,
-    flexShrink: true,
-    fontWeight: true,
-    lineClamp: true,
-    lineHeight: true,
+    'flex-grow': true,
+    'flex-shrink': true,
+    'font-weight': true,
+    'line-clamp': true,
+    'line-height': true,
     opacity: true,
     order: true,
     orphans: true,
     widows: true,
-    zIndex: true,
+    'z-index': true,
     zoom: true,
     // SVG-related properties
-    fillOpacity: true,
-    strokeOpacity: true
+    'fill-opacity': true,
+    'stroke-opacity': true
   };
 
   // Find the prefixed version of Element.prototype.matches()
@@ -36,50 +35,13 @@ define(function() {
     }
   }(Element.prototype));
 
-  function styleProperty(property) {
-    if (styleProperty.memo[property]) {
-      return styleProperty.memo[property];
-    }
-    return (styleProperty.memo[property] = property.replace(styleProperty.pattern, styleProperty.replacement));
-  }
-  // Prepopulate map with the only exception 'float'
-  styleProperty.memo = { float: 'cssFloat' };
-  styleProperty.pattern = /-([a-z])/g;
-  styleProperty.replacement = function(match, p1) {
-    return p1.toLocaleUpperCase();
-  };
-
-
   return {
-    extract: function(element) {
-      var style = element.style;
-
-      var arr = {};
-      var prop;
-      for (var i = 0; i < style.length; ++i) {
-        prop = styleProperty(style[i]);
-        if (style[prop] != null) {
-          arr[prop] = style[prop];
-        }
-      }
-      return arr;
-    },
-
     find: function(selector, base) {
       return (base || document).querySelectorAll(selector);
     },
 
     matches: function(element, selector) {
       return element[matches](selector);
-    },
-
-    normalize: function(styleObj) {
-      var key;
-      var nStyle = {};
-      for (key in styleObj) {
-        nStyle[styleProperty(key)] = styleObj[key];
-      }
-      return nStyle;
     },
 
     apply: function(element, incoming) {
@@ -95,18 +57,18 @@ define(function() {
 
         // Undefined/null value
         if (value == null || value === '') {
-          element.style[key] = '';
+          element.style.setProperty(key, '');
           continue;
         }
 
         // Literal value
         if (isNaN(value) || isUnitlessNumber[key] || value === 0) {
-          element.style[key] = value;
+          element.style.setProperty(key, value);
           continue;
         }
 
         // Numbers without units
-        element.style[key] = value + 'px';
+        element.style.setProperty(key, value + 'px');
       }
     }
   };
