@@ -42,6 +42,16 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
       this.engine.process(data);
     },
 
+    /**
+     * Generate a string of styles as the result of running
+     * the current set of rules against state data.
+     * @param data {Object} state data
+     * @returns String string containing generated styles
+     */
+    toString: function(data) {
+      return this.engine.toString(data);
+    },
+
     destroy: function() {
       this.engine.destroy();
       this.engine = null;
