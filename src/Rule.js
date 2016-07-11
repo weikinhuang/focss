@@ -73,7 +73,7 @@ define([
       }
 
       this.computedSelector = selector;
-      this.result = css.normalize(this.body(data, extensions));
+      this.result = this.body(data, extensions);
     }
   }, {
     displayName: 'FocssRule'
