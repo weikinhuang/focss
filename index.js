@@ -29,6 +29,15 @@ define(['nbd/Class', 'nbd/util/extend', './src/Engine'], function(Class, extend,
       return rule.artifacts;
     },
 
+    /**
+     * Insert a map of variables and their values
+     * @param variables {Object} map of variables and their values
+     * @returns {void}
+     */
+    insertVars: function(variables) {
+      this.engine.insertVars(variables);
+    },
+
     toggleSelector: function(key, isToggled) {
       this.engine.toggleSelector(key, isToggled);
     },

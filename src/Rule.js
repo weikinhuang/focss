@@ -23,7 +23,6 @@ define([
         throw new TypeError('selector must be a string.');
       }
       this.selector = normalizePseudoElement(selector);
-
       this.body = expression.compileSpec(spec, arrayMemberExpr);
       this.artifacts = extend({}, this.body.artifacts);
       this.isArrayRule = !!arrayMemberExpr;
