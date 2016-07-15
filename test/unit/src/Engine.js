@@ -1,4 +1,4 @@
-define(['src/Engine'], function(Engine) {
+define(['src/Engine', 'nbd/util/extend'], function(Engine, extend) {
   describe('Engine', function() {
     beforeEach(function() {
       this._engine = new Engine();
@@ -27,6 +27,77 @@ define(['src/Engine'], function(Engine) {
         var rule = this._engine.insert('selector', {});
         this._engine.process(payload);
         expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
+      });
+
+      it('merges variable data with user data', function() {
+        var payload = {
+          foo: 'bar'
+        };
+        var variables = {
+          someVar: 'someValue'
+        };
+        var expected = extend({}, payload, { focssVariables: variables });
+        var rule;
+
+        spyOn(Engine, 'Rule')
+        .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
+        this._engine.insertVars(variables);
+        rule = this._engine.insert('selector', {});
+        this._engine.process(payload);
+        expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(expected), jasmine.anything());
+      });
+
+      it('processes rules with variable data', function() {
+        this._engine.insertVars({
+          foo: '.container',
+          bar: 'red'
+        });
+        this._engine.insert('${focssVariables.foo}', {
+          width: 'dynamic',
+          color: 'focssVariables.bar'
+        });
+        this._engine.process({ dynamic: 'foobar' });
+        expect(this._engine.rules[0].computedSelector).toBe('.container');
+        expect(this._engine.rules[0].artifacts).toEqual({
+          dynamic: true,
+          'focssVariables.foo': true,
+          'focssVariables.bar': true
+        });
+      });
+    });
+
+    describe('#insertVars', function() {
+      beforeEach(function() {
+        this._variables = {
+          maxHeight: 40,
+          defaultColor: 'red'
+        };
+        this._variables2 = {
+          maxHeight: 1000,
+          anotherDefault: '300px'
+        };
+      });
+
+      afterEach(function() {
+        delete this._variables;
+        delete this._variables2;
+      });
+
+      it('inserts variables', function() {
+        this._engine.insertVars(this._variables);
+        expect(this._engine.variables).toEqual(this._variables);
+      });
+
+      it('inserts new and overwrites pre-existing variables', function() {
+        this._engine.insertVars(this._variables);
+        expect(this._engine.variables).toEqual(this._variables);
+
+        this._engine.insertVars(this._variables2);
+        expect(this._engine.variables).toEqual({
+          maxHeight: 1000,
+          defaultColor: 'red',
+          anotherDefault: '300px'
+        });
       });
     });
 

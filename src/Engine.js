@@ -39,6 +39,7 @@ define([
     init: function(root, scoped) {
       var target = root || document.body;
 
+      this.variables = {};
       this.rules = [];
       this.arrayRuleDescriptors = [];
       this.extensions = Object.create(this.extensions);
@@ -68,7 +69,7 @@ define([
     },
 
     process: function(payload) {
-      this._state = payload;
+      this._state = extend({}, payload, { focssVariables: this.variables });
       this._regenerateArrayRules();
       this.rules.forEach(this._process, this);
 
@@ -166,6 +167,10 @@ define([
       }
 
       return this._insertSingleSelector(selector, spec);
+    },
+
+    insertVars: function(spec) {
+      extend(this.variables, spec);
     },
 
     _insertSingleSelector: function(selector, spec) {
