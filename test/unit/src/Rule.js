@@ -1,132 +1,132 @@
-define(['src/Rule'], function(Rule) {
-  describe('Rule', function() {
-    var rule;
-    it('is a constructor', function() {
-      rule = new Rule('section', {});
+import Rule from '../../../src/Rule';
 
-      expect(rule).toBeDefined();
+describe('Rule', function() {
+  var rule;
+  it('is a constructor', function() {
+    rule = new Rule('section', {});
+
+    expect(rule).toBeDefined();
+  });
+
+  it('normalizes CSS2 pseudo-element selectors', function() {
+    rule = new Rule('section:after, section:before, section:first-line, section:first-letter', {});
+
+    expect(rule.selector).toBe('section::after, section::before, section::first-line, section::first-letter');
+  });
+
+  it('needs a selector and body', function() {
+    expect(function() {
+      rule = new Rule();
+    }).toThrow();
+
+    expect(function() {
+      rule = new Rule([], {});
+    }).toThrow();
+
+    expect(function() {
+      rule = new Rule('', {});
+    }).not.toThrow();
+  });
+
+  it('accepts expressions in selectors', function() {
+    expect(function() {
+      rule = new Rule('#${foo}', {});
+    }).not.toThrow();
+
+    expect(rule.artifacts.foo).toBeDefined();
+    expect(rule.isComputed).toBeTruthy();
+  });
+
+  it('compiles body into a function', function() {
+    rule = new Rule('', {
+      marco: 'polo'
     });
 
-    it('normalizes CSS2 pseudo-element selectors', function() {
-      rule = new Rule('section:after, section:before, section:first-line, section:first-letter', {});
+    expect(rule.body).toEqual(jasmine.any(Function));
+    expect(rule.body({
+      polo: 3
+    })).toEqual(jasmine.objectContaining({
+      marco: 3
+    }));
+  });
 
-      expect(rule.selector).toBe('section::after, section::before, section::first-line, section::first-letter');
+  describe('#process()', function() {
+    it('calculates static selectors', function() {
+      rule = new Rule('.static', {});
+      rule.process();
+      expect(rule.computedSelector).toBe('.static');
+      expect(rule.specificity).toBeDefined();
     });
 
-    it('needs a selector and body', function() {
-      expect(function() {
-        rule = new Rule();
-      }).toThrow();
-
-      expect(function() {
-        rule = new Rule([], {});
-      }).toThrow();
-
-      expect(function() {
-        rule = new Rule('', {});
-      }).not.toThrow();
+    it('calculates computed selectors', function() {
+      rule = new Rule('.${dynamic}', {});
+      rule.process({ dynamic: 'foobar' });
+      expect(rule.computedSelector).toBe('.foobar');
+      expect(rule.specificity).toBeDefined();
     });
 
-    it('accepts expressions in selectors', function() {
-      expect(function() {
-        rule = new Rule('#${foo}', {});
-      }).not.toThrow();
-
-      expect(rule.artifacts.foo).toBeDefined();
-      expect(rule.isComputed).toBeTruthy();
+    it('calculates result', function() {
+      rule = new Rule('.static', {
+        foo: 'bar'
+      });
+      rule.process({ bar: 'baz' });
+      expect(rule.result).toEqual({ foo: 'baz' });
     });
 
-    it('compiles body into a function', function() {
-      rule = new Rule('', {
-        marco: 'polo'
+    it('calculates result with extensions', function() {
+      rule = new Rule('.extended', {
+        foo: 'bar()'
       });
 
-      expect(rule.body).toEqual(jasmine.any(Function));
-      expect(rule.body({
-        polo: 3
-      })).toEqual(jasmine.objectContaining({
-        marco: 3
-      }));
+      var bar = jasmine.createSpy('extension').and.returnValue('baz');
+      rule.process({}, { bar: bar });
+
+      expect(bar).toHaveBeenCalled();
+      expect(rule.result).toEqual({ foo: 'baz' });
     });
 
-    describe('#process()', function() {
-      it('calculates static selectors', function() {
-        rule = new Rule('.static', {});
-        rule.process();
-        expect(rule.computedSelector).toBe('.static');
-        expect(rule.specificity).toBeDefined();
+    it('calculates non-idempotent extensions', function() {
+      rule = new Rule('.extended', {
+        foo: 'bar()'
       });
 
-      it('calculates computed selectors', function() {
-        rule = new Rule('.${dynamic}', {});
-        rule.process({ dynamic: 'foobar' });
-        expect(rule.computedSelector).toBe('.foobar');
-        expect(rule.specificity).toBeDefined();
-      });
+      var bar = jasmine.createSpy('extension').and.returnValues('bar', 'baz');
 
-      it('calculates result', function() {
-        rule = new Rule('.static', {
-          foo: 'bar'
-        });
-        rule.process({ bar: 'baz' });
-        expect(rule.result).toEqual({ foo: 'baz' });
-      });
+      rule.process({}, { bar: bar });
+      expect(rule.result).toEqual({ foo: 'bar' });
 
-      it('calculates result with extensions', function() {
-        rule = new Rule('.extended', {
-          foo: 'bar()'
-        });
-
-        var bar = jasmine.createSpy('extension').and.returnValue('baz');
-        rule.process({}, { bar: bar });
-
-        expect(bar).toHaveBeenCalled();
-        expect(rule.result).toEqual({ foo: 'baz' });
-      });
-
-      it('calculates non-idempotent extensions', function() {
-        rule = new Rule('.extended', {
-          foo: 'bar()'
-        });
-
-        var bar = jasmine.createSpy('extension').and.returnValues('bar', 'baz');
-
-        rule.process({}, { bar: bar });
-        expect(rule.result).toEqual({ foo: 'bar' });
-
-        rule.process({}, { bar: bar });
-        expect(rule.result).toEqual({ foo: 'baz' });
-      });
-
-      it('ignores missing extensions', function() {
-        rule = new Rule('.extended', {
-          foo: 'bar()'
-        });
-        rule.process({});
-
-        expect(rule.result).toEqual({ foo: 'bar()' });
-      });
+      rule.process({}, { bar: bar });
+      expect(rule.result).toEqual({ foo: 'baz' });
     });
 
-    describe('#getSelector()', function() {
-      it('returns all selector parts', function() {
-        rule = new Rule('.foo1,.foo2,.foo3', {});
-        rule.process();
-
-        var res = rule.getSelector();
-        expect(res.split(',').length).toBe(3);
-        expect(res).toEqual(rule.selector);
+    it('ignores missing extensions', function() {
+      rule = new Rule('.extended', {
+        foo: 'bar()'
       });
+      rule.process({});
 
-      it('prefixes all selector parts', function() {
-        rule = new Rule('.foo1, .foo2, .foo3', {});
-        rule.process();
-        var res = rule.getSelector('bar').split(',');
-        expect(res.length).toBe(3);
-        expect(res[0]).toMatch(/^bar/);
-        expect(res[1]).toMatch(/^bar/);
-        expect(res[2]).toMatch(/^bar/);
-      });
+      expect(rule.result).toEqual({ foo: 'bar()' });
+    });
+  });
+
+  describe('#getSelector()', function() {
+    it('returns all selector parts', function() {
+      rule = new Rule('.foo1,.foo2,.foo3', {});
+      rule.process();
+
+      var res = rule.getSelector();
+      expect(res.split(',').length).toBe(3);
+      expect(res).toEqual(rule.selector);
+    });
+
+    it('prefixes all selector parts', function() {
+      rule = new Rule('.foo1, .foo2, .foo3', {});
+      rule.process();
+      var res = rule.getSelector('bar').split(',');
+      expect(res.length).toBe(3);
+      expect(res[0]).toMatch(/^bar/);
+      expect(res[1]).toMatch(/^bar/);
+      expect(res[2]).toMatch(/^bar/);
     });
   });
 });
