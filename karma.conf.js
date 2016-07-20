@@ -1,6 +1,6 @@
+/* eslint-env node */
 // Karma configuration
 // Generated on Tue Jan 27 2015 12:55:07 GMT-0500 (EST)
-
 module.exports = function(config) {
   config.set({
 
@@ -10,19 +10,13 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jquery-2.1.0', 'jasmine', 'requirejs'],
+    frameworks: ['jquery-2.1.0', 'jasmine'],
 
 
     // list of files / patterns to load in the browser
     files: [
-      'test/test-main.js',
       'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
-      {pattern: 'node_modules/nbd/**/*.js', included: false},
-      {pattern: 'node_modules/jsep/build/jsep.js', included: false},
-      {pattern: 'index.js', included: false},
-      {pattern: 'src/**/*.js', included: false},
-      {pattern: 'util/**/*.js', included: false},
-      {pattern: 'test/**/*.js', included: false}
+      'test/**/*.js'
     ],
 
 
@@ -34,6 +28,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'test/**/*.js': ['webpack']
     },
 
 
@@ -67,6 +62,18 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
+
+    webpack: {
+      module: {
+        loaders: [
+          {
+            test: /(\.js)$/,
+            exclude: /node_modules/,
+            loader: 'babel'
+          }
+        ]
+      }
+    }
   });
 };
