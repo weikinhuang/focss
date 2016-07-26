@@ -2,10 +2,8 @@ import Class from 'nbd/Class';
 import extend from 'nbd/util/extend';
 import diff from 'nbd/util/diff';
 import expression from '../util/expression';
-import specificity from '../util/specificity';
 
 var computed = /\$\{([^\}]*?)\}/ig;
-var scoped = /^\w*:scope/;
 
 // CSS3 introduces the double colon syntax for pseudos
 var css2PseudoEl = /:(after|before|first-letter|first-line)|::/g;
@@ -31,18 +29,10 @@ var Rule = Class.extend({
       this.isComputed = true;
       extend(this.artifacts, expression.parse(expr[1]).artifacts);
     }
-
-    if (!this.isComputed) {
-      this.specificity = specificity.calculate(this.selector);
-    }
   },
 
-  getSelector: function(prefix) {
-    if (!prefix) { return this.computedSelector || this.selector; }
-
-    return this.specificity.map(function(part) {
-      return scoped.test(part.selector) ? part.selector : prefix + part.selector;
-    }, this).join(',');
+  getSelector: function() {
+    return this.computedSelector || this.selector;
   },
 
   process: function(data, extensions) {
@@ -65,7 +55,6 @@ var Rule = Class.extend({
       selector = this.selector.replace(computed, function(match, expr) {
         return expression.compile(expr)(data, extensions);
       });
-      this.specificity = specificity.calculate(selector);
     }
 
     this.computedSelector = selector;

@@ -13,9 +13,14 @@ describe('Engine', function() {
   });
 
   it('is a constructor', function() {
+    let engine;
+
     expect(function() {
-      new Engine();
+      engine = new Engine();
     }).not.toThrow();
+    expect(engine).toBeDefined();
+
+    engine.destroy();
   });
 
   describe('#process()', function() {

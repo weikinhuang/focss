@@ -20,25 +20,9 @@ var isUnitlessNumber = {
   'stroke-opacity': true
 };
 
-// Find the prefixed version of Element.prototype.matches()
-var matches = (function(prot) {
-  var name;
-  var names = ['matches', 'webkitMatchesSelector', 'mozMatchesSelector', 'msMatchesSelector', 'oMatchesSelector'];
-
-  while (name = names.shift()) {
-    if (name in prot) {
-      return name;
-    }
-  }
-}(Element.prototype));
-
 export default {
   find: function(selector, base) {
     return (base || document).querySelectorAll(selector);
-  },
-
-  matches: function(element, selector) {
-    return element[matches](selector);
   },
 
   apply: function(element, incoming) {
@@ -96,6 +80,6 @@ export default {
       result += key + ':' + value + 'px;';
     }
     result += '}';
-    return result;
+    return result.trim();
   }
 };

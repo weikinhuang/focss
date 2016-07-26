@@ -1,24 +1,39 @@
 import Focss from '../..';
 
 describe('Focss', function() {
-  var fox;
-  var payload = { foo: 'bar' };
+  const payload = { foo: 'bar' };
+
+  beforeEach(function() {
+    this._fox = new Focss();
+  });
+
+  afterEach(function() {
+    if (this._fox) {
+      this._fox.destroy();
+      this._fox = null;
+    }
+  });
 
   it('is instanciable', function() {
-    expect(function() {
+    let fox;
+
+    expect(() => {
       fox = new Focss();
     }).not.toThrow();
     expect(fox).toBeDefined();
+
+    fox.destroy();
+    fox = null;
   });
 
   describe('#insert()', function() {
     it('inserts single rules', function() {
-      spyOn(fox.engine, 'insert').and.returnValue({});
+      spyOn(this._fox.engine, 'insert').and.returnValue({});
 
-      fox.insert('.selector', {
+      this._fox.insert('.selector', {
         prop: ''
       });
-      expect(fox.engine.insert)
+      expect(this._fox.engine.insert)
       .toHaveBeenCalledWith('.selector', jasmine.objectContaining({
         prop: ''
       }));
@@ -32,19 +47,19 @@ describe('Focss', function() {
         defaultColor: 'red'
       };
 
-      spyOn(fox.engine, 'insertVars');
-      fox.insertVars(variables);
-      expect(fox.engine.insertVars)
+      spyOn(this._fox.engine, 'insertVars');
+      this._fox.insertVars(variables);
+      expect(this._fox.engine.insertVars)
       .toHaveBeenCalledWith(jasmine.objectContaining(variables));
     });
   });
 
   describe('#process()', function() {
     it('calls its engine', function() {
-      spyOn(fox.engine, 'process');
+      spyOn(this._fox.engine, 'process');
 
-      fox.process(payload);
-      expect(fox.engine.process).toHaveBeenCalledWith(payload);
+      this._fox.process(payload);
+      expect(this._fox.engine.process).toHaveBeenCalledWith(payload);
     });
   });
 
@@ -55,25 +70,25 @@ describe('Focss', function() {
         b: 200
       };
 
-      fox.insert('.foo', {
+      this._fox.insert('.foo', {
         'max-width': 'a + b'
       });
-      expect(fox.toString(payload)).toEqual('.foo{max-width:300px;}');
+      expect(this._fox.toString(payload)).toEqual('.foo{max-width:300px;}');
     });
   });
 
   describe('#toggleSelector()', function() {
     it('calls its engine', function() {
-      spyOn(fox.engine, 'toggleSelector');
+      spyOn(this._fox.engine, 'toggleSelector');
 
-      fox.toggleSelector('hover1', true);
-      expect(fox.engine.toggleSelector).toHaveBeenCalledWith('hover1', true);
+      this._fox.toggleSelector('hover1', true);
+      expect(this._fox.engine.toggleSelector).toHaveBeenCalledWith('hover1', true);
     });
   });
 
   describe('#destroy()', function() {
     it('exists', function() {
-      expect(fox.destroy).toEqual(jasmine.any(Function));
+      expect(this._fox.destroy).toEqual(jasmine.any(Function));
     });
   });
 });
