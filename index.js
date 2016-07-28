@@ -3,9 +3,8 @@ import extend from 'nbd/util/extend';
 import Engine from './src/Engine';
 
 var Focss = Class.extend({
-  init: function(root, extensions, scoped) {
-    scoped = scoped === undefined ? true : !!scoped;
-    this.engine = new Engine(root, scoped);
+  init: function(root, extensions) {
+    this.engine = new Engine(root);
     extend(this.engine.extensions, extensions);
   },
 

@@ -16,15 +16,6 @@ describe('css helper', function() {
     });
   });
 
-  describe('.matches()', function() {
-    it('returns whether an element matches a selector', function() {
-      var el = affix('.foo.bar')[0];
-      expect(css.matches(el, '.foo')).toBeTruthy();
-      expect(css.matches(el, '.bar')).toBeTruthy();
-      expect(css.matches(el, '.baz')).toBeFalsy();
-    });
-  });
-
   describe('.apply()', function() {
     it('applies CSS style directly to element', function() {
       var div = affix('div');

@@ -4,7 +4,9 @@
   "description": "Graphics pipeline, but for the DOM",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && ./node_modules/karma/bin/karma start --singleRun",
+    "test": "npm run lint && npm run test:browser && npm run test:node",
+    "test:browser": "./node_modules/karma/bin/karma start --singleRun",
+    "test:node": "jasmine JASMINE_CONFIG_PATH=test/jasmine.json",
     "test:dev": "./node_modules/karma/bin/karma start",
     "lint": "./node_modules/.bin/eslint src test/behavior test/unit"
   },
@@ -30,8 +32,10 @@
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.4",
     "babel-preset-behance": "^1.0.0",
+    "babel-register": "^6.11.5",
     "eslint": "^2.12.0",
     "eslint-preset-behance": "^2.0.0",
+    "jasmine": "^2.4.1",
     "jasmine-core": "^2.1.3",
     "jasmine-fixture": "^1.3.4",
     "karma": "^1.1.0",

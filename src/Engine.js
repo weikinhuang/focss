@@ -2,14 +2,9 @@
 import Class from 'nbd/Class';
 import extend from 'nbd/util/extend';
 import Rule from './Rule';
+import Style from './Style';
 import css from '../util/css';
-import compat from '../util/detectScoped';
 import expression from '../util/expression';
-
-function genId() {
-  return '__focss__' + genId.i++;
-}
-genId.i = 1;
 
 function getVendorPrefixRegex() {
   var otherVendorPrefixesMap = {
@@ -24,55 +19,50 @@ function getVendorPrefixRegex() {
   return new RegExp(':-(' + otherVendorPrefixes.join('|') + ')-');
 }
 
+var hasDom = typeof window !== 'undefined';
 var arrayPropertyRegex = /%([^%]+?)%/g;
 var foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
 var filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i;
 var toggleSelectorPsuedoRegex = /:(hover|active)/;
 var toggleSelectorClassRegex = /\.(__[^ :]+)/;
-var otherPrefixRegex = getVendorPrefixRegex();
+var otherPrefixRegex = hasDom ? getVendorPrefixRegex() : new RegExp();
 var Engine;
 
 Engine = Class.extend({
-  init: function(root, scoped) {
-    var target = root || document.body;
-
+  init: function(root) {
     this.variables = {};
     this.rules = [];
     this.arrayRuleDescriptors = [];
     this.extensions = Object.create(this.extensions);
-    this.style = document.createElement('style');
     this.traces = {};
-
     this._toggleKeys = {};
     this._uuid = 0;
 
-    if (scoped) {
-      this.style.setAttribute('scoped', 'scoped');
-    }
-
-    target.insertBefore(this.style, target.firstChild);
-
-    if (!scoped || compat.scopeSupported || target === document.body) {
-      this._prefix = '';
-    }
-    else {
-      this._prefix = '#' + (root.id || (root.id = genId())) + ' ';
+    if (hasDom) {
+      this.style = new Style(root);
     }
   },
 
   destroy: function() {
     this.rules.length = 0;
-    this.style.parentNode.removeChild(this.style);
+
+    if (this.style) {
+      this.style.destroy();
+    }
   },
 
   process: function(payload) {
+    if (!hasDom) {
+      return;
+    }
+
     this._state = extend({}, payload, { focssVariables: this.variables });
     this._regenerateArrayRules();
     this.rules.forEach(this._process, this);
 
     //remove leftover rules
-    for (var i = this.cssRules.length; i > this.rules.length; i--) {
-      this.sheet.deleteRule(i - 1);
+    for (var i = this.style.cssRules.length; i > this.rules.length; i--) {
+      this.style.deleteRule(i - 1);
     }
   },
 
@@ -127,17 +117,17 @@ Engine = Class.extend({
 
   _process: function(rule, i) {
     var result = rule.process(this._getStateWithToggles(), this.extensions);
-    var selector = rule.getSelector(this._prefix);
+    var selector = rule.getSelector();
 
     // Selector has changed
-    if (selector !== this.cssRules[i].selectorText) {
-      this.sheet.deleteRule(i);
-      this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
+    if (selector !== this.style.cssRules[i].selectorText) {
+      this.style.deleteRule(i);
+      this.style.insertRule(rule.getSelector() + '{}', i);
       result = true;
     }
 
     if (result) {
-      css.apply(this.cssRules[i], rule.result);
+      css.apply(this.style.cssRules[i], rule.result);
     }
   },
 
@@ -147,7 +137,7 @@ Engine = Class.extend({
     // ignore rules that contain the other vendor prefix, as trying to
     // insert them into a stylesheet will cause an exception to be thrown
     // @see: http://stackoverflow.com/questions/23050001/insert-multiple-css-rules-into-a-stylesheet
-    if (otherPrefixRegex.test(selector)) {
+    if (hasDom && otherPrefixRegex.test(selector)) {
       return {
         artifacts: {}
       };
@@ -278,18 +268,21 @@ Engine = Class.extend({
     var rule = new this.constructor.Rule(selector, spec, arrayMemberExpr);
     var i = this.rules.length;
 
-    if (rule.isComputed) {
-      // Placeholder rule
-      this.sheet.insertRule(':root {}', i);
-    }
-    else {
-      this.sheet.insertRule(rule.getSelector(this._prefix) + '{}', i);
-    }
-    this.rules.push(rule);
+    if (hasDom) {
+      if (rule.isComputed) {
+        // Placeholder rule
+        this.style.insertRule(':root {}', i);
+      }
+      else {
+        this.style.insertRule(rule.getSelector() + '{}', i);
+      }
 
-    if (this._state) {
-      this._process(rule, i);
+      if (this._state) {
+        this._process(rule, i);
+      }
     }
+
+    this.rules.push(rule);
     return rule;
   },
 
@@ -299,14 +292,6 @@ Engine = Class.extend({
 }, {
   Rule: Rule,
   displayName: 'FocssEngine'
-})
-.mixin({
-  get sheet() {
-    return this.style[compat.sheet];
-  },
-  get cssRules() {
-    return this.sheet[compat.rules];
-  }
 });
 
 // ES6 future-proofing

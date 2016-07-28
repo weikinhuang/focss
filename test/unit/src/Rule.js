@@ -55,14 +55,12 @@ describe('Rule', function() {
       rule = new Rule('.static', {});
       rule.process();
       expect(rule.computedSelector).toBe('.static');
-      expect(rule.specificity).toBeDefined();
     });
 
     it('calculates computed selectors', function() {
       rule = new Rule('.${dynamic}', {});
       rule.process({ dynamic: 'foobar' });
       expect(rule.computedSelector).toBe('.foobar');
-      expect(rule.specificity).toBeDefined();
     });
 
     it('calculates result', function() {
@@ -117,16 +115,6 @@ describe('Rule', function() {
       var res = rule.getSelector();
       expect(res.split(',').length).toBe(3);
       expect(res).toEqual(rule.selector);
-    });
-
-    it('prefixes all selector parts', function() {
-      rule = new Rule('.foo1, .foo2, .foo3', {});
-      rule.process();
-      var res = rule.getSelector('bar').split(',');
-      expect(res.length).toBe(3);
-      expect(res[0]).toMatch(/^bar/);
-      expect(res[1]).toMatch(/^bar/);
-      expect(res[2]).toMatch(/^bar/);
     });
   });
 });
