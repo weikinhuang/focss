@@ -1,6 +1,5 @@
 /* global Symbol */
 import Class from 'nbd/Class';
-import extend from 'nbd/util/extend';
 import Rule from './Rule';
 import Style from './Style';
 import css from '../util/css';
@@ -56,7 +55,7 @@ Engine = Class.extend({
       return;
     }
 
-    this._state = extend({}, payload, { focssVariables: this.variables });
+    this._state = Object.assign({}, payload, { focssVariables: this.variables });
     this._regenerateArrayRules();
     this.rules.forEach(this._process, this);
 
@@ -70,12 +69,17 @@ Engine = Class.extend({
     var result = '';
     var i;
 
-    this._state = payload;
+    this._state = Object.assign({}, payload, { focssVariables: this.variables });
     this._regenerateArrayRules();
 
     for (i = 0; i < this.rules.length; i++) {
       this.rules[i].process(this._getStateWithToggles(), this.extensions);
-      result += css.toString(this.rules[i].selector, this.rules[i].result);
+
+      const selector = this.rules[i].isComputed ?
+        this.rules[i].computedSelector :
+        this.rules[i].selector;
+
+      result += css.toString(selector, this.rules[i].result);
     }
 
     return result;
@@ -157,7 +161,7 @@ Engine = Class.extend({
   },
 
   insertVars: function(spec) {
-    extend(this.variables, spec);
+    Object.assign(this.variables, spec);
   },
 
   _insertSingleSelector: function(selector, spec) {
@@ -203,7 +207,7 @@ Engine = Class.extend({
     var expr;
 
     while ((expr = this.constructor.Rule.computed.exec(selector)) !== null) {
-      extend(artifacts, expression.parse(expr[1]).artifacts);
+      Object.assign(artifacts, expression.parse(expr[1]).artifacts);
     }
 
     return artifacts;

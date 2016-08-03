@@ -1,11 +1,10 @@
 import Class from 'nbd/Class';
-import extend from 'nbd/util/extend';
 import Engine from './src/Engine';
 
 var Focss = Class.extend({
   init: function(root, extensions) {
     this.engine = new Engine(root);
-    extend(this.engine.extensions, extensions);
+    Object.assign(this.engine.extensions, extensions);
   },
 
   /**
@@ -19,7 +18,7 @@ var Focss = Class.extend({
       var artifacts = {};
       for (var s in selector) {
         if (selector.hasOwnProperty(s)) {
-          extend(artifacts, this.insert(s, selector[s]));
+          Object.assign(artifacts, this.insert(s, selector[s]));
         }
       }
       return artifacts;
