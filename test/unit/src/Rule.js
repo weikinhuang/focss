@@ -77,7 +77,7 @@ describe('Rule', function() {
       });
 
       var bar = jasmine.createSpy('extension').and.returnValue('baz');
-      rule.process({}, { bar: bar });
+      rule.process({}, { bar });
 
       expect(bar).toHaveBeenCalled();
       expect(rule.result).toEqual({ foo: 'baz' });
@@ -90,10 +90,10 @@ describe('Rule', function() {
 
       var bar = jasmine.createSpy('extension').and.returnValues('bar', 'baz');
 
-      rule.process({}, { bar: bar });
+      rule.process({}, { bar });
       expect(rule.result).toEqual({ foo: 'bar' });
 
-      rule.process({}, { bar: bar });
+      rule.process({}, { bar });
       expect(rule.result).toEqual({ foo: 'baz' });
     });
 
