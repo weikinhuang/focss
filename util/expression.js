@@ -1,5 +1,4 @@
 import jsep from 'jsep';
-import extend from 'nbd/util/extend';
 
 /**
  * AST tree parse/compilation
@@ -208,7 +207,7 @@ export default {
       }
 
       inner = this.parse(expr);
-      extend(artifacts, inner.artifacts);
+      Object.assign(artifacts, inner.artifacts);
 
       innerBody = inner.body;
       if (arrayMemberExpr) {

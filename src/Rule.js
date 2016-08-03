@@ -1,5 +1,4 @@
 import Class from 'nbd/Class';
-import extend from 'nbd/util/extend';
 import diff from 'nbd/util/diff';
 import expression from '../util/expression';
 
@@ -19,7 +18,7 @@ var Rule = Class.extend({
     }
     this.selector = normalizePseudoElement(selector);
     this.body = expression.compileSpec(spec, arrayMemberExpr);
-    this.artifacts = extend({}, this.body.artifacts);
+    this.artifacts = Object.assign({}, this.body.artifacts);
     this.isArrayRule = !!arrayMemberExpr;
 
     // Perform a while loop here because a computed selector can
@@ -27,7 +26,7 @@ var Rule = Class.extend({
     var expr;
     while ((expr = computed.exec(this.selector)) !== null) {
       this.isComputed = true;
-      extend(this.artifacts, expression.parse(expr[1]).artifacts);
+      Object.assign(this.artifacts, expression.parse(expr[1]).artifacts);
     }
   },
 

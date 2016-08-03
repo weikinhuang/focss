@@ -31,6 +31,7 @@
   "devDependencies": {
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.4",
+    "babel-polyfill": "^6.9.1",
     "babel-preset-behance": "^1.0.0",
     "babel-register": "^6.11.5",
     "eslint": "^2.12.0",

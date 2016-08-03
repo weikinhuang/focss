@@ -1,5 +1,4 @@
 import Engine from '../../../src/Engine';
-import extend from 'nbd/util/extend';
 
 describe('Engine', function() {
   beforeEach(function() {
@@ -43,7 +42,7 @@ describe('Engine', function() {
       var variables = {
         someVar: 'someValue'
       };
-      var expected = extend({}, payload, { focssVariables: variables });
+      var expected = Object.assign({}, payload, { focssVariables: variables });
       var rule;
 
       spyOn(Engine, 'Rule')
