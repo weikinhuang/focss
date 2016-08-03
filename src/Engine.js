@@ -70,12 +70,17 @@ Engine = Class.extend({
     var result = '';
     var i;
 
-    this._state = payload;
+    this._state = extend({}, payload, { focssVariables: this.variables });
     this._regenerateArrayRules();
 
     for (i = 0; i < this.rules.length; i++) {
       this.rules[i].process(this._getStateWithToggles(), this.extensions);
-      result += css.toString(this.rules[i].selector, this.rules[i].result);
+
+      const selector = this.rules[i].isComputed ?
+        this.rules[i].computedSelector :
+        this.rules[i].selector;
+
+      result += css.toString(selector, this.rules[i].result);
     }
 
     return result;

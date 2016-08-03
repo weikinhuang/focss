@@ -44,5 +44,19 @@ describe('toString', function() {
         ]
       })).toEqual('.bar[data-id="3"]{max-width:100px;}.bar[data-id="4"]{max-width:200px;}');
     });
+
+    it('when inserted rule uses variables', function() {
+      this._fox.insertVars({
+        class: 'foo',
+        bar: 'red'
+      });
+
+      this._fox.insert('.${focssVariables.class}', {
+        'max-width': 'width',
+        color: 'focssVariables.bar'
+      });
+
+      expect(this._fox.toString({ width: 100 })).toEqual('.foo{max-width:100px;color:red;}');
+    });
   });
 });
