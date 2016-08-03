@@ -28,7 +28,7 @@ var otherPrefixRegex = hasDom ? getVendorPrefixRegex() : new RegExp();
 var Engine;
 
 Engine = Class.extend({
-  init: function(root) {
+  init(root) {
     this.variables = {};
     this.rules = [];
     this.arrayRuleDescriptors = [];
@@ -42,7 +42,7 @@ Engine = Class.extend({
     }
   },
 
-  destroy: function() {
+  destroy() {
     this.rules.length = 0;
 
     if (this.style) {
@@ -50,7 +50,7 @@ Engine = Class.extend({
     }
   },
 
-  process: function(payload) {
+  process(payload) {
     if (!hasDom) {
       return;
     }
@@ -59,13 +59,13 @@ Engine = Class.extend({
     this._regenerateArrayRules();
     this.rules.forEach(this._process, this);
 
-    //remove leftover rules
+    // remove leftover rules
     for (var i = this.style.cssRules.length; i > this.rules.length; i--) {
       this.style.deleteRule(i - 1);
     }
   },
 
-  toString: function(payload) {
+  toString(payload) {
     var result = '';
     var i;
 
@@ -85,7 +85,7 @@ Engine = Class.extend({
     return result;
   },
 
-  toggleSelector: function(key, isToggled) {
+  toggleSelector(key, isToggled) {
     var isCurrentlyToggled = this._toggleKeys[key] || false;
     this._toggleKeys[key] = isToggled;
 
@@ -94,7 +94,7 @@ Engine = Class.extend({
     }
   },
 
-  _getToggleSelectorInfo: function(selector) {
+  _getToggleSelectorInfo(selector) {
     var toggleKeys = [];
     var self = this;
 
@@ -107,19 +107,19 @@ Engine = Class.extend({
     });
 
     return {
-      selector: selector,
-      toggleKeys: toggleKeys
+      selector,
+      toggleKeys
     };
   },
 
-  _getStateWithToggles: function() {
+  _getStateWithToggles() {
     var state = Object.create(this._state);
     state.__toggled__ = this._toggleKeys;
 
     return state;
   },
 
-  _process: function(rule, i) {
+  _process(rule, i) {
     var result = rule.process(this._getStateWithToggles(), this.extensions);
     var selector = rule.getSelector();
 
@@ -135,7 +135,7 @@ Engine = Class.extend({
     }
   },
 
-  insert: function(selector, spec) {
+  insert(selector, spec) {
     var expr;
 
     // ignore rules that contain the other vendor prefix, as trying to
@@ -160,11 +160,11 @@ Engine = Class.extend({
     return this._insertSingleSelector(selector, spec);
   },
 
-  insertVars: function(spec) {
+  insertVars(spec) {
     Object.assign(this.variables, spec);
   },
 
-  _insertSingleSelector: function(selector, spec) {
+  _insertSingleSelector(selector, spec) {
     var selectorInfo = this._getToggleSelectorInfo(selector);
     var rule = this._insert(selectorInfo.selector, spec);
 
@@ -173,13 +173,13 @@ Engine = Class.extend({
     return rule;
   },
 
-  _insertArrayDescriptor: function(selector, expr, spec, filterExpr) {
+  _insertArrayDescriptor(selector, expr, spec, filterExpr) {
     var toggleSelectorInfo = this._getToggleSelectorInfo(selector);
     var descriptor = {
       selector: toggleSelectorInfo.selector,
-      expr: expr,
-      spec: spec,
-      filterExpr: filterExpr,
+      expr,
+      spec,
+      filterExpr,
       toggleKeys: toggleSelectorInfo.toggleKeys,
       artifacts: this._getArtifactsFromSelector(toggleSelectorInfo.selector)
     };
@@ -192,7 +192,7 @@ Engine = Class.extend({
     return descriptor;
   },
 
-  _regenerateArrayRules: function() {
+  _regenerateArrayRules() {
     this.rules = this.rules.filter(function(rule) {
       return !rule.isArrayRule;
     }, this);
@@ -202,7 +202,7 @@ Engine = Class.extend({
     }, this);
   },
 
-  _getArtifactsFromSelector: function(selector) {
+  _getArtifactsFromSelector(selector) {
     var artifacts = {};
     var expr;
 
@@ -213,7 +213,7 @@ Engine = Class.extend({
     return artifacts;
   },
 
-  _generateRulesFromArrayRuleDescriptor: function(descriptor) {
+  _generateRulesFromArrayRuleDescriptor(descriptor) {
     var arrayDataFromState;
     var filterFunction;
 
@@ -251,7 +251,7 @@ Engine = Class.extend({
     }, this);
   },
 
-  _addTraces: function(rule, toggleKeys, prefix) {
+  _addTraces(rule, toggleKeys, prefix) {
     prefix = prefix || '';
 
     var artifactsPrefixed = {};
@@ -268,7 +268,7 @@ Engine = Class.extend({
     }, this);
   },
 
-  _insert: function(selector, spec, arrayMemberExpr) {
+  _insert(selector, spec, arrayMemberExpr) {
     var rule = new this.constructor.Rule(selector, spec, arrayMemberExpr);
     var i = this.rules.length;
 
@@ -291,10 +291,10 @@ Engine = Class.extend({
   },
 
   extensions: {
-    Math: Math
+    Math
   }
 }, {
-  Rule: Rule,
+  Rule,
   displayName: 'FocssEngine'
 });
 
@@ -303,7 +303,7 @@ if (typeof Symbol !== 'undefined' && Symbol.iterator) {
   Engine.prototype[Symbol.iterator] = function() {
     return {
       _keys: this.rules.slice(),
-      next: function() {
+      next() {
         var rule;
         if (rule = this._keys.shift()) {
           return {

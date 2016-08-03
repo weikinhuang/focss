@@ -12,7 +12,7 @@ function normalizePseudoElement(selector) {
 }
 
 var Rule = Class.extend({
-  init: function(selector, spec, arrayMemberExpr) {
+  init(selector, spec, arrayMemberExpr) {
     if (typeof selector !== 'string') {
       throw new TypeError('selector must be a string.');
     }
@@ -30,11 +30,11 @@ var Rule = Class.extend({
     }
   },
 
-  getSelector: function() {
+  getSelector() {
     return this.computedSelector || this.selector;
   },
 
-  process: function(data, extensions) {
+  process(data, extensions) {
     // First find out the new results
     this._process(data, extensions);
 
@@ -46,7 +46,7 @@ var Rule = Class.extend({
     return different ? this.result : null;
   },
 
-  _process: function(data, extensions) {
+  _process(data, extensions) {
     var selector = this.selector;
 
     if (this.isComputed) {
