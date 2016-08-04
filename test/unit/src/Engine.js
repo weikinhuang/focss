@@ -42,7 +42,7 @@ describe('Engine', function() {
       var variables = {
         someVar: 'someValue'
       };
-      var expected = Object.assign({}, payload, { focssVariables: variables });
+      var expected = Object.assign({}, payload, { __var: variables });
       var rule;
 
       spyOn(Engine, 'Rule')
@@ -58,16 +58,16 @@ describe('Engine', function() {
         foo: '.container',
         bar: 'red'
       });
-      this._engine.insert('${focssVariables.foo}', {
+      this._engine.insert('${__var.foo}', {
         width: 'dynamic',
-        color: 'focssVariables.bar'
+        color: '__var.bar'
       });
       this._engine.process({ dynamic: 'foobar' });
       expect(this._engine.rules[0].computedSelector).toBe('.container');
       expect(this._engine.rules[0].artifacts).toEqual({
         dynamic: true,
-        'focssVariables.foo': true,
-        'focssVariables.bar': true
+        '__var.foo': true,
+        '__var.bar': true
       });
     });
   });

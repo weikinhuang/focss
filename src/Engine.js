@@ -55,7 +55,7 @@ Engine = Class.extend({
       return;
     }
 
-    this._state = Object.assign({}, payload, { focssVariables: this.variables });
+    this._state = Object.assign({}, payload, { __var: this.variables });
     this._regenerateArrayRules();
     this.rules.forEach(this._process, this);
 
@@ -69,17 +69,12 @@ Engine = Class.extend({
     var result = '';
     var i;
 
-    this._state = Object.assign({}, payload, { focssVariables: this.variables });
+    this._state = Object.assign({}, payload, { __var: this.variables });
     this._regenerateArrayRules();
 
     for (i = 0; i < this.rules.length; i++) {
       this.rules[i].process(this._getStateWithToggles(), this.extensions);
-
-      const selector = this.rules[i].isComputed ?
-        this.rules[i].computedSelector :
-        this.rules[i].selector;
-
-      result += css.toString(selector, this.rules[i].result);
+      result += css.toString(this.rules[i].getSelector(), this.rules[i].result);
     }
 
     return result;
