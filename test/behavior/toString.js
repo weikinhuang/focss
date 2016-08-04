@@ -51,9 +51,9 @@ describe('toString', function() {
         bar: 'red'
       });
 
-      this._fox.insert('.${focssVariables.class}', {
+      this._fox.insert('.${__var.class}', {
         'max-width': 'width',
-        color: 'focssVariables.bar'
+        color: '__var.bar'
       });
 
       expect(this._fox.toString({ width: 100 })).toEqual('.foo{max-width:100px;color:red;}');
