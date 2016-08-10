@@ -196,5 +196,32 @@ describe('Engine', function() {
       var rule = this._engine.insert('.selector', {});
       expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
     });
+
+    describe('media queries', function() {
+      beforeEach(function() {
+        this._engine.insert('@media screen and (max-width: 300px)', {
+          '.class1': {
+            width: 'foo',
+            color: 'bar'
+          },
+          '%forEach(baz, .class2[data-id="%id%"])': {
+            'max-width': 'qux'
+          }
+        });
+      });
+
+      it('inserts a media query rule', function() {
+        expect(this._engine.mediaQueries[0]).toBeDefined();
+        expect(this._engine.mediaQueries.length).toEqual(1);
+      });
+
+      it('contains the correct artifacts', function() {
+        expect(this._engine.mediaQueries[0].artifacts).toEqual({
+          foo: true,
+          bar: true,
+          baz: true
+        });
+      });
+    });
   });
 });

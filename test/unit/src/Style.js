@@ -18,7 +18,7 @@ describe('Style', function() {
     expect(() => {
       style = new Style();
     }).not.toThrow();
-    expect(this._style).toBeDefined();
+    expect(style).toBeDefined();
 
     style.destroy();
   });

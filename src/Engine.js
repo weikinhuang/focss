@@ -22,6 +22,7 @@ var hasDom = typeof window !== 'undefined';
 var arrayPropertyRegex = /%([^%]+?)%/g;
 var foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
 var filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i;
+var mediaQueryRegex = /^@media/;
 var toggleSelectorPsuedoRegex = /:(hover|active)/;
 var toggleSelectorClassRegex = /\.(__[^ :]+)/;
 var otherPrefixRegex = hasDom ? getVendorPrefixRegex() : new RegExp();
@@ -32,6 +33,7 @@ Engine = Class.extend({
     this.variables = {};
     this.rules = [];
     this.arrayRuleDescriptors = [];
+    this.mediaQueries = [];
     this.extensions = Object.create(this.extensions);
     this.traces = {};
     this._toggleKeys = {};
@@ -66,18 +68,30 @@ Engine = Class.extend({
   },
 
   toString(payload) {
-    var result = '';
-    var i;
+    let result = '';
+    let mediaQueryResult = '';
 
     this._state = Object.assign({}, payload, { __var: this.variables });
     this._regenerateArrayRules();
 
-    for (i = 0; i < this.rules.length; i++) {
-      this.rules[i].process(this._getStateWithToggles(), this.extensions);
-      result += css.toString(this.rules[i].getSelector(), this.rules[i].result);
+    for (let rule of this.rules) {
+      rule.process(this._getStateWithToggles(), this.extensions);
+      result += css.toString(rule.getSelector(), rule.result);
     }
 
-    return result;
+    for (let query of this.mediaQueries) {
+      this._regenerateArrayRules(query);
+      mediaQueryResult += `${query.selector}{`;
+
+      for (let rule of query.rules) {
+        rule.process(this._getStateWithToggles(), this.extensions);
+        mediaQueryResult += css.toString(rule.getSelector(), rule.result);
+      }
+
+      mediaQueryResult += '}';
+    }
+
+    return result + mediaQueryResult;
   },
 
   toggleSelector(key, isToggled) {
@@ -131,6 +145,14 @@ Engine = Class.extend({
   },
 
   insert(selector, spec) {
+    if (mediaQueryRegex.test(selector)) {
+      return this._insertMediaQuery(selector, spec);
+    }
+
+    return this._insertByType(selector, spec);
+  },
+
+  _insertByType(selector, spec, rulesContext = this) {
     var expr;
 
     // ignore rules that contain the other vendor prefix, as trying to
@@ -144,31 +166,48 @@ Engine = Class.extend({
 
     expr = foreachSelectorRegex.exec(selector);
     if (expr !== null) {
-      return this._insertArrayDescriptor(expr[2], expr[1], spec);
+      return this._insertArrayDescriptor(expr[2], expr[1], spec, null, rulesContext);
     }
 
     expr = filterEachSelectorRegex.exec(selector);
     if (expr !== null) {
-      return this._insertArrayDescriptor(expr[3], expr[1], spec, expr[2]);
+      return this._insertArrayDescriptor(expr[3], expr[1], spec, expr[2], rulesContext);
     }
 
-    return this._insertSingleSelector(selector, spec);
+    return this._insertSingleSelector(selector, spec, rulesContext);
   },
 
   insertVars(spec) {
     Object.assign(this.variables, spec);
   },
 
-  _insertSingleSelector(selector, spec) {
+  _insertSingleSelector(selector, spec, rulesContext) {
     var selectorInfo = this._getToggleSelectorInfo(selector);
-    var rule = this._insert(selectorInfo.selector, spec);
+    var rule = this._insertRule(selectorInfo.selector, spec, null, rulesContext.rules);
 
     this._addTraces(rule, selectorInfo.toggleKeys);
 
     return rule;
   },
 
-  _insertArrayDescriptor(selector, expr, spec, filterExpr) {
+  _insertMediaQuery(selector, spec) {
+    const descriptor = {
+      selector,
+      rules: [],
+      arrayRuleDescriptors: [],
+      artifacts: {}
+    };
+
+    for (let rule in spec) {
+      let { artifacts } = this._insertByType(rule, spec[rule], descriptor);
+      Object.assign(descriptor.artifacts, artifacts);
+    }
+    this.mediaQueries.push(descriptor);
+
+    return descriptor;
+  },
+
+  _insertArrayDescriptor(selector, expr, spec, filterExpr, rulesContext) {
     var toggleSelectorInfo = this._getToggleSelectorInfo(selector);
     var descriptor = {
       selector: toggleSelectorInfo.selector,
@@ -181,19 +220,19 @@ Engine = Class.extend({
 
     descriptor.artifacts[expr] = true;
 
-    this._generateRulesFromArrayRuleDescriptor(descriptor);
-    this.arrayRuleDescriptors.push(descriptor);
+    this._generateRulesFromArrayRuleDescriptor(descriptor, rulesContext);
+    rulesContext.arrayRuleDescriptors.push(descriptor);
 
     return descriptor;
   },
 
-  _regenerateArrayRules() {
-    this.rules = this.rules.filter(function(rule) {
+  _regenerateArrayRules(rulesContext = this) {
+    rulesContext.rules = rulesContext.rules.filter(function(rule) {
       return !rule.isArrayRule;
     }, this);
 
-    this.arrayRuleDescriptors.forEach(function(descriptor) {
-      this._generateRulesFromArrayRuleDescriptor(descriptor);
+    rulesContext.arrayRuleDescriptors.forEach(function(descriptor) {
+      this._generateRulesFromArrayRuleDescriptor(descriptor, rulesContext);
     }, this);
   },
 
@@ -208,7 +247,7 @@ Engine = Class.extend({
     return artifacts;
   },
 
-  _generateRulesFromArrayRuleDescriptor(descriptor) {
+  _generateRulesFromArrayRuleDescriptor(descriptor, rulesContext) {
     var arrayDataFromState;
     var filterFunction;
 
@@ -222,7 +261,7 @@ Engine = Class.extend({
     arrayDataFromState = expression.compile(descriptor.expr)(this._state, this._extensions);
     arrayDataFromState.forEach(function(item, index) {
       // Filtering must happen here instead of a separate filter step to ensure that
-      // `index` is consistent between the data from process and the index provided to _insert below
+      // `index` is consistent between the data from process and the index provided to _insertRule below
       if (filterFunction && !filterFunction(item)) {
         return;
       }
@@ -241,7 +280,7 @@ Engine = Class.extend({
         return newToggleKey;
       });
 
-      rule = this._insert(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']');
+      rule = this._insertRule(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']', rulesContext.rules);
       this._addTraces(rule, newToggleKeys, descriptor.expr + '.' + index + '.');
     }, this);
   },
@@ -263,7 +302,7 @@ Engine = Class.extend({
     }, this);
   },
 
-  _insert(selector, spec, arrayMemberExpr) {
+  _insertRule(selector, spec, arrayMemberExpr, rulesCache) {
     var rule = new this.constructor.Rule(selector, spec, arrayMemberExpr);
     var i = this.rules.length;
 
@@ -281,7 +320,7 @@ Engine = Class.extend({
       }
     }
 
-    this.rules.push(rule);
+    rulesCache.push(rule);
     return rule;
   },
 
