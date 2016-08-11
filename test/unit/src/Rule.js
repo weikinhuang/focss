@@ -1,15 +1,21 @@
 import Rule from '../../../src/Rule';
 
 describe('Rule', function() {
-  var rule;
+  let rule;
   it('is a constructor', function() {
-    rule = new Rule('section', {});
+    rule = new Rule({
+      selector: 'section',
+      spec: {}
+    });
 
     expect(rule).toBeDefined();
   });
 
   it('normalizes CSS2 pseudo-element selectors', function() {
-    rule = new Rule('section:after, section:before, section:first-line, section:first-letter', {});
+    rule = new Rule({
+      selector: 'section:after, section:before, section:first-line, section:first-letter',
+      spec: {}
+    });
 
     expect(rule.selector).toBe('section::after, section::before, section::first-line, section::first-letter');
   });
@@ -20,17 +26,92 @@ describe('Rule', function() {
     }).toThrow();
 
     expect(function() {
-      rule = new Rule([], {});
+      rule = new Rule({
+        selector: [],
+        spec: {}
+      });
     }).toThrow();
 
     expect(function() {
-      rule = new Rule('', {});
+      rule = new Rule({
+        selector: '',
+        spec: {}
+      });
     }).not.toThrow();
+  });
+
+  describe('#init', function() {
+    it('does not add traces if no toggle keys are provided', function() {
+      rule = new Rule({
+        selector: '.foo',
+        spec: {}
+      });
+
+      expect(rule.traces).toBeUndefined();
+    });
+
+    describe('adds traces when', function() {
+      it('is given a single toggleKey without a togglePrefix', function() {
+        rule = new Rule({
+          selector: '.foo:hover',
+          spec: {
+            width: 'bar'
+          },
+          toggleKeys: ['hover1']
+        });
+
+        expect(rule.traces).toEqual({
+          hover1: {
+            bar: true
+          }
+        });
+      });
+
+      it('is given a single toggleKey with a togglePrefix', function() {
+        rule = new Rule({
+          selector: '.foo:hover',
+          spec: {
+            width: 'bar'
+          },
+          arrayMemberExpr: 'baz[0]',
+          toggleKeys: ['hover1'],
+          togglePrefix: 'baz.0.'
+        });
+
+        expect(rule.traces).toEqual({
+          hover1: {
+            'baz.0.bar': true
+          }
+        });
+      });
+
+      it('is given multiple toggleKeys', function() {
+        rule = new Rule({
+          selector: '.foo:hover .__fake',
+          spec: {
+            width: 'bar'
+          },
+          toggleKeys: ['hover1', '__fake2']
+        });
+
+        expect(rule.traces).toEqual({
+          hover1: {
+            bar: true
+          },
+          __fake2: {
+            bar: true
+          }
+        });
+      });
+    });
   });
 
   it('accepts expressions in selectors', function() {
     expect(function() {
-      rule = new Rule('#${foo}', {});
+      rule = new Rule({
+        selector: '#${foo}',
+        spec: {}
+      });
     }).not.toThrow();
 
     expect(rule.artifacts.foo).toBeDefined();
@@ -38,8 +119,11 @@ describe('Rule', function() {
   });
 
   it('compiles body into a function', function() {
-    rule = new Rule('', {
-      marco: 'polo'
+    rule = new Rule({
+      selector: '',
+      spec: {
+        marco: 'polo'
+      }
     });
 
     expect(rule.body).toEqual(jasmine.any(Function));
@@ -52,28 +136,40 @@ describe('Rule', function() {
 
   describe('#process()', function() {
     it('calculates static selectors', function() {
-      rule = new Rule('.static', {});
+      rule = new Rule({
+        selector: '.static',
+        spec: {}
+      });
       rule.process();
       expect(rule.computedSelector).toBe('.static');
     });
 
     it('calculates computed selectors', function() {
-      rule = new Rule('.${dynamic}', {});
+      rule = new Rule({
+        selector: '.${dynamic}',
+        spec: {}
+      });
       rule.process({ dynamic: 'foobar' });
       expect(rule.computedSelector).toBe('.foobar');
     });
 
     it('calculates result', function() {
-      rule = new Rule('.static', {
-        foo: 'bar'
+      rule = new Rule({
+        selector: '.static',
+        spec: {
+          foo: 'bar'
+        }
       });
       rule.process({ bar: 'baz' });
       expect(rule.result).toEqual({ foo: 'baz' });
     });
 
     it('calculates result with extensions', function() {
-      rule = new Rule('.extended', {
-        foo: 'bar()'
+      rule = new Rule({
+        selector: '.extended',
+        spec: {
+          foo: 'bar()'
+        }
       });
 
       var bar = jasmine.createSpy('extension').and.returnValue('baz');
@@ -84,8 +180,11 @@ describe('Rule', function() {
     });
 
     it('calculates non-idempotent extensions', function() {
-      rule = new Rule('.extended', {
-        foo: 'bar()'
+      rule = new Rule({
+        selector: '.extended',
+        spec: {
+          foo: 'bar()'
+        }
       });
 
       var bar = jasmine.createSpy('extension').and.returnValues('bar', 'baz');
@@ -98,8 +197,11 @@ describe('Rule', function() {
     });
 
     it('ignores missing extensions', function() {
-      rule = new Rule('.extended', {
-        foo: 'bar()'
+      rule = new Rule({
+        selector: '.extended',
+        spec: {
+          foo: 'bar()'
+        }
       });
       rule.process({});
 
@@ -109,7 +211,10 @@ describe('Rule', function() {
 
   describe('#getSelector()', function() {
     it('returns all selector parts', function() {
-      rule = new Rule('.foo1,.foo2,.foo3', {});
+      rule = new Rule({
+        selector: '.foo1,.foo2,.foo3',
+        spec: {}
+      });
       rule.process();
 
       var res = rule.getSelector();

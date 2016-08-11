@@ -181,13 +181,14 @@ Engine = Class.extend({
     Object.assign(this.variables, spec);
   },
 
-  _insertSingleSelector(selector, spec, rulesContext) {
-    var selectorInfo = this._getToggleSelectorInfo(selector);
-    var rule = this._insertRule(selectorInfo.selector, spec, null, rulesContext.rules);
+  _insertSingleSelector(insertedSelector, spec, ruleContext) {
+    const { selector, toggleKeys } = this._getToggleSelectorInfo(insertedSelector);
 
-    this._addTraces(rule, selectorInfo.toggleKeys);
-
-    return rule;
+    return this._insertRule({
+      selector,
+      spec,
+      toggleKeys
+    }, ruleContext);
   },
 
   _insertMediaQuery(selector, spec) {
@@ -247,9 +248,9 @@ Engine = Class.extend({
     return artifacts;
   },
 
-  _generateRulesFromArrayRuleDescriptor(descriptor, rulesContext) {
-    var arrayDataFromState;
-    var filterFunction;
+  _generateRulesFromArrayRuleDescriptor(descriptor, ruleContext) {
+    let arrayDataFromState;
+    let filterFunction;
 
     // occurs when .insert is called before .process
     if (!this._state) {
@@ -259,52 +260,54 @@ Engine = Class.extend({
     filterFunction = descriptor.filterExpr ? expression.compile(descriptor.filterExpr) : false;
 
     arrayDataFromState = expression.compile(descriptor.expr)(this._state, this._extensions);
-    arrayDataFromState.forEach(function(item, index) {
+    arrayDataFromState.forEach((item, index) => {
+      let { selector, spec, toggleKeys } = descriptor;
+
       // Filtering must happen here instead of a separate filter step to ensure that
       // `index` is consistent between the data from process and the index provided to _insertRule below
       if (filterFunction && !filterFunction(item)) {
         return;
       }
 
-      var toggleSuffix = '';
-      var selectorForItem = descriptor.selector.replace(arrayPropertyRegex, function(match, column) {
+      let toggleSuffix = '';
+      selector = selector.replace(arrayPropertyRegex, (match, column) => {
         toggleSuffix += '_' + column + '_' + item[column];
         return item[column];
       });
-      var newToggleKeys;
-      var rule;
 
-      newToggleKeys = descriptor.toggleKeys.map(function(toggleKey) {
-        var newToggleKey = toggleKey + toggleSuffix;
-        selectorForItem = selectorForItem.replace(toggleKey + "']?", newToggleKey + "']?");
+      toggleKeys = toggleKeys.map((toggleKey) => {
+        const newToggleKey = toggleKey + toggleSuffix;
+        selector = selector.replace(`${toggleKey}']?`, `${newToggleKey}']?`);
         return newToggleKey;
       });
 
-      rule = this._insertRule(selectorForItem, descriptor.spec, descriptor.expr + '[' + index + ']', rulesContext.rules);
-      this._addTraces(rule, newToggleKeys, descriptor.expr + '.' + index + '.');
-    }, this);
+      this._insertRule({
+        selector,
+        spec,
+        toggleKeys,
+        arrayMemberExpr: `${descriptor.expr}[${index}]`,
+        togglePrefix: `${descriptor.expr}.${index}.`
+      }, ruleContext);
+    });
   },
 
-  _addTraces(rule, toggleKeys, prefix) {
-    prefix = prefix || '';
+  getTraces() {
+    let traces = {};
 
-    var artifactsPrefixed = {};
-    var key;
-
-    for (key in rule.artifacts) {
-      if (key.indexOf('__toggled__') !== 0) {
-        artifactsPrefixed[prefix + key] = rule.artifacts[key];
+    for (let rule of this.rules) {
+      for (let key in rule.traces) {
+        if (rule.traces.hasOwnProperty(key)) {
+          traces[key] = rule.traces[key];
+        }
       }
     }
 
-    toggleKeys.forEach(function(key) {
-      this.traces[key] = artifactsPrefixed;
-    }, this);
+    return traces;
   },
 
-  _insertRule(selector, spec, arrayMemberExpr, rulesCache) {
-    var rule = new this.constructor.Rule(selector, spec, arrayMemberExpr);
-    var i = this.rules.length;
+  _insertRule(ruleData, { rules }) {
+    const rule = new this.constructor.Rule(ruleData);
+    const i = this.rules.length;
 
     if (hasDom) {
       if (rule.isComputed) {
@@ -320,7 +323,7 @@ Engine = Class.extend({
       }
     }
 
-    rulesCache.push(rule);
+    rules.push(rule);
     return rule;
   },
 

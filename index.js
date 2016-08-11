@@ -69,7 +69,7 @@ var Focss = Class.extend({
 })
 .mixin({
   get traces() {
-    return this.engine.traces;
+    return this.engine.getTraces();
   }
 });
 
