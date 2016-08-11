@@ -328,7 +328,8 @@ Engine = Class.extend({
   },
 
   extensions: {
-    Math
+    Math,
+    Number
   }
 }, {
   Rule,
