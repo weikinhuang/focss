@@ -17,15 +17,6 @@ describe('dynamic rules', function() {
   });
 
   describe('engine.arrayRuleDescriptors', function() {
-    beforeEach(function() {
-      fox.process({
-        foo: [
-          { id: 3, width: 100 },
-          { id: 4, width: 200 }
-        ]
-      });
-    });
-
     it('forEach contains the correct artifacts', function() {
       fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
         'max-width': 'width'
@@ -63,34 +54,15 @@ describe('dynamic rules', function() {
         expect(artifacts).toEqual({ foo: true });
       });
 
-      it('evaluates the selector when process is called before insert', function() {
-        var artifacts;
-
-        fox.process({
-          foo: [
-            { id: 3, width: 100 },
-            { id: 4, width: 200 }
-          ]
-        });
-        artifacts = fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
+      it('evaluates the selector multiple times when process is called multiple times', function() {
+        const artifacts = fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
           'max-width': 'width'
         });
-
-        expect(css(this._el, 'max-width')).toBe('100px');
-        expect(css(this._el2, 'max-width')).toBe('200px');
-        expect(artifacts).toEqual({ foo: true });
-      });
-
-      it('evaluates the selector multiple times when process is called multiple times', function() {
-        var artifacts;
 
         fox.process({
           foo: [
             { id: 3, width: 100 }
           ]
-        });
-        artifacts = fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
-          'max-width': 'width'
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -312,34 +284,15 @@ describe('dynamic rules', function() {
         expect(artifacts).toEqual({ foo: true });
       });
 
-      it('evaluates the selector when process is called before insert', function() {
-        var artifacts;
-
-        fox.process({
-          foo: [
-            { id: 3, width: 100 },
-            { id: 4, width: 200 }
-          ]
-        });
-        artifacts = fox.insert('%filterEach(foo, true, .bar[data-id="%id%"])', {
+      it('evaluates the selector multiple times when process is called multiple times', function() {
+        const artifacts = fox.insert('%filterEach(foo, true, .bar[data-id="%id%"])', {
           'max-width': 'width'
         });
-
-        expect(css(this._el, 'max-width')).toBe('100px');
-        expect(css(this._el2, 'max-width')).toBe('200px');
-        expect(artifacts).toEqual({ foo: true });
-      });
-
-      it('evaluates the selector multiple times when process is called multiple times', function() {
-        var artifacts;
 
         fox.process({
           foo: [
             { id: 3, width: 100 }
           ]
-        });
-        artifacts = fox.insert('%filterEach(foo, true, .bar[data-id="%id%"])', {
-          'max-width': 'width'
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -401,29 +354,6 @@ describe('dynamic rules', function() {
             { id: 4, type: 'form', width: 200 },
             { id: 5, type: 'form', width: 300 }
           ]
-        });
-
-        expect(css(this._el, 'max-width')).toBe('100px');
-        expect(css(this._el2, 'max-width')).toBe('200px');
-        expect(css(this._el3, 'max-width')).toBe('none');
-        expect(artifacts).toEqual({ foo: true, classPrefix: true, classSuffix: true });
-      });
-
-      it('can evaluate selector that has a computed target selector when insert is called after process', function() {
-        var artifacts;
-
-        fox.process({
-          classPrefix: 'b',
-          classSuffix: 'ar',
-          foo: [
-            { id: 3, type: 'form', width: 100 },
-            { id: 4, type: 'form', width: 200 },
-            { id: 5, type: 'form', width: 300 }
-          ]
-        });
-
-        artifacts = fox.insert('%filterEach(foo, type === "form", .${ classPrefix + classSuffix }[data-id="%id%"])', {
-          'max-width': 'width'
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -506,10 +436,10 @@ describe('dynamic rules', function() {
       var el = affix('div.bar');
       var artifacts;
 
-      fox.process({ foo: 'bar', width: 100 });
       artifacts = fox.insert('.${foo}', {
         'max-width': 'width'
       });
+      fox.process({ foo: 'bar', width: 100 });
 
       expect(css(el, 'max-width')).toBe('100px');
       expect(artifacts).toEqual({ foo: true, width: true });
@@ -519,10 +449,10 @@ describe('dynamic rules', function() {
       var el = affix('div.bar');
       var artifacts;
 
-      fox.process({ foo: { baz: 'bar' }, width: 100 });
       artifacts = fox.insert('.${foo.baz}', {
         'max-width': 'width'
       });
+      fox.process({ foo: { baz: 'bar' }, width: 100 });
 
       expect(css(el, 'max-width')).toBe('100px');
       expect(artifacts).toEqual({ width: true, 'foo.baz': true });
@@ -532,10 +462,10 @@ describe('dynamic rules', function() {
       var el = affix('div.bar');
       var artifacts;
 
-      fox.process({ foo: 'ba', baz: 'r', width: 100 });
       artifacts = fox.insert('.${foo}${baz}', {
         'max-width': 'width'
       });
+      fox.process({ foo: 'ba', baz: 'r', width: 100 });
 
       expect(css(el, 'max-width')).toBe('100px');
       expect(artifacts).toEqual({ foo: true, baz: true, width: true });
@@ -573,17 +503,18 @@ describe('dynamic rules', function() {
       fox.insert('.bar', {
         'max-width': 'width'
       });
-      fox.process({ width: 100 });
     });
 
     // Stuff that depends on MutationObserver are very tricky to time
     it('applies styles to new elements', function() {
       var el = affix('.bar');
+      fox.process({ width: 100 });
       expect(css(el, 'max-width')).toBe('100px');
     });
 
     it('adds element styles when their attributes change', function() {
       var el = affix('.baz');
+      fox.process({ width: 100 });
       expect(css(el, 'max-width')).toBe('none');
       el.addClass('bar');
       expect(css(el, 'max-width')).toBe('100px');
@@ -591,6 +522,7 @@ describe('dynamic rules', function() {
 
     it('removes element styles when their attributes change', function() {
       var el = affix('.bar');
+      fox.process({ width: 100 });
       expect(css(el, 'max-width')).toBe('100px');
       el.removeClass('bar');
       expect(css(el, 'max-width')).toBe('none');
@@ -598,6 +530,7 @@ describe('dynamic rules', function() {
 
     it('affects descendants when ancestors\' attributes change', function() {
       fox.insert('.bar .stool', { 'max-height': 'width' });
+      fox.process({ width: 100 });
 
       var el = affix('.baz .stool');
       var stool = el.find('.stool');

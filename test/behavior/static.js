@@ -26,24 +26,22 @@ function insertSpecs(selector) {
     expect($(selector).css('max-width')).toBe('100px');
   });
 
-  it(selector + ' affects existing elements with newly inserted rule', function() {
-    fox.process({ width: 100 });
-
+  it(selector + ' affects existing elements with newly inserted and processed rule', function() {
     affix(selector);
 
     fox.insert(selector, {
       'max-width': 'width'
     });
+    fox.process({ width: 100 });
 
     expect($(selector).css('max-width')).toBe('100px');
   });
 
-  it(selector + ' affects new elements with newly inserted rule', function() {
-    fox.process({ width: 100 });
-
+  it(selector + ' affects new elements with newly inserted and processed rule', function() {
     fox.insert(selector, {
       'max-width': 'width'
     });
+    fox.process({ width: 100 });
 
     affix(selector);
 

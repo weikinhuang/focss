@@ -317,10 +317,6 @@ Engine = Class.extend({
       else {
         this.style.insertRule(rule.getSelector() + '{}', i);
       }
-
-      if (this._state) {
-        this._process(rule, i);
-      }
     }
 
     rules.push(rule);
