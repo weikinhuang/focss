@@ -185,18 +185,6 @@ describe('Engine', function() {
       expect(rule).toEqual(jasmine.any(Engine.Rule));
     });
 
-    it('processes last process state', function() {
-      var payload = {
-        foo: 'bar'
-      };
-      this._engine.process(payload);
-
-      spyOn(Engine, 'Rule')
-      .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
-      var rule = this._engine.insert('.selector', {});
-      expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
-    });
-
     describe('media queries', function() {
       beforeEach(function() {
         this._engine.insert('@media screen and (max-width: 300px)', {

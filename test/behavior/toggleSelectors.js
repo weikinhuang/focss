@@ -15,18 +15,15 @@ describe('toggleSelectors rules', function() {
   });
 
   describe('for normal selectors', function() {
-    beforeEach(function() {
-      this._fox.process({
-        width: 20,
-        foo: 'foo'
-      });
-    });
-
     describe('with a single psuedo selector', function() {
       beforeEach(function() {
         this._el = affix('div.bar');
         this._fox.insert('.bar:hover', {
           'max-width': 'width'
+        });
+        this._fox.process({
+          width: 20,
+          foo: 'foo'
         });
       });
 
@@ -55,6 +52,10 @@ describe('toggleSelectors rules', function() {
         this._fox.insert('.bar:hover, .bar:active', {
           'max-width': 'width'
         });
+        this._fox.process({
+          width: 20,
+          foo: 'foo'
+        });
       });
 
       it('creates a trace linking the selector to the specs modifying it', function() {
@@ -82,6 +83,10 @@ describe('toggleSelectors rules', function() {
         this._fox.insert('.bar.__sent', {
           'max-width': 'width'
         });
+        this._fox.process({
+          width: 20,
+          foo: 'foo'
+        });
       });
 
       it('creates a trace linking the selector to the specs modifying it', function() {
@@ -108,6 +113,10 @@ describe('toggleSelectors rules', function() {
         this._el = affix('div.bar.__sent');
         this._fox.insert('.bar.__sent:before', {
           'max-width': 'width'
+        });
+        this._fox.process({
+          width: 20,
+          foo: 'foo'
         });
       });
 
