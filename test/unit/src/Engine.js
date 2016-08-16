@@ -61,8 +61,8 @@ describe('Engine', function() {
         color: '__var.bar'
       });
       this._engine.process({ dynamic: 'foobar' });
-      expect(this._engine.rules[0].computedSelector).toBe('.container');
-      expect(this._engine.rules[0].artifacts).toEqual({
+      expect(this._engine.rules.getRules()[0].computedSelector).toBe('.container');
+      expect(this._engine.rules.getRules()[0].artifacts).toEqual({
         dynamic: true,
         '__var.foo': true,
         '__var.bar': true
@@ -197,12 +197,12 @@ describe('Engine', function() {
       });
 
       it('inserts a media query rule', function() {
-        expect(this._engine.mediaQueries[0]).toBeDefined();
-        expect(this._engine.mediaQueries.length).toEqual(1);
+        expect(this._engine.rules.getMediaQueries()[0]).toBeDefined();
+        expect(this._engine.rules.getMediaQueries().length).toEqual(1);
       });
 
       it('contains the correct artifacts', function() {
-        expect(this._engine.mediaQueries[0].artifacts).toEqual({
+        expect(this._engine.rules.getMediaQueries()[0].artifacts).toEqual({
           foo: true,
           bar: true,
           baz: true

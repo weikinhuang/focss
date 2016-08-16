@@ -68,6 +68,14 @@ var Focss = Class.extend({
   displayName: 'Focss'
 })
 .mixin({
+  get rules() {
+    return this.engine.getRules();
+  },
+
+  get arrayRuleDescriptors() {
+    return this.engine.getArrayRuleDescriptors();
+  },
+
   get traces() {
     return this.engine.getTraces();
   }
