@@ -143,19 +143,19 @@ describe('toggleSelectors rules', function() {
       this._el = affix('div.bar[data-id="-1"]');
       this._el2 = affix('div.bar[data-id="4"]');
       this._el3 = affix('div.bar[data-id="5"]');
-      this._fox.process({
-        foo: [
-          { id: -1, width: 100 },
-          { id: 4, width: 200 },
-          { id: 5, width: 300 }
-        ]
-      });
     });
 
     describe('with a forEach selector', function() {
       beforeEach(function() {
         this._fox.insert('%forEach(foo, .bar[data-id="%id%"]:hover)', {
           'max-width': 'width'
+        });
+        this._fox.process({
+          foo: [
+            { id: -1, width: 100 },
+            { id: 4, width: 200 },
+            { id: 5, width: 300 }
+          ]
         });
       });
 

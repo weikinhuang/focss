@@ -241,7 +241,7 @@ Engine = Class.extend({
     var artifacts = {};
     var expr;
 
-    while ((expr = this.constructor.Rule.computed.exec(selector)) !== null) {
+    while ((expr = Rule.computed.exec(selector)) !== null) {
       Object.assign(artifacts, expression.parse(expr[1]).artifacts);
     }
 
@@ -306,7 +306,7 @@ Engine = Class.extend({
   },
 
   _insertRule(ruleData, { rules }) {
-    const rule = new this.constructor.Rule(ruleData);
+    const rule = new Rule(ruleData);
     const i = this.rules.length;
 
     if (hasDom) {
@@ -328,7 +328,6 @@ Engine = Class.extend({
     Number
   }
 }, {
-  Rule,
   displayName: 'FocssEngine'
 });
 

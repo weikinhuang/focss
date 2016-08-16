@@ -1,4 +1,5 @@
 import Engine from '../../../src/Engine';
+import Rule from '../../../src/Rule';
 
 describe('Engine', function() {
   beforeEach(function() {
@@ -24,32 +25,29 @@ describe('Engine', function() {
 
   describe('#process()', function() {
     it('runs individual rule.process()', function() {
-      spyOn(Engine, 'Rule')
-      .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
-
-      var payload = {
+      spyOn(Rule.prototype, 'process');
+      const payload = {
         foo: 'bar'
       };
-      var rule = this._engine.insert('selector', {});
+      const rule = this._engine.insert('selector', {});
       this._engine.process(payload);
       expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(payload), jasmine.anything());
     });
 
     it('merges variable data with user data', function() {
-      var payload = {
+      spyOn(Rule.prototype, 'process');
+      const payload = {
         foo: 'bar'
       };
-      var variables = {
+      const variables = {
         someVar: 'someValue'
       };
-      var expected = Object.assign({}, payload, { __var: variables });
-      var rule;
+      const expected = Object.assign({}, payload, { __var: variables });
 
-      spyOn(Engine, 'Rule')
-      .and.returnValue(jasmine.createSpyObj('rule', ['process', 'getSelector']));
       this._engine.insertVars(variables);
-      rule = this._engine.insert('selector', {});
+      const rule = this._engine.insert('selector', {});
       this._engine.process(payload);
+
       expect(rule.process).toHaveBeenCalledWith(jasmine.objectContaining(expected), jasmine.anything());
     });
 
@@ -180,9 +178,9 @@ describe('Engine', function() {
 
   describe('#insert()', function() {
     it('inserts a new Rule', function() {
-      var rule = this._engine.insert('.selector', {});
+      const rule = this._engine.insert('.selector', {});
       expect(rule).toBeDefined();
-      expect(rule).toEqual(jasmine.any(Engine.Rule));
+      expect(rule).toEqual(jasmine.any(Rule));
     });
 
     describe('media queries', function() {
