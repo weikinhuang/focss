@@ -1,4 +1,3 @@
-import Class from 'nbd/Class';
 import diff from 'nbd/util/diff';
 import expression from '../util/expression';
 
@@ -11,8 +10,8 @@ function normalizePseudoElement(selector) {
   return selector.replace(css2PseudoEl, prefixPseudo);
 }
 
-const Rule = Class.extend({
-  init({ selector, spec, arrayMemberExpr, toggleKeys, togglePrefix = '' }) {
+export default class Rule {
+  constructor({ selector, spec, arrayMemberExpr, toggleKeys, togglePrefix = '' }) {
     if (typeof selector !== 'string') {
       throw new TypeError('selector must be a string.');
     }
@@ -42,11 +41,11 @@ const Rule = Class.extend({
         this.traces[key] = artifactsPrefixed;
       }
     }
-  },
+  }
 
   getSelector() {
     return this.computedSelector || this.selector;
-  },
+  }
 
   process(data, extensions) {
     // First find out the new results
@@ -58,7 +57,7 @@ const Rule = Class.extend({
 
     this._lastResult = this.result;
     return different ? this.result : null;
-  },
+  }
 
   _process(data, extensions) {
     let selector = this.selector;
@@ -73,9 +72,7 @@ const Rule = Class.extend({
     this.computedSelector = selector;
     this.result = this.body(data, extensions);
   }
-}, {
-  displayName: 'FocssRule'
-});
+}
 
 Object.defineProperty(Rule, 'computed', { value: computed });
 
