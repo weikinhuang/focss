@@ -1,4 +1,3 @@
-/* global Symbol */
 import Class from 'nbd/Class';
 import RuleList from './RuleList';
 import Style from './Style';
@@ -131,7 +130,6 @@ export default Class.extend({
     }
     else {
       this.style.insertRule(rule.getSelector() + '{}', i);
-      result = true;
     }
 
     if (result) {

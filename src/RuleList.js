@@ -4,7 +4,7 @@ import expression from '../util/expression';
 const foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
 const filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i;
 const mediaQueryRegex = /^@media/;
-const toggleSelectorPsuedoRegex = /:(hover|active)/;
+const toggleSelectorPseudoRegex = /:(hover|active)/;
 const toggleSelectorClassRegex = /\.(__[^ :]+)/;
 const arrayPropertyRegex = /%([^%]+?)%/g;
 
@@ -96,7 +96,6 @@ export default class RuleList {
       filterExpr,
       toggleKeys: toggleSelectorInfo.toggleKeys,
       artifacts: this._getArtifactsFromSelector(toggleSelectorInfo.selector),
-      isArrayDescriptor: true
     };
 
     descriptor.artifacts[expr] = true;
@@ -118,7 +117,7 @@ export default class RuleList {
   _getToggleSelectorInfo(selector) {
     const toggleKeys = [];
 
-    [toggleSelectorPsuedoRegex, toggleSelectorClassRegex].forEach((toggleSelectorRegex) => {
+    [toggleSelectorPseudoRegex, toggleSelectorClassRegex].forEach((toggleSelectorRegex) => {
       selector = selector.replace(toggleSelectorRegex, (match, name) => {
         const key = name + (++this._uuid);
         toggleKeys.push(key);
@@ -158,7 +157,7 @@ export default class RuleList {
 
       let toggleSuffix = '';
       selector = selector.replace(arrayPropertyRegex, (match, column) => {
-        toggleSuffix += '_' + column + '_' + item[column];
+        toggleSuffix += `_${column}_${item[column]}`;
         return item[column];
       });
 

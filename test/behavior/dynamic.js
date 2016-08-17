@@ -22,17 +22,17 @@ describe('dynamic rules', function() {
         'max-width': 'width'
       });
 
-      expect(fox.engine.rules.arrayRuleDescriptors.length).toBe(1);
-      expect(fox.engine.rules.arrayRuleDescriptors[0].artifacts).toEqual({ foo: true });
+      expect(fox.engine.getArrayRuleDescriptors().length).toBe(1);
+      expect(fox.engine.rules.getArrayRuleDescriptors()[0].artifacts).toEqual({ foo: true });
     });
 
     it('filterEach contains the correct artifacts', function() {
-      fox.insert('%forEach(foo, true, .bar[data-id="%id%"])', {
+      fox.insert('%filterEach(foo, true, .bar[data-id="%id%"])', {
         'max-width': 'width'
       });
 
-      expect(fox.engine.rules.arrayRuleDescriptors.length).toBe(1);
-      expect(fox.engine.rules.arrayRuleDescriptors[0].artifacts).toEqual({ foo: true });
+      expect(fox.engine.rules.getArrayRuleDescriptors().length).toBe(1);
+      expect(fox.engine.rules.getArrayRuleDescriptors()[0].artifacts).toEqual({ foo: true });
     });
   });
 
