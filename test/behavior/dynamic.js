@@ -16,23 +16,23 @@ describe('dynamic rules', function() {
     fox = null;
   });
 
-  describe('engine.arrayRuleDescriptors', function() {
+  describe('arrayRuleDescriptors', function() {
     it('forEach contains the correct artifacts', function() {
       fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
         'max-width': 'width'
       });
 
-      expect(fox.engine.arrayRuleDescriptors.length).toBe(1);
-      expect(fox.engine.arrayRuleDescriptors[0].artifacts).toEqual({ foo: true });
+      expect(fox.engine.getArrayRuleDescriptors().length).toBe(1);
+      expect(fox.engine.rules.getArrayRuleDescriptors()[0].artifacts).toEqual({ foo: true });
     });
 
     it('filterEach contains the correct artifacts', function() {
-      fox.insert('%forEach(foo, true, .bar[data-id="%id%"])', {
+      fox.insert('%filterEach(foo, true, .bar[data-id="%id%"])', {
         'max-width': 'width'
       });
 
-      expect(fox.engine.arrayRuleDescriptors.length).toBe(1);
-      expect(fox.engine.arrayRuleDescriptors[0].artifacts).toEqual({ foo: true });
+      expect(fox.engine.rules.getArrayRuleDescriptors().length).toBe(1);
+      expect(fox.engine.rules.getArrayRuleDescriptors()[0].artifacts).toEqual({ foo: true });
     });
   });
 

@@ -23,6 +23,14 @@ describe('Engine', function() {
     engine.destroy();
   });
 
+  describe('#insert()', function() {
+    it('inserts a new Rule', function() {
+      const rule = this._engine.insert('.selector', {});
+      expect(rule).toBeDefined();
+      expect(rule).toEqual(jasmine.any(Rule));
+    });
+  });
+
   describe('#process()', function() {
     it('runs individual rule.process()', function() {
       spyOn(Rule.prototype, 'process');
@@ -61,8 +69,8 @@ describe('Engine', function() {
         color: '__var.bar'
       });
       this._engine.process({ dynamic: 'foobar' });
-      expect(this._engine.rules[0].computedSelector).toBe('.container');
-      expect(this._engine.rules[0].artifacts).toEqual({
+      expect(this._engine.rules.getRules()[0].computedSelector).toBe('.container');
+      expect(this._engine.rules.getRules()[0].artifacts).toEqual({
         dynamic: true,
         '__var.foo': true,
         '__var.bar': true
@@ -173,41 +181,6 @@ describe('Engine', function() {
     it('it does not run rule.process() if the keys value is falsey and has not been set before', function() {
       this._engine.toggleSelector('newkey2', false);
       expect(this._engine.process).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('#insert()', function() {
-    it('inserts a new Rule', function() {
-      const rule = this._engine.insert('.selector', {});
-      expect(rule).toBeDefined();
-      expect(rule).toEqual(jasmine.any(Rule));
-    });
-
-    describe('media queries', function() {
-      beforeEach(function() {
-        this._engine.insert('@media screen and (max-width: 300px)', {
-          '.class1': {
-            width: 'foo',
-            color: 'bar'
-          },
-          '%forEach(baz, .class2[data-id="%id%"])': {
-            'max-width': 'qux'
-          }
-        });
-      });
-
-      it('inserts a media query rule', function() {
-        expect(this._engine.mediaQueries[0]).toBeDefined();
-        expect(this._engine.mediaQueries.length).toEqual(1);
-      });
-
-      it('contains the correct artifacts', function() {
-        expect(this._engine.mediaQueries[0].artifacts).toEqual({
-          foo: true,
-          bar: true,
-          baz: true
-        });
-      });
     });
   });
 });

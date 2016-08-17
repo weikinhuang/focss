@@ -14,7 +14,7 @@ describe('Focss', function() {
     }
   });
 
-  it('is instanciable', function() {
+  it('is instantiable', function() {
     let fox;
 
     expect(() => {
@@ -89,6 +89,56 @@ describe('Focss', function() {
   describe('#destroy()', function() {
     it('exists', function() {
       expect(this._fox.destroy).toEqual(jasmine.any(Function));
+    });
+  });
+
+  describe('get rules', function() {
+    beforeEach(function() {
+      this._fox.insert('.foo', {
+        width: 'bar'
+      });
+    });
+
+    it('returns list of rules', function() {
+      expect(this._fox.rules).toEqual([jasmine.objectContaining({
+        selector: '.foo',
+        artifacts: {
+          bar: true
+        }
+      })]);
+    });
+  });
+
+  describe('get arrayRuleDescriptors', function() {
+    beforeEach(function() {
+      this._fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
+        width: 'baz'
+      });
+    });
+
+    it('returns list of rules', function() {
+      expect(this._fox.arrayRuleDescriptors).toEqual([jasmine.objectContaining({
+        selector: ' .bar[data-id="%id%"]',
+        artifacts: {
+          foo: true
+        }
+      })]);
+    });
+  });
+
+  describe('get arrayRuleDescriptors', function() {
+    beforeEach(function() {
+      this._fox.insert('foo:hover', {
+        width: 'bar'
+      });
+    });
+
+    it('returns list of rules', function() {
+      expect(this._fox.traces).toEqual({
+        hover1: {
+          bar: true
+        }
+      });
     });
   });
 });
