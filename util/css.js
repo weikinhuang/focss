@@ -21,11 +21,11 @@ var isUnitlessNumber = {
 };
 
 export default {
-  find: function(selector, base) {
+  find(selector, base) {
     return (base || document).querySelectorAll(selector);
   },
 
-  apply: function(element, incoming) {
+  apply(element, incoming) {
     var key;
     var value;
     for (key in incoming) {
@@ -53,7 +53,7 @@ export default {
     }
   },
 
-  toString: function(selector, incoming) {
+  toString(selector, incoming) {
     var key;
     var value;
     var result = selector + '{';

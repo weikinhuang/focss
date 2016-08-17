@@ -6,7 +6,7 @@ function css(el, prop) {
   return window.getComputedStyle(el[0] || el)[prop];
 }
 
-describe('extensions', function() {
+describe('default extensions', function() {
   beforeEach(function() {
     fox = new Focss();
     this._el = affix('.foo');
@@ -18,7 +18,7 @@ describe('extensions', function() {
   });
 
   describe('Math', function() {
-    it('#floor', function() {
+    it('.floor', function() {
       fox.insert('.foo', {
         'max-width': 'Math.floor(width)'
       });
@@ -32,7 +32,7 @@ describe('extensions', function() {
   });
 
   describe('Number', function() {
-    it('#parseInt', function() {
+    it('.parseInt', function() {
       fox.insert('.foo', {
         'max-width': 'Number.parseInt(width)'
       });

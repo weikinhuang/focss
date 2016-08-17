@@ -1,6 +1,6 @@
-import Class from 'nbd/Class';
 import RuleList from './RuleList';
 import Style from './Style';
+import defaultExtensions from './defaultExtensions';
 import css from '../util/css';
 
 function getVendorPrefixRegex() {
@@ -18,23 +18,23 @@ function getVendorPrefixRegex() {
 const hasDom = typeof window !== 'undefined';
 const otherPrefixRegex = hasDom ? getVendorPrefixRegex() : new RegExp();
 
-export default Class.extend({
-  init(root) {
+export default class {
+  constructor(root, extensions) {
     this.variables = {};
-    this.extensions = Object.create(this.extensions);
+    this.extensions = Object.assign({}, defaultExtensions, extensions);
     this.rules = new RuleList();
     this._toggleKeys = {};
 
     if (hasDom) {
       this.style = new Style(root);
     }
-  },
+  }
 
   destroy() {
     if (this.style) {
       this.style.destroy();
     }
-  },
+  }
 
   insert(selector, spec) {
     // ignore rules that contain the other vendor prefix, as trying to
@@ -47,11 +47,11 @@ export default Class.extend({
     }
 
     return this.rules.insert(selector, spec);
-  },
+  }
 
   insertVars(spec) {
     Object.assign(this.variables, spec);
-  },
+  }
 
   process(payload) {
     if (!hasDom) {
@@ -66,7 +66,7 @@ export default Class.extend({
     for (let i = this.style.cssRules.length; i > this.rules.getRules().length; i--) {
       this.style.deleteRule(i - 1);
     }
-  },
+  }
 
   toString(payload) {
     let result = '';
@@ -93,7 +93,7 @@ export default Class.extend({
     }
 
     return result + mediaQueryResult;
-  },
+  }
 
   toggleSelector(key, isToggled) {
     const isCurrentlyToggled = this._toggleKeys[key] || false;
@@ -102,19 +102,19 @@ export default Class.extend({
     if (isToggled !== isCurrentlyToggled) {
       this.process(this._state);
     }
-  },
+  }
 
   getRules() {
     return this.rules.getRules();
-  },
+  }
 
   getArrayRuleDescriptors() {
     return this.rules.getArrayRuleDescriptors();
-  },
+  }
 
   getTraces() {
     return this.rules.getTraces();
-  },
+  }
 
   _process(rule, i) {
     let result = rule.process(this._getStateWithToggles(), this.extensions);
@@ -135,19 +135,12 @@ export default Class.extend({
     if (result) {
       css.apply(this.style.cssRules[i], rule.result);
     }
-  },
+  }
 
   _getStateWithToggles() {
     const state = Object.create(this._state);
     state.__toggled__ = this._toggleKeys;
 
     return state;
-  },
-
-  extensions: {
-    Math,
-    Number
   }
-}, {
-  displayName: 'FocssEngine'
-});
+}
