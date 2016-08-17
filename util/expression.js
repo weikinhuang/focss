@@ -171,14 +171,14 @@ function treeParse(expr, scope, callPrefix) {
       obj[symbol.join('.')] = true;
       return obj;
     }, {}),
-    body: body
+    body
   };
 }
 
 var base = '$';
 var callbase = '__';
 export default {
-  compile: function(expr) {
+  compile(expr) {
     if (this._cache[expr] && this._cache[expr].fn) {
       return this._cache[expr].fn;
     }
@@ -189,7 +189,7 @@ export default {
     fn.artifacts = res.artifacts;
     return (this._cache[expr].fn = fn);
   },
-  compileSpec: function(spec, arrayMemberExpr) {
+  compileSpec(spec, arrayMemberExpr) {
     var artifacts = {};
     var body;
     var result;
@@ -224,7 +224,7 @@ export default {
     result.artifacts = artifacts;
     return result;
   },
-  parse: function parse(expr) {
+  parse(expr) {
     if (this._cache[expr]) {
       return this._cache[expr];
     }
