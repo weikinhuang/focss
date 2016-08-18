@@ -38,6 +38,58 @@ describe('Focss', function() {
         prop: ''
       }));
     });
+
+    it('inserts a spec of rules from an object', function() {
+      spyOn(this._fox.engine, 'insert').and.returnValue({});
+
+      this._fox.insert({
+        '.selector': {
+          prop: ''
+        },
+        '.selector2': {
+          otherProp: ''
+        }
+      });
+
+      expect(this._fox.engine.insert.calls.count()).toEqual(2);
+      expect(this._fox.engine.insert.calls.allArgs()).toEqual([
+        ['.selector', jasmine.objectContaining({
+          prop: ''
+        })],
+        ['.selector2', jasmine.objectContaining({
+          otherProp: ''
+        })]
+      ]);
+    });
+
+    it('inserts a spec of rules from an array', function() {
+      spyOn(this._fox.engine, 'insert').and.returnValue({});
+
+      this._fox.insert([
+        {
+          selector: '.selector',
+          rules: {
+            prop: ''
+          }
+        },
+        {
+          selector: '.selector2',
+          rules: {
+            otherProp: ''
+          }
+        }
+      ]);
+
+      expect(this._fox.engine.insert.calls.count()).toEqual(2);
+      expect(this._fox.engine.insert.calls.allArgs()).toEqual([
+        ['.selector', jasmine.objectContaining({
+          prop: ''
+        })],
+        ['.selector2', jasmine.objectContaining({
+          otherProp: ''
+        })]
+      ]);
+    });
   });
 
   describe('#insertVars', function() {

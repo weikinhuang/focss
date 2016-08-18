@@ -7,23 +7,32 @@ export default class {
 
   /**
    * Insert a focss rule
-   * @param selector {String} CSS selector/dynamic selector
-   * @param spec {Object} key/value map of CSS property to expression
+   * @param selector {String|Object|Array} CSS selector/dynamic selector|object of descriptors|array of descriptors
+   * @param spec {Object|null} key/value map of CSS property to expression or null if selector is object or array
    * @returns Object Artifacts found while compiling the rule
    */
   insert(selector, spec) {
     if (typeof selector === 'object') {
-      var artifacts = {};
-      for (var s in selector) {
-        if (selector.hasOwnProperty(s)) {
-          Object.assign(artifacts, this.insert(s, selector[s]));
+      const artifacts = {};
+
+      if (Array.isArray(selector)) {
+        for (let s of selector) {
+          Object.assign(artifacts, this.insert(s.selector, s.rules));
         }
       }
+      else {
+        for (let s in selector) {
+          if (selector.hasOwnProperty(s)) {
+            Object.assign(artifacts, this.insert(s, selector[s]));
+          }
+        }
+      }
+
       return artifacts;
     }
 
-    var rule = this.engine.insert(selector, spec);
-    return rule.artifacts;
+    const { artifacts } = this.engine.insert(selector, spec);
+    return artifacts;
   }
 
   /**
