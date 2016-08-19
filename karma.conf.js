@@ -65,6 +65,20 @@ module.exports = function(config) {
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false,
 
+
+    // Make webpack output less verbose
+    webpackMiddleware: {
+      noInfo: true,
+      stats: {
+        colors: true,
+        version: false,
+        assets: false,
+        chunks: false,
+        chunkModules: false
+      }
+    },
+
+
     webpack: {
       module: {
         loaders: [
