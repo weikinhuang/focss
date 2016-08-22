@@ -240,4 +240,89 @@ describe('toString', function() {
       ]
     })).toEqual('.class1{color:red;}.class2{max-width:100px;}@media screen and (max-width: 300px){.class1{width:100px;color:red;}.class2[data-id="3"]{max-width:1200px;}.class2[data-id="4"]{max-width:800px;}}');
   });
+
+  describe('`<% %>` delimiter', function() {
+    it('works when used in a an attribute selector', function() {
+      this._fox.insert('.<% foo %>[<% bar %>]', {
+        'max-width': 'width'
+      });
+
+      expect(this._fox.toString({
+        foo: 'a',
+        bar: 'b',
+        width: 100
+      })).toEqual('.a[b]{max-width:100px;}');
+    });
+
+    it('works when used with inserted variables', function() {
+      this._fox.insertVars({
+        class: 'foo',
+        bar: 'red'
+      });
+
+      this._fox.insert('.<% __var.class %>', {
+        'max-width': 'width',
+        color: '__var.bar'
+      });
+
+      expect(this._fox.toString({ width: 100 })).toEqual('.foo{max-width:100px;color:red;}');
+    });
+
+    it('correctly evaulates a JavaScript expression', function() {
+      this._fox.insert('.<% foo || bar %>', {
+        'max-width': 'width'
+      });
+
+      expect(this._fox.toString({
+        foo: 'a',
+        width: 100
+      })).toEqual('.a{max-width:100px;}');
+    });
+
+    it('correctly evaulates a JavaScript expression', function() {
+      this._fox.insert('.<% foo || bar %>', {
+        'max-width': 'width',
+      });
+
+      expect(this._fox.toString({
+        bar: 'b',
+        width: 100
+      })).toEqual('.b{max-width:100px;}');
+    });
+
+    it('correctly evaulates a JavaScript expression with a < symbol', function() {
+      this._fox.insert('.class<% foo < bar ? foo : bar %>', {
+        'max-width': 'width',
+      });
+
+      expect(this._fox.toString({
+        foo: 4,
+        bar: 6,
+        width: 100
+      })).toEqual('.class4{max-width:100px;}');
+    });
+
+    it('correctly evaulates a JavaScript expression with a < and % symbol', function() {
+      this._fox.insert('.class<% foo < bar % 5 ? foo % 3 : bar %>', {
+        'max-width': 'width',
+      });
+
+      expect(this._fox.toString({
+        foo: 4,
+        bar: 15,
+        width: 100
+      })).toEqual('.class15{max-width:100px;}');
+    });
+
+    it('correctly evaulates a computed expression regardless of surrounding whitespace', function() {
+      this._fox.insert('.<%foo  %>', {
+        'max-width': 'width',
+      });
+
+      expect(this._fox.toString({
+        foo: 'a',
+        width: '100'
+      })).toEqual('.a{max-width:100px;}');
+    });
+  });
 });

@@ -1,7 +1,7 @@
 import diff from 'nbd/util/diff';
 import expression from '../util/expression';
 
-const computed = /\$\{([^\}]*?)\}/ig;
+const computed = /\$\{([^\}]*?)\}|<%\s*(.*?)\s*%>/ig;
 
 // CSS3 introduces the double colon syntax for pseudos
 const css2PseudoEl = /:(after|before|first-letter|first-line)|::/g;
@@ -25,7 +25,7 @@ export default class Rule {
     let expr;
     while ((expr = computed.exec(this.selector)) !== null) {
       this.isComputed = true;
-      Object.assign(this.artifacts, expression.parse(expr[1]).artifacts);
+      Object.assign(this.artifacts, expression.parse(expr[1] || expr[2]).artifacts);
     }
 
     if (toggleKeys) {
@@ -64,7 +64,8 @@ export default class Rule {
 
     if (this.isComputed) {
       // Compile the selector
-      selector = this.selector.replace(computed, (match, expr) => {
+      selector = this.selector.replace(computed, (match, oldExpr, newExpr) => {
+        const expr = oldExpr || newExpr;
         return expression.compile(expr)(data, extensions);
       });
     }
