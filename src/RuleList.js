@@ -1,4 +1,6 @@
 import Rule from './Rule';
+import { computedExpression } from './RuleBase';
+import MediaQuery from './MediaQuery';
 import expression from '../util/expression';
 
 const foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
@@ -71,19 +73,8 @@ export default class RuleList {
   }
 
   _insertMediaQuery(selector, spec) {
-    const descriptor = {
-      selector,
-      rules: new RuleList(),
-      arrayRuleDescriptors: [],
-      artifacts: {}
-    };
-
-    for (let rule in spec) {
-      const { artifacts } = descriptor.rules.insert(rule, spec[rule]);
-      Object.assign(descriptor.artifacts, artifacts);
-    }
+    const descriptor = new MediaQuery(selector, spec);
     this.mediaQueries.push(descriptor);
-
     return descriptor;
   }
 
@@ -135,7 +126,7 @@ export default class RuleList {
     const artifacts = {};
     let expr;
 
-    while ((expr = Rule.computed.exec(selector)) !== null) {
+    while ((expr = computedExpression.exec(selector)) !== null) {
       Object.assign(artifacts, expression.parse(expr[1]).artifacts);
     }
 

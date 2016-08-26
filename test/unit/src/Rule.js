@@ -40,7 +40,7 @@ describe('Rule', function() {
     }).not.toThrow();
   });
 
-  describe('#init', function() {
+  describe('#constructor', function() {
     it('does not add traces if no toggle keys are provided', function() {
       rule = new Rule({
         selector: '.foo',
@@ -206,6 +206,28 @@ describe('Rule', function() {
       rule.process({});
 
       expect(rule.result).toEqual({ foo: 'bar()' });
+    });
+
+    it('returns new result if result has changed', function() {
+      rule = new Rule({
+        selector: '.static',
+        spec: {
+          foo: 'bar'
+        }
+      });
+      rule.process({ bar: 'baz' });
+      expect(rule.process({ bar: 'bar' })).toEqual({ foo: 'bar' });
+    });
+
+    it('returns null if result has not changed', function() {
+      rule = new Rule({
+        selector: '.static',
+        spec: {
+          foo: 'bar'
+        }
+      });
+      rule.process({ bar: 'baz' });
+      expect(rule.process({ bar: 'baz' })).toEqual(null);
     });
   });
 

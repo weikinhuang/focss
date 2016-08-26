@@ -81,15 +81,8 @@ export default class {
     }
 
     for (let query of this.rules.getMediaQueries()) {
-      query.rules.generateArrayRules(this._state, this.extensions);
-      mediaQueryResult += `${query.selector}{`;
-
-      for (let rule of query.rules.getRules()) {
-        rule.process(this._getStateWithToggles(), this.extensions);
-        mediaQueryResult += css.toString(rule.getSelector(), rule.result);
-      }
-
-      mediaQueryResult += '}';
+      query.process(this._getStateWithToggles(), this.extensions);
+      mediaQueryResult += `${query.getSelector()}{${query.result}}`;
     }
 
     return result + mediaQueryResult;

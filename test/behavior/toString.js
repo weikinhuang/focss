@@ -119,6 +119,47 @@ describe('toString', function() {
       })).toEqual('@media screen and (max-width: 300px){.class1{width:100px;color:red;}.class2[data-id="4"]{max-width:800px;}}');
     });
 
+    it('when inserted media query contains computed selector', function() {
+      this._fox.insert({
+        '@media screen and (max-width: <% baz + qux %>px)': {
+          '.class1': {
+            width: 'foo',
+          },
+          '.class2': {
+            color: 'bar'
+          },
+        }
+      });
+
+      expect(this._fox.toString({
+        foo: 100,
+        bar: 'red',
+        baz: 200,
+        qux: 1600
+      })).toEqual('@media screen and (max-width: 1800px){.class1{width:100px;}.class2{color:red;}}');
+    });
+
+    it('when inserted media query uses variables', function() {
+      this._fox.insertVars({
+        breakpoint: 1600
+      });
+      this._fox.insert({
+        '@media screen and (max-width: <% __var.breakpoint %>px)': {
+          '.class1': {
+            width: 'foo',
+          },
+          '.class2': {
+            color: 'bar'
+          },
+        }
+      });
+
+      expect(this._fox.toString({
+        foo: 100,
+        bar: 'red',
+      })).toEqual('@media screen and (max-width: 1600px){.class1{width:100px;}.class2{color:red;}}');
+    });
+
     it('when inserted rule list contains multiple media queries', function() {
       this._fox.insert({
         '@media screen and (max-width: 300px)': {
@@ -167,7 +208,7 @@ describe('toString', function() {
         bar: 'red'
       });
 
-      this._fox.insert('.${__var.class}', {
+      this._fox.insert('.<% __var.class %>', {
         'max-width': 'width',
         color: '__var.bar'
       });
