@@ -17,7 +17,7 @@ module.exports = function(config) {
     files: [
       'node_modules/babel-polyfill/dist/polyfill.js',
       'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
-      'test/**/*.js'
+      'test/**/!(parser)/*.js'
     ],
 
 
