@@ -6,12 +6,11 @@ const plugin = postcss.plugin('behance-postcss-focss', () => {
     const descriptors = [];
 
     root.each((node) => {
-      const descriptor = {
-        rules: {}
-      };
+      const descriptor = {};
 
       if (node.type === 'rule') {
         descriptor.selector = node.selector;
+        descriptor.rules = {};
 
         node.walkDecls(({ prop, value }) => {
           descriptor.rules[prop] = value;
@@ -19,28 +18,32 @@ const plugin = postcss.plugin('behance-postcss-focss', () => {
       }
       else if (node.type === 'atrule' && node.name === 'media') {
         descriptor.selector = `@${node.name} ${node.params}`;
+        descriptor.rules = [];
 
         node.walkRules((ruleNode) => {
-          const rules = {};
+          const ruleDescriptor = {
+            selector: ruleNode.selector.replace(/\n/g, ' '),
+            rules: {}
+          };
 
           ruleNode.walkDecls(({ prop, value }) => {
-            rules[prop] = value;
+            ruleDescriptor.rules[prop] = value;
           });
 
-          descriptor.rules[ruleNode.selector] = rules;
+          descriptor.rules.push(ruleDescriptor);
         });
       }
       else {
         return;
       }
 
+      descriptor.selector = descriptor.selector.replace(/\n/g, ' ');
       descriptors.push(descriptor);
     });
 
     result.focssDescriptors = descriptors;
   };
 });
-
 
 /**
  * Parse Focss descriptors

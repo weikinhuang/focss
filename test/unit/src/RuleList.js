@@ -131,15 +131,21 @@ describe('RuleList', function() {
   describe('#insert', function() {
     describe('media queries', function() {
       beforeEach(function() {
-        this._rules.insert('@media screen and (max-width: 300px)', {
-          '.class1': {
-            width: 'foo',
-            color: 'bar'
+        this._rules.insert('@media screen and (max-width: 300px)', [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo',
+              color: 'bar'
+            }
           },
-          '%forEach(baz, .class2[data-id="%id%"])': {
-            'max-width': 'qux'
+          {
+            selector: '%forEach(baz, .class2[data-id="%id%"])',
+            rules: {
+              'max-width': 'qux'
+            }
           }
-        });
+        ]);
       });
 
       it('inserts a media query rule', function() {

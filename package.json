@@ -8,7 +8,7 @@
     "test:browser": "./node_modules/karma/bin/karma start --singleRun",
     "test:node": "jasmine JASMINE_CONFIG_PATH=test/jasmine.json",
     "test:dev": "./node_modules/karma/bin/karma start",
-    "lint": "eslint src util test/behavior test/unit"
+    "lint": "eslint src util parser test/behavior test/unit test/parser"
   },
   "repository": {
     "type": "git",
