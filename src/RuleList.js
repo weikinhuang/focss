@@ -1,7 +1,7 @@
 import Rule from './Rule';
 import { computedExpression } from './RuleBase';
 import MediaQuery from './MediaQuery';
-import expression from '../util/expression';
+import expression from './util/expression';
 
 const foreachSelectorRegex = /%forEach\(([^,]+),(.+)\)$/i;
 const filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i;

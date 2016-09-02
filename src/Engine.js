@@ -1,7 +1,7 @@
 import RuleList from './RuleList';
 import Style from './Style';
 import defaultExtensions from './defaultExtensions';
-import css from '../util/css';
+import css from './util/css';
 
 function getVendorPrefixRegex() {
   const otherVendorPrefixesMap = {

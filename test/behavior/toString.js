@@ -1,4 +1,4 @@
-import Focss from '../..';
+import Focss from '../../src';
 
 describe('toString', function() {
   beforeEach(function() {
@@ -59,12 +59,15 @@ describe('toString', function() {
 
     it('when inserted rule contains media query', function() {
       this._fox.insert({
-        '@media screen and (max-width: 300px)': {
-          '.class1': {
-            width: 'foo',
-            color: 'bar'
+        '@media screen and (max-width: 300px)': [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo',
+              color: 'bar'
+            }
           }
-        }
+        ]
       });
 
       expect(this._fox.toString({
@@ -75,15 +78,21 @@ describe('toString', function() {
 
     it('when inserted media query contains %forEach selector', function() {
       this._fox.insert({
-        '@media screen and (max-width: 300px)': {
-          '.class1': {
-            width: 'foo',
-            color: 'bar'
+        '@media screen and (max-width: 300px)': [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo',
+              color: 'bar'
+            }
           },
-          '%forEach(baz, .class2[data-id="%id%"])': {
-            'max-width': 'qux'
+          {
+            selector: '%forEach(baz, .class2[data-id="%id%"])',
+            rules: {
+              'max-width': 'qux'
+            }
           }
-        }
+        ]
       });
 
       expect(this._fox.toString({
@@ -98,15 +107,21 @@ describe('toString', function() {
 
     it('when inserted media query contains %filterEach selector', function() {
       this._fox.insert({
-        '@media screen and (max-width: 300px)': {
-          '.class1': {
-            width: 'foo',
-            color: 'bar'
+        '@media screen and (max-width: 300px)': [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo',
+              color: 'bar'
+            }
           },
-          '%filterEach(baz, qux < 1000, .class2[data-id="%id%"])': {
-            'max-width': 'qux'
+          {
+            selector: '%filterEach(baz, qux < 1000, .class2[data-id="%id%"])',
+            rules: {
+              'max-width': 'qux'
+            }
           }
-        }
+        ]
       });
 
       expect(this._fox.toString({
@@ -121,14 +136,20 @@ describe('toString', function() {
 
     it('when inserted media query contains computed selector', function() {
       this._fox.insert({
-        '@media screen and (max-width: <% baz + qux %>px)': {
-          '.class1': {
-            width: 'foo',
+        '@media screen and (max-width: <% baz + qux %>px)': [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo'
+            }
           },
-          '.class2': {
-            color: 'bar'
-          },
-        }
+          {
+            selector: '.class2',
+            rules: {
+              color: 'bar'
+            }
+          }
+        ]
       });
 
       expect(this._fox.toString({
@@ -144,14 +165,20 @@ describe('toString', function() {
         breakpoint: 1600
       });
       this._fox.insert({
-        '@media screen and (max-width: <% __var.breakpoint %>px)': {
-          '.class1': {
-            width: 'foo',
+        '@media screen and (max-width: <% __var.breakpoint %>px)': [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo'
+            }
           },
-          '.class2': {
-            color: 'bar'
-          },
-        }
+          {
+            selector: '.class2',
+            rules: {
+              color: 'bar'
+            }
+          }
+        ]
       });
 
       expect(this._fox.toString({
@@ -162,18 +189,24 @@ describe('toString', function() {
 
     it('when inserted rule list contains multiple media queries', function() {
       this._fox.insert({
-        '@media screen and (max-width: 300px)': {
-          '.class1': {
-            width: 'foo',
+        '@media screen and (max-width: 300px)': [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo'
+            }
           }
-        }
+        ]
       });
       this._fox.insert({
-        '@media screen and (max-width: 600px)': {
-          '.class1': {
-            color: 'bar'
+        '@media screen and (max-width: 600px)': [
+          {
+            selector: '.class1',
+            rules: {
+              color: 'bar'
+            }
           }
-        }
+        ]
       });
 
       expect(this._fox.toString({
@@ -187,12 +220,15 @@ describe('toString', function() {
         '.class1': {
           'max-width': 'foo'
         },
-        '@media screen and (max-width: 300px)': {
-          '.class1': {
-            width: 'foo',
-            color: 'bar'
+        '@media screen and (max-width: 300px)': [
+          {
+            selector: '.class1',
+            rules: {
+              width: 'foo',
+              color: 'bar'
+            }
           }
-        }
+        ]
       });
 
       expect(this._fox.toString({
@@ -219,25 +255,34 @@ describe('toString', function() {
 
   it('returns media queries in order in which they were inserted', function() {
     this._fox.insert({
-      '@media screen and (max-width: 300px)': {
-        '.class1': {
-          width: 'foo',
+      '@media screen and (max-width: 300px)': [
+        {
+          selector: '.class1',
+          rules: {
+            width: 'foo'
+          }
         }
-      }
+      ]
     });
     this._fox.insert({
-      '@media screen and (max-width: 600px)': {
-        '.class1': {
-          color: 'bar'
+      '@media screen and (max-width: 600px)': [
+        {
+          selector: '.class1',
+          rules: {
+            color: 'bar'
+          }
         }
-      }
+      ]
     });
     this._fox.insert({
-      '@media screen and (max-width: 100px)': {
-        '.class1': {
-          height: 'baz'
+      '@media screen and (max-width: 100px)': [
+        {
+          selector: '.class1',
+          rules: {
+            height: 'baz'
+          }
         }
-      }
+      ]
     });
 
     expect(this._fox.toString({
@@ -255,15 +300,21 @@ describe('toString', function() {
     });
 
     this._fox.insert({
-      '@media screen and (max-width: 300px)': {
-        '.class1': {
-          width: 'foo',
-          color: 'bar'
+      '@media screen and (max-width: 300px)': [
+        {
+          selector: '.class1',
+          rules: {
+            width: 'foo',
+            color: 'bar'
+          }
         },
-        '%forEach(baz, .class2[data-id="%id%"])': {
-          'max-width': 'qux'
+        {
+          selector: '%forEach(baz, .class2[data-id="%id%"])',
+          rules: {
+            'max-width': 'qux'
+          }
         }
-      }
+      ]
     });
 
     this._fox.insert({

@@ -1,4 +1,4 @@
-import Focss from '../..';
+import Focss from '../../src';
 
 function css(el, prop, psuedoEl) {
   return window.getComputedStyle(el[0] || el, psuedoEl)[prop];

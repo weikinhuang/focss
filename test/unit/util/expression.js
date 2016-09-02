@@ -1,4 +1,4 @@
-import expression from '../../../util/expression';
+import expression from '../../../src/util/expression';
 
 describe('expression parser', function() {
   describe('.parse()', function() {

@@ -1,5 +1,5 @@
 import diff from 'nbd/util/diff';
-import expression from '../util/expression';
+import expression from './util/expression';
 
 export const computedExpression = /\$\{([^\}]*?)\}|<%\s*(.*?)\s*%>/ig;
 

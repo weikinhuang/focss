@@ -1,6 +1,6 @@
 import RuleBase from './RuleBase';
 import RuleList from './RuleList';
-import css from '../util/css';
+import css from './util/css';
 
 export default class MediaQuery extends RuleBase {
   constructor(selector, spec) {
@@ -13,8 +13,9 @@ export default class MediaQuery extends RuleBase {
     this.isComputed = isComputed;
     Object.assign(this.artifacts, artifacts);
 
-    for (let rule in spec) {
-      const { artifacts } = this.rules.insert(rule, spec[rule]);
+    for (let rule of spec) {
+      const { selector, rules } = rule;
+      const { artifacts } = this.rules.insert(selector, rules);
       Object.assign(this.artifacts, artifacts);
     }
   }

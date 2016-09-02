@@ -1,0 +1,60 @@
+.foo {
+  width: width1;
+}
+
+.foo:hover {
+  max-width: (width1 + width2) + "%";
+}
+
+/* comment */
+
+nav .foo a.active,
+nav .foo a.__fake {
+  margin-left: Math.isInteger(width1) ? width1 : null;
+}
+
+.foo <% Math.round(num1 % num2) %> {
+  opacity: Math.round(opacity);
+}
+
+%filterEach(foo, num1 > 2, .class1[data-id="%id%"]) {
+  float: float;
+  margin-top: num1 * num2;
+  margin-bottom: num1 > num2 ? "" : (num2 === num3 ? 400 + "px" : null);
+  width: (num1 * num2) + 'px';
+}
+
+%forEach(baz, .class2[data-id="%id%"]) {
+  max-width: width;
+}
+
+@media screen and (max-width: <% width2 / 2 %>px) {
+  .foo {
+    width: width1;
+  }
+
+  .foo:hover {
+    max-width: (width1 + width2) + "%";
+  }
+
+  /* comment */
+
+  nav .foo a.active, nav .foo a.__fake {
+    margin-left: Math.isInteger(width1) ? width1 : null;
+  }
+
+  .foo <% Math.round(num1 % num2) %> {
+    opacity: Math.round(opacity);
+  }
+
+  %filterEach(foo, num1 > 2, .class1[data-id="%id%"]) {
+    float: float;
+    margin-top: num1 * num2;
+    margin-bottom: num1 > num2 ? "" : (num2 === num3 ? 400 + "px" : null);
+    width: (num1 * num2) + 'px';
+  }
+
+  %forEach(baz, .class2[data-id="%id%"]) {
+    max-width: width;
+  }
+}
