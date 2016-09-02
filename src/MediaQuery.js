@@ -1,6 +1,6 @@
 import RuleBase from './RuleBase';
 import RuleList from './RuleList';
-import css from '../util/css';
+import css from './util/css';
 
 export default class MediaQuery extends RuleBase {
   constructor(selector, spec) {

@@ -1,4 +1,4 @@
-import Engine from './src/Engine';
+import Engine from './Engine';
 
 export default class {
   constructor(root, extensions) {

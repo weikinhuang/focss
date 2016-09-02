@@ -1,4 +1,4 @@
-import css from '../../../util/css';
+import css from '../../../src/util/css';
 
 describe('css helper', function() {
   describe('.find()', function() {

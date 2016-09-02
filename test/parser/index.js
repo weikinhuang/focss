@@ -2,8 +2,8 @@
 
 import path from 'path';
 import fs from 'fs';
-import parse from '../../parser';
-import Focss from '../..';
+import parse from '../../src/parser';
+import Focss from '../../src';
 
 describe('parser', function() {
   it('returns an array of parsed Focss descriptors', function(done) {

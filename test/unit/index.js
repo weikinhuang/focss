@@ -1,4 +1,4 @@
-import Focss from '../..';
+import Focss from '../../src';
 
 describe('Focss', function() {
   const payload = { foo: 'bar' };

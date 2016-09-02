@@ -1,4 +1,4 @@
-import detectScoped from '../util/detectScoped';
+import detectScoped from './util/detectScoped';
 
 export default class Style {
   constructor(root = document.body) {

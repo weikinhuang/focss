@@ -1,5 +1,5 @@
 import RuleBase from './RuleBase';
-import expression from '../util/expression';
+import expression from './util/expression';
 
 // CSS3 introduces the double colon syntax for pseudos
 const css2PseudoEl = /:(after|before|first-letter|first-line)|::/g;

@@ -1,4 +1,4 @@
-import Focss from '../..';
+import Focss from '../../src';
 
 let fox;
 
