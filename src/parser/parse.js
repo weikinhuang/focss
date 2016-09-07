@@ -7,7 +7,7 @@ class FocssParser extends Parser {
   checkMissedSemicolon() {}
 }
 
-export default function parse(styles, opts) {
+export default function parser(styles, opts) {
   const input = new Input(styles, opts);
   const parser = new FocssParser(input);
 
