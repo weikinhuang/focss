@@ -307,6 +307,33 @@ describe('parser', function() {
       });
     });
 
+    describe('empty rule declaration values', function() {
+      const styles = `.foo {
+                        max-width: ;
+                      }`;
+      const result = [
+        {
+          selector: '.foo',
+          rules: {
+            'max-width': ''
+          }
+        }
+      ];
+
+      it('when parsed with parse', function(done) {
+        parse(styles)
+        .then(({ focssDescriptors }) => {
+          expect(focssDescriptors).toEqual(result);
+        })
+        .then(done, done.fail);
+      });
+
+      it('when parsed with parseSync', function() {
+        const focssDescriptors = parseSync(styles);
+        expect(focssDescriptors).toEqual(result);
+      });
+    });
+
     describe('calling toString() should return processed styles', function() {
       function processAndValidate(focssDescriptors, result) {
         const fox = new Focss();
