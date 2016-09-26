@@ -1,36 +1,54 @@
 import postcss from 'postcss';
 import parser from './parse';
 
-function transform(ast) {
+function replaceVariables(node, value, variables) {
+  const usedVarRegex = /(\$[\w\d-]+)/ig;
+  return value.replace(usedVarRegex, (match) => {
+    if (!variables[match]) {
+      const { source: { start: { line, column } } } = node;
+      throw new Error(`Variable ${value} is not defined. (${line}:${column})`);
+    }
+
+    return variables[match];
+  });
+}
+
+function transform(ast, variables = {}) {
   const descriptors = [];
+  variables = Object.assign({}, variables);
 
   ast.each((node) => {
+    const definedVarRegex = /^\$[\w\d-]+/;
     const descriptor = {};
 
     if (node.type === 'rule') {
-      descriptor.selector = node.selector;
+      descriptor.selector = replaceVariables(node, node.selector, variables);
       descriptor.rules = {};
 
-      node.walkDecls(({ prop, value }) => {
-        descriptor.rules[prop] = value;
+      node.walkDecls((declNode) => {
+        descriptor.rules[declNode.prop] = replaceVariables(declNode, declNode.value, variables);
       });
     }
     else if (node.type === 'atrule' && node.name === 'media') {
-      descriptor.selector = `@${node.name} ${node.params}`;
+      descriptor.selector = `@media ${replaceVariables(node, node.params, variables)}`;
       descriptor.rules = [];
 
       node.walkRules((ruleNode) => {
         const ruleDescriptor = {
-          selector: ruleNode.selector.replace(/\n/g, ' '),
+          selector: replaceVariables(ruleNode, ruleNode.selector.replace(/\n/g, ' '), variables),
           rules: {}
         };
 
-        ruleNode.walkDecls(({ prop, value }) => {
-          ruleDescriptor.rules[prop] = value;
+        ruleNode.walkDecls((declNode) => {
+          ruleDescriptor.rules[declNode.prop] = replaceVariables(declNode, declNode.value, variables);
         });
 
         descriptor.rules.push(ruleDescriptor);
       });
+    }
+    else if (node.type === 'decl' && definedVarRegex.test(node.prop)) {
+      variables[node.prop] = replaceVariables(node, node.value, variables);
+      return;
     }
     else {
       return;
@@ -40,12 +58,12 @@ function transform(ast) {
     descriptors.push(descriptor);
   });
 
-  return descriptors;
+  return { descriptors, variables };
 }
 
 const plugin = postcss.plugin('behance-postcss-focss', () => {
   return (root, result) => {
-    result.focssDescriptors = transform(root);
+    return result.focss = transform(root, result.opts.variables);
   };
 });
 
@@ -54,8 +72,8 @@ const plugin = postcss.plugin('behance-postcss-focss', () => {
  * @param {string} styles Styles from a .focss file.
  * @returns {Promise<Object>} Object containing parsed Focss Descriptors.
  */
-export function parse(styles) {
-  return postcss([plugin]).process(styles, { parser });
+export function parse(styles, variables) {
+  return postcss([plugin]).process(styles, { parser, variables });
 }
 
 /**
@@ -63,7 +81,7 @@ export function parse(styles) {
  * @param {string} styles Styles from a .focss file.
  * @returns {Object} Object containing parsed Focss Descriptors.
  */
-export function parseSync(styles) {
+export function parseSync(styles, variables) {
   const ast = parser(styles);
-  return transform(ast);
+  return transform(ast, variables);
 }
