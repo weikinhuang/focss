@@ -8,7 +8,7 @@ const filterEachSelectorRegex = /%filterEach\(([^,]+),([^,]+),(.+)\)$/i;
 const mediaQueryRegex = /^@media/;
 const toggleSelectorPseudoRegex = /:(hover|active)/;
 const toggleSelectorClassRegex = /\.(__[^ :]+)/;
-const arrayPropertyRegex = /%([^%]+?)%/g;
+const arrayPropertyRegex = /([^<])%(?!>)(.+?)%(?!>)/g;
 
 export default class RuleList {
   constructor() {
@@ -112,7 +112,7 @@ export default class RuleList {
       selector = selector.replace(toggleSelectorRegex, (match, name) => {
         const key = name + (++this._uuid);
         toggleKeys.push(key);
-        return "${__toggled__['" + key + "']?':not(" + match + ")':'" + match + "'}";
+        return `<%__toggled__['${key}']?':not(${match})':'${match}'%>`;
       });
     });
 
@@ -147,9 +147,10 @@ export default class RuleList {
       }
 
       let toggleSuffix = '';
-      selector = selector.replace(arrayPropertyRegex, (match, column) => {
+      selector = selector.replace(arrayPropertyRegex, (match, firstChar, column) => {
         toggleSuffix += `_${column}_${item[column]}`;
-        return item[column];
+        // The first character is captured and replaced as a workaround for JS not having regex lookbehinds
+        return `${firstChar}${item[column]}`;
       });
 
       toggleKeys = toggleKeys.map((toggleKey) => {

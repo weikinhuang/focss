@@ -237,7 +237,7 @@ describe('RuleList', function() {
         });
 
         it('creates toggle selector', function() {
-          expect(this._rules.rules[0].selector).toEqual(".foo${__toggled__['__fake1']?':not(.__fake)':'.__fake'}");
+          expect(this._rules.rules[0].selector).toEqual(".foo<%__toggled__['__fake1']?':not(.__fake)':'.__fake'%>");
         });
 
         it('contains the correct artifacts', function() {
@@ -257,7 +257,7 @@ describe('RuleList', function() {
           });
 
           it('creates toggle selector', function() {
-            expect(this._rules.rules[0].selector).toEqual(".foo${__toggled__['hover1']?':not(:hover)':':hover'}");
+            expect(this._rules.rules[0].selector).toEqual(".foo<%__toggled__['hover1']?':not(:hover)':':hover'%>");
           });
 
           it('contains the correct artifacts', function() {
@@ -276,7 +276,7 @@ describe('RuleList', function() {
           });
 
           it('creates toggle selector', function() {
-            expect(this._rules.rules[0].selector).toEqual(".foo${__toggled__['active1']?':not(:active)':':active'}");
+            expect(this._rules.rules[0].selector).toEqual(".foo<%__toggled__['active1']?':not(:active)':':active'%>");
           });
 
           it('contains the correct artifacts', function() {
