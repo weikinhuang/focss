@@ -109,7 +109,7 @@ describe('Rule', function() {
   it('accepts expressions in selectors', function() {
     expect(function() {
       rule = new Rule({
-        selector: '#${foo}',
+        selector: '#<% foo %>',
         spec: {}
       });
     }).not.toThrow();
@@ -146,7 +146,7 @@ describe('Rule', function() {
 
     it('calculates computed selectors', function() {
       rule = new Rule({
-        selector: '.${dynamic}',
+        selector: '.<% dynamic %>',
         spec: {}
       });
       rule.process({ dynamic: 'foobar' });

@@ -64,7 +64,7 @@ describe('Engine', function() {
         foo: '.container',
         bar: 'red'
       });
-      this._engine.insert('${__var.foo}', {
+      this._engine.insert('<% __var.foo %>', {
         width: 'dynamic',
         color: '__var.bar'
       });

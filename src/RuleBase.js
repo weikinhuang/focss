@@ -1,7 +1,7 @@
 import diff from 'nbd/util/diff';
 import expression from './util/expression';
 
-export const computedExpression = /\$\{([^\}]*?)\}|<%\s*(.*?)\s*%>/ig;
+export const computedExpression = /<%\s*(.*?)\s*%>/ig;
 
 export default class RuleBase {
   getSelector() {
@@ -35,7 +35,7 @@ export default class RuleBase {
     // contain *multiple* template strings in a row.
     while ((expr = computedExpression.exec(selector)) !== null) {
       isComputed = true;
-      Object.assign(artifacts, expression.parse(expr[1] || expr[2]).artifacts);
+      Object.assign(artifacts, expression.parse(expr[1]).artifacts);
     }
 
     return { isComputed, artifacts };
@@ -45,10 +45,7 @@ export default class RuleBase {
     let selector = this.selector;
 
     if (this.isComputed) {
-      selector = this.selector.replace(computedExpression, (match, oldExpr, newExpr) => {
-        const expr = oldExpr || newExpr;
-        return expression.compile(expr)(data, extensions);
-      });
+      selector = this.selector.replace(computedExpression, (match, expr) => expression.compile(expr)(data, extensions));
     }
 
     this.computedSelector = selector;

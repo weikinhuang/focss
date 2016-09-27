@@ -342,7 +342,7 @@ describe('dynamic rules', function() {
       });
 
       it('can evaluate selector that has a computed target selector', function() {
-        var artifacts = fox.insert('%filterEach(foo, type === "form", .${ classPrefix + classSuffix }[data-id="%id%"])', {
+        var artifacts = fox.insert('%filterEach(foo, type === "form", .<% classPrefix + classSuffix %>[data-id="%id%"])', {
           'max-width': 'width'
         });
 
@@ -425,7 +425,7 @@ describe('dynamic rules', function() {
     it('has no effect without calling process', function() {
       var el = affix('div.bar');
 
-      fox.insert('.${foo}', {
+      fox.insert('.<% foo %>', {
         'max-width': 'width'
       });
 
@@ -436,7 +436,7 @@ describe('dynamic rules', function() {
       var el = affix('div.bar');
       var artifacts;
 
-      artifacts = fox.insert('.${foo}', {
+      artifacts = fox.insert('.<% foo %>', {
         'max-width': 'width'
       });
       fox.process({ foo: 'bar', width: 100 });
@@ -449,7 +449,7 @@ describe('dynamic rules', function() {
       var el = affix('div.bar');
       var artifacts;
 
-      artifacts = fox.insert('.${foo.baz}', {
+      artifacts = fox.insert('.<% foo.baz %>', {
         'max-width': 'width'
       });
       fox.process({ foo: { baz: 'bar' }, width: 100 });
@@ -462,7 +462,7 @@ describe('dynamic rules', function() {
       var el = affix('div.bar');
       var artifacts;
 
-      artifacts = fox.insert('.${foo}${baz}', {
+      artifacts = fox.insert('.<% foo %><% baz %>', {
         'max-width': 'width'
       });
       fox.process({ foo: 'ba', baz: 'r', width: 100 });
@@ -473,7 +473,7 @@ describe('dynamic rules', function() {
 
     it('removes styles when selector no longer matches', function() {
       var el = affix('div.bar');
-      fox.insert('.${foo}', {
+      fox.insert('.<% foo %>', {
         'max-width': 'width'
       });
 
@@ -486,7 +486,7 @@ describe('dynamic rules', function() {
 
     it('maintains styles when selector changes', function() {
       var el = affix('div.bar.baz');
-      fox.insert('.${foo}', {
+      fox.insert('.<% foo %>', {
         'max-width': 'width'
       });
 
