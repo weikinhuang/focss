@@ -23,7 +23,7 @@ nav .foo a.__fake {
 
 %filterEach(foo, num1 > 2, .class1[data-id="%id%"]) {
   float: float;
-  margin-top: num1 * num2;
+  margin-top: num1 * num2 + $hyphenated-var;
   margin-bottom: num1 > num2 ? "" : (num2 === num3 ? 400 + "px" : null);
   width: (num1 * num2) + 'px';
 }
@@ -53,7 +53,7 @@ nav .foo a.__fake {
 
   %filterEach(foo, num1 > 2, .class1[data-id="%id%"]) {
     float: float;
-    margin-top: num1 * num2;
+    margin-top: num1 * num2 + $hyphenated-var;
     margin-bottom: num1 > num2 ? "" : (num2 === num3 ? 400 + "px" : null);
     width: (num1 * num2) + 'px';
   }
