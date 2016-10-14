@@ -1,6 +1,8 @@
 $maxWidth: 1600;
 $opacity: .6;
 $expressionValue: ($maxWidth + 200) + 'px';
+$hyphenated-var: 300;
+
 /* This variable is overwritten in stylesWithGlobalVars.focss */
 $className: "other-class-name";
 

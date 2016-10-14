@@ -341,9 +341,10 @@ describe('parser', function() {
     describe('Focss variables', function() {
       const styles = `$foo: 600;
                       $bar: '#123ABC';
+                      $foo-bar: 'px';
 
                       .test-static {
-                        prop: ($foo * 2) + 'px';
+                        prop: ($foo * 2) + $foo-bar;
                       }
                       .test-method {
                         prop: darken($bar, 16);
@@ -446,7 +447,7 @@ describe('parser', function() {
 
       const variables = fs.readFileSync(path.resolve(__dirname, 'fixtures', 'variables.focss'), { encoding: 'utf8' });
       const styles = fs.readFileSync(path.resolve(__dirname, 'fixtures', 'stylesWithGlobalVars.focss'), { encoding: 'utf8' });
-      const result = '.foo{width:300px;}.foo class-name:hover{max-width:800%;}nav .foo a.active, nav .foo a.__fake{margin-left:200px;}.foo 3{opacity:0;}.class1[data-id="3"]{float:none;margin-top:18px;width:18px;}.class1[data-id="4"]{float:left;margin-top:8px;width:8px;}.class2[data-id="1"]{max-width:1800px;}.class2[data-id="2"]{max-width:1800px;}@media screen and (min-width: 800px) and (max-width: 300px){.foo{width:300px;}.foo class-name:hover{max-width:800%;}nav .foo a.active, nav .foo a.__fake{margin-left:200px;}.foo 3{opacity:0;}.class1[data-id="3"]{float:none;margin-top:18px;width:18px;}.class1[data-id="4"]{float:left;margin-top:8px;width:8px;}.class2[data-id="1"]{max-width:1800px;}.class2[data-id="2"]{max-width:1800px;}}';
+      const result = '.foo{width:300px;}.foo class-name:hover{max-width:800%;}nav .foo a.active, nav .foo a.__fake{margin-left:200px;}.foo 3{opacity:0;}.class1[data-id="3"]{float:none;margin-top:318px;width:18px;}.class1[data-id="4"]{float:left;margin-top:308px;width:8px;}.class2[data-id="1"]{max-width:1800px;}.class2[data-id="2"]{max-width:1800px;}@media screen and (min-width: 800px) and (max-width: 300px){.foo{width:300px;}.foo class-name:hover{max-width:800%;}nav .foo a.active, nav .foo a.__fake{margin-left:200px;}.foo 3{opacity:0;}.class1[data-id="3"]{float:none;margin-top:318px;width:18px;}.class1[data-id="4"]{float:left;margin-top:308px;width:8px;}.class2[data-id="1"]{max-width:1800px;}.class2[data-id="2"]{max-width:1800px;}}';
 
       it('when inserted descriptors are parsed with parse', function(done) {
         parse(variables)
