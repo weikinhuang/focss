@@ -338,6 +338,33 @@ describe('parser', function() {
       });
     });
 
+    describe('two rule declarations on the same line that are terminated by semicolons', function() {
+      const styles = `.foo {
+                         width: bar; max-width: baz;
+                      }`;
+      const result = [
+        {
+          selector: '.foo',
+          rules: {
+            width: 'bar',
+            'max-width': 'baz'
+          }
+        }
+      ];
+
+      it('when parsed with parse', function(done) {
+        parse(styles)
+        .then(({ focss: { descriptors } }) => {
+          expect(descriptors).toEqual(result);
+        })
+        .then(done, done.fail);
+      });
+
+      it('when parsed with parseSync', function() {
+        const { descriptors } = parseSync(styles);
+        expect(descriptors).toEqual(result);
+      });
+    });
     describe('Focss variables', function() {
       const styles = `$foo: 600;
                       $bar: '#123ABC';
@@ -396,23 +423,45 @@ describe('parser', function() {
       });
 
       describe('should throw an error when a variable is not defined before use', function() {
-        const undefinedVarStyles = `.missing-var {
+        const styles = `.missing-var {
                                      prop: $not-defined;
                                    }`;
         const errMsg = 'Variable $not-defined is not defined. (2:38)';
 
         it('when parsed with parse', function(done) {
-          parse(undefinedVarStyles)
-          .catch(({ message }) => {
+          parse(styles)
+          .then(done.fail, ({ message }) => {
             expect(message).toEqual(errMsg);
-          })
-          .then(done, done.fail);
+            done();
+          });
         });
 
         it('when parsed with parseSync', function() {
           expect(() => {
-            parseSync(undefinedVarStyles);
+            parseSync(styles);
           }).toThrowError(errMsg);
+        });
+      });
+
+      describe('should throw an error when a newline at the end of a rule declaration is not preceded by a semicolon', function() {
+        const styles = `.foo {
+                           width: bar
+                           max-width: baz;
+                        }`;
+        const errMsg = '<css input>:2:35: Missed semicolon';
+
+        it('when parsed with parse', function(done) {
+          parse(styles)
+          .then(done.fail, ({ message }) => {
+            expect(message).toEqual(errMsg);
+            done();
+          });
+        });
+
+        it('when parsed with parseSync', function() {
+          expect(() => {
+            parseSync(styles);
+          }).toThrow();
         });
       });
     });
