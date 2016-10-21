@@ -1,5 +1,5 @@
 import postcss from 'postcss';
-import parser from './parse';
+import parser from './parser';
 
 function replaceVariables(node, value, variables) {
   const usedVarRegex = /(\$[\w\d-]+)/ig;
