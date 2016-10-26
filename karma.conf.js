@@ -16,6 +16,8 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'node_modules/babel-polyfill/dist/polyfill.js',
+      require.resolve('jasmine-stray-timers'),
+      require.resolve('jasmine-stray-promises'),
       'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
       'test/**/!(parser)/*.js'
     ],
@@ -65,6 +67,18 @@ module.exports = function(config) {
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false,
 
+    // code coverage reporter
+    coverageReporter: {
+      reporters: [
+        {
+          type: 'text-summary'
+        },
+        {
+          type: 'html',
+          dir: 'coverage/'
+        }
+      ]
+    },
 
     // Make webpack output less verbose
     webpackMiddleware: {
