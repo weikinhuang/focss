@@ -1,6 +1,6 @@
 import Focss from '../../src';
 
-describe('toString', function() {
+describe('Focss#toString', function() {
   beforeEach(function() {
     this._fox = new Focss();
   });
