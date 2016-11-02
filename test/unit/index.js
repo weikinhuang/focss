@@ -92,20 +92,6 @@ describe('Focss', function() {
     });
   });
 
-  describe('#insertVars', function() {
-    it('inserts variables', function() {
-      var variables = {
-        maxHeight: 40,
-        defaultColor: 'red'
-      };
-
-      spyOn(this._fox.engine, 'insertVars');
-      this._fox.insertVars(variables);
-      expect(this._fox.engine.insertVars)
-      .toHaveBeenCalledWith(jasmine.objectContaining(variables));
-    });
-  });
-
   describe('#process()', function() {
     it('calls its engine', function() {
       spyOn(this._fox.engine, 'process');
