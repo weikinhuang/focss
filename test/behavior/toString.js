@@ -160,33 +160,6 @@ describe('Focss#toString', function() {
       })).toEqual('@media screen and (max-width: 1800px){.class1{width:100px;}.class2{color:red;}}');
     });
 
-    it('when inserted media query uses variables', function() {
-      this._fox.insertVars({
-        breakpoint: 1600
-      });
-      this._fox.insert({
-        '@media screen and (max-width: <% __var.breakpoint %>px)': [
-          {
-            selector: '.class1',
-            rules: {
-              width: 'foo'
-            }
-          },
-          {
-            selector: '.class2',
-            rules: {
-              color: 'bar'
-            }
-          }
-        ]
-      });
-
-      expect(this._fox.toString({
-        foo: 100,
-        bar: 'red',
-      })).toEqual('@media screen and (max-width: 1600px){.class1{width:100px;}.class2{color:red;}}');
-    });
-
     it('when inserted rule list contains multiple media queries', function() {
       this._fox.insert({
         '@media screen and (max-width: 300px)': [
@@ -235,21 +208,6 @@ describe('Focss#toString', function() {
         foo: 100,
         bar: 'red'
       })).toEqual('.class1{max-width:100px;}@media screen and (max-width: 300px){.class1{width:100px;color:red;}}');
-    });
-
-
-    it('when inserted rule uses variables', function() {
-      this._fox.insertVars({
-        class: 'foo',
-        bar: 'red'
-      });
-
-      this._fox.insert('.<% __var.class %>', {
-        'max-width': 'width',
-        color: '__var.bar'
-      });
-
-      expect(this._fox.toString({ width: 100 })).toEqual('.foo{max-width:100px;color:red;}');
     });
   });
 
@@ -344,20 +302,6 @@ describe('Focss#toString', function() {
         bar: 'b',
         width: 100
       })).toEqual('.a[b]{max-width:100px;}');
-    });
-
-    it('works when used with inserted variables', function() {
-      this._fox.insertVars({
-        class: 'foo',
-        bar: 'red'
-      });
-
-      this._fox.insert('.<% __var.class %>', {
-        'max-width': 'width',
-        color: '__var.bar'
-      });
-
-      expect(this._fox.toString({ width: 100 })).toEqual('.foo{max-width:100px;color:red;}');
     });
 
     it('correctly evaulates a JavaScript expression', function() {

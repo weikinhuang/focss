@@ -35,15 +35,6 @@ export default class {
     return artifacts;
   }
 
-  /**
-  * Insert a map of variables and their values
-  * @param variables {Object} map of variables and their values
-  * @returns {void}
-  */
-  insertVars(variables) {
-    this.engine.insertVars(variables);
-  }
-
   toggleSelector(key, isToggled) {
     this.engine.toggleSelector(key, isToggled);
   }

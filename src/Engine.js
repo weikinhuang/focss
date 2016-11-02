@@ -20,7 +20,6 @@ const otherPrefixRegex = hasDom ? getVendorPrefixRegex() : new RegExp();
 
 export default class {
   constructor(root, extensions) {
-    this.variables = {};
     this.extensions = Object.assign({}, defaultExtensions, extensions);
     this.rules = new RuleList();
     this._toggleKeys = {};
@@ -49,16 +48,12 @@ export default class {
     return this.rules.insert(selector, spec);
   }
 
-  insertVars(spec) {
-    Object.assign(this.variables, spec);
-  }
-
   process(payload) {
     if (!hasDom) {
       return;
     }
 
-    this._state = Object.assign({}, payload, { __var: this.variables });
+    this._state = payload;
     this.rules.generateArrayRules(this._state, this.extensions);
     this.rules.getRules().forEach(this._process, this);
 
@@ -72,7 +67,7 @@ export default class {
     let result = '';
     let mediaQueryResult = '';
 
-    this._state = Object.assign({}, payload, { __var: this.variables });
+    this._state = payload;
     this.rules.generateArrayRules(this._state, this.extensions);
 
     for (let rule of this.rules.getRules()) {
