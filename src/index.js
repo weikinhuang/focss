@@ -11,28 +11,19 @@ export default class {
    * @param spec {Object|null} key/value map of CSS property to expression or null if selector is object or array
    * @returns Object Artifacts found while compiling the rule
    */
-  insert(selector, spec) {
-    if (typeof selector === 'object') {
-      const artifacts = {};
-
-      if (Array.isArray(selector)) {
-        for (let s of selector) {
-          Object.assign(artifacts, this.insert(s.selector, s.rules));
-        }
-      }
-      else {
-        for (let s in selector) {
-          if (selector.hasOwnProperty(s)) {
-            Object.assign(artifacts, this.insert(s, selector[s]));
-          }
-        }
-      }
-
-      return artifacts;
+  insert(descriptors) {
+    if (!Array.isArray(descriptors)) {
+      throw new TypeError('Inserted descriptors must be an array.');
     }
 
-    const { artifacts } = this.engine.insert(selector, spec);
-    return artifacts;
+    const artifactsMap = {};
+
+    for (const { selector, rules } of descriptors) {
+      const { artifacts } = this.engine.insert(selector, rules);
+      Object.assign(artifactsMap, artifacts);
+    }
+
+    return artifactsMap;
   }
 
   toggleSelector(key, isToggled) {

@@ -27,42 +27,7 @@ describe('Focss', function() {
   });
 
   describe('#insert()', function() {
-    it('inserts single rules', function() {
-      spyOn(this._fox.engine, 'insert').and.returnValue({});
-
-      this._fox.insert('.selector', {
-        prop: ''
-      });
-      expect(this._fox.engine.insert)
-      .toHaveBeenCalledWith('.selector', jasmine.objectContaining({
-        prop: ''
-      }));
-    });
-
-    it('inserts a spec of rules from an object', function() {
-      spyOn(this._fox.engine, 'insert').and.returnValue({});
-
-      this._fox.insert({
-        '.selector': {
-          prop: ''
-        },
-        '.selector2': {
-          otherProp: ''
-        }
-      });
-
-      expect(this._fox.engine.insert.calls.count()).toEqual(2);
-      expect(this._fox.engine.insert.calls.allArgs()).toEqual([
-        ['.selector', jasmine.objectContaining({
-          prop: ''
-        })],
-        ['.selector2', jasmine.objectContaining({
-          otherProp: ''
-        })]
-      ]);
-    });
-
-    it('inserts a spec of rules from an array', function() {
+    it('inserts a spec of descriptors from an array', function() {
       spyOn(this._fox.engine, 'insert').and.returnValue({});
 
       this._fox.insert([
@@ -90,6 +55,20 @@ describe('Focss', function() {
         })]
       ]);
     });
+
+    it('should throw an error when inserted descriptors are not an array', function() {
+      expect(() => {
+        this._fox.insert('.selector{width:foo;}');
+      }).toThrow(new TypeError('Inserted descriptors must be an array.'));
+
+      expect(() => {
+        this._fox.insert({
+          '.selector': {
+            prop: ''
+          }
+        });
+      }).toThrow(new TypeError('Inserted descriptors must be an array.'));
+    });
   });
 
   describe('#process()', function() {
@@ -108,9 +87,14 @@ describe('Focss', function() {
         b: 200
       };
 
-      this._fox.insert('.foo', {
-        'max-width': 'a + b'
-      });
+      this._fox.insert([
+        {
+          selector: '.foo',
+          rules: {
+            'max-width': 'a + b'
+          }
+        }
+      ]);
       expect(this._fox.toString(payload)).toEqual('.foo{max-width:300px;}');
     });
   });
@@ -132,9 +116,14 @@ describe('Focss', function() {
 
   describe('get rules', function() {
     beforeEach(function() {
-      this._fox.insert('.foo', {
-        width: 'bar'
-      });
+      this._fox.insert([
+        {
+          selector: '.foo',
+          rules: {
+            width: 'bar'
+          }
+        }
+      ]);
     });
 
     it('returns list of rules', function() {
@@ -149,9 +138,14 @@ describe('Focss', function() {
 
   describe('get arrayRuleDescriptors', function() {
     beforeEach(function() {
-      this._fox.insert('%forEach(foo, .bar[data-id="%id%"])', {
-        width: 'baz'
-      });
+      this._fox.insert([
+        {
+          selector: '%forEach(foo, .bar[data-id="%id%"])',
+          rules: {
+            width: 'baz'
+          }
+        }
+      ]);
     });
 
     it('returns list of rules', function() {
@@ -166,9 +160,14 @@ describe('Focss', function() {
 
   describe('get arrayRuleDescriptors', function() {
     beforeEach(function() {
-      this._fox.insert('foo:hover', {
-        width: 'bar'
-      });
+      this._fox.insert([
+        {
+          selector: 'foo:hover',
+          rules: {
+            width: 'bar'
+          }
+        }
+      ]);
     });
 
     it('returns list of rules', function() {

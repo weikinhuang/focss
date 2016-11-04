@@ -22,7 +22,14 @@ describe('positional pseudo class selectors', function() {
       var first = ul.find('li:first-child');
       var second = first.next();
       var last = second.next();
-      fox.insert('li:first-child', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:first-child',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(first, 'max-width')).toBe('100px');
@@ -35,7 +42,14 @@ describe('positional pseudo class selectors', function() {
       var first = ul.find('li:first-child');
       var second = first.next();
       var last = second.next();
-      fox.insert('li:first-child', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:first-child',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       ul[0].insertBefore(second[0], first[0]);
@@ -52,7 +66,14 @@ describe('positional pseudo class selectors', function() {
       var last = ul.find('li:last-child');
       var second = last.prev();
       var first = second.prev();
-      fox.insert('li:last-child', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:last-child',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(last, 'max-width')).toBe('100px');
@@ -65,7 +86,14 @@ describe('positional pseudo class selectors', function() {
       var last = ul.find('li:last-child');
       var second = last.prev();
       var first = second.prev();
-      fox.insert('li:last-child', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:last-child',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       ul[0].appendChild(second[0]);
@@ -81,7 +109,14 @@ describe('positional pseudo class selectors', function() {
       var ul = affix('section div+span+span+h1');
       var target = $(ul[0].querySelector('span:first-of-type'));
 
-      fox.insert('span:first-of-type', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'span:first-of-type',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(target, 'max-width')).toBe('100px');
@@ -92,7 +127,14 @@ describe('positional pseudo class selectors', function() {
       var ul = affix('section div+span+span+h1');
       var target = $(ul[0].querySelector('span:first-of-type'));
 
-      fox.insert('span:first-of-type', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'span:first-of-type',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       var span = document.createElement('span');
@@ -108,7 +150,14 @@ describe('positional pseudo class selectors', function() {
       var ul = affix('section div+span+span+h1');
       var target = $(ul[0].querySelector('span:last-of-type'));
 
-      fox.insert('span:last-of-type', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'span:last-of-type',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(target.siblings().css('max-width')).toBe('none');
@@ -118,7 +167,14 @@ describe('positional pseudo class selectors', function() {
       var ul = affix('section div+span+span+h1');
       var target = $(ul[0].querySelector('span:last-of-type'));
 
-      fox.insert('span:last-of-type', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'span:last-of-type',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       var span = document.createElement('span');
@@ -134,7 +190,14 @@ describe('positional pseudo class selectors', function() {
       var ul = affix('section div+span+span+h1');
       var target = $(ul[0].querySelector('div:only-of-type'));
 
-      fox.insert('div:only-of-type', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'div:only-of-type',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(target, 'max-width')).toBe('100px');
@@ -145,7 +208,14 @@ describe('positional pseudo class selectors', function() {
       var ul = affix('section div+span+span+h1');
       var target = $(ul[0].querySelector('div:only-of-type'));
 
-      fox.insert('div:only-of-type', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'div:only-of-type',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(target, 'max-width')).toBe('100px');
@@ -161,7 +231,14 @@ describe('positional pseudo class selectors', function() {
     it('affects only the nth element', function() {
       var ul = affix('ul li+li+li+li');
 
-      fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:nth-child(2n)',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(ul.find('li:eq(0)'), 'max-width')).toBe('none');
@@ -173,7 +250,14 @@ describe('positional pseudo class selectors', function() {
     it('tracks when new element shifts positions', function() {
       var ul = affix('ul li+li+li+li');
 
-      fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:nth-child(2n)',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       ul[0].insertBefore(document.createElement('li'), ul[0].childNodes[0]);
@@ -188,7 +272,14 @@ describe('positional pseudo class selectors', function() {
     it('tracks when removing element shifts positions', function() {
       var ul = affix('ul li+li+li+li');
 
-      fox.insert('li:nth-child(3n)', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:nth-child(3n)',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       ul[0].removeChild(ul[0].firstChild);
@@ -201,7 +292,14 @@ describe('positional pseudo class selectors', function() {
     it('tracks when positions shift', function() {
       var ul = affix('ul li#first+li#second+li#third+li#last');
 
-      fox.insert('li:nth-child(2n)', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:nth-child(2n)',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       ul[0].insertBefore(ul[0].childNodes[1], ul[0].childNodes[0]);
@@ -217,7 +315,14 @@ describe('positional pseudo class selectors', function() {
     it('affects only the nth element in reverse', function() {
       var ul = affix('ul li+li+li+li');
 
-      fox.insert('li:nth-last-child(2n)', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:nth-last-child(2n)',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(ul.find('li:eq(0)'), 'max-width')).toBe('100px');
@@ -229,7 +334,14 @@ describe('positional pseudo class selectors', function() {
     it('tracks when new element shifts positions', function() {
       var ul = affix('ul li+li+li+li');
 
-      fox.insert('li:nth-last-child(2n)', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'li:nth-last-child(2n)',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       ul[0].appendChild(document.createElement('li'));
@@ -257,7 +369,14 @@ describe('relational pseudo class selectors', function() {
     it('matches only empty elements', function() {
       var ul = affix('ul');
 
-      fox.insert('ul:empty', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'ul:empty',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(ul, 'max-width')).toBe('100px');
@@ -304,7 +423,14 @@ describe('input pseudo class selectors', function() {
     it('matches enabled inputs', function() {
       var input = affix('input[type=text]');
 
-      fox.insert('input:enabled', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'input:enabled',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(input, 'max-width')).toBe('100px');
@@ -318,7 +444,14 @@ describe('input pseudo class selectors', function() {
     it('matches disabled inputs', function() {
       var input = affix('input[type=text]');
 
-      fox.insert('input:disabled', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'input:disabled',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(input, 'max-width')).toBe('none');
@@ -332,7 +465,14 @@ describe('input pseudo class selectors', function() {
     it('matches checked inputs', function() {
       var input = affix('input[type=checkbox]');
 
-      fox.insert('input:checked', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'input:checked',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(input, 'max-width')).toBe('none');
@@ -346,7 +486,14 @@ describe('input pseudo class selectors', function() {
     it('matches indeterminate inputs', function() {
       var input = affix('input[type=checkbox]');
 
-      fox.insert('input:indeterminate', { 'max-width': 'foo' });
+      fox.insert([
+        {
+          selector: 'input:indeterminate',
+          rules: {
+            'max-width': 'foo'
+          }
+        }
+      ]);
       fox.process({ foo: 100 });
 
       expect(css(input, 'max-width')).toBe('none');
@@ -371,7 +518,14 @@ describe('pseudo elements', function() {
     it('sets pseudo element content', function() {
       var el = affix('div');
 
-      fox.insert('div:before', { content: 'foo' });
+      fox.insert([
+        {
+          selector: 'div:before',
+          rules: {
+            content: 'foo'
+          }
+        }
+      ]);
       expect(css(el, 'content', ':before')).not.toBe('bar');
 
       fox.process({ foo: '"bar"' });
@@ -382,7 +536,14 @@ describe('pseudo elements', function() {
     it('sets pseudo element content', function() {
       var el = affix('div');
 
-      fox.insert('div:after', { content: 'foo' });
+      fox.insert([
+        {
+          selector: 'div:after',
+          rules: {
+            content: 'foo'
+          }
+        }
+      ]);
       expect(css(el, 'content', ':after')).not.toBe('bar');
 
       fox.process({ foo: '"bar"' });
