@@ -1,5 +1,5 @@
 import Input from 'postcss/lib/input';
-import FocssParser from './focss-parser';
+import FocssParser from './FocssParser';
 
 export default function parse(styles, opts) {
   const input = new Input(styles, opts);

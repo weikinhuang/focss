@@ -1,5 +1,6 @@
 export function replaceVariables(node, value, variables) {
   const usedVarRegex = /(\$[\w\d-]+)/ig;
+
   return value.replace(usedVarRegex, (match) => {
     if (!variables[match]) {
       const { source: { start: { line, column } } } = node;
