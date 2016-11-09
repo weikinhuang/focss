@@ -26,9 +26,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:first-child',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -46,9 +46,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:first-child',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -70,9 +70,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:last-child',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -90,9 +90,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:last-child',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -113,9 +113,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'span:first-of-type',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -131,9 +131,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'span:first-of-type',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -154,9 +154,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'span:last-of-type',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -171,9 +171,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'span:last-of-type',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -194,9 +194,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'div:only-of-type',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -212,9 +212,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'div:only-of-type',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -235,9 +235,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:nth-child(2n)',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -254,9 +254,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:nth-child(2n)',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -276,9 +276,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:nth-child(3n)',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -296,9 +296,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:nth-child(2n)',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -319,9 +319,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:nth-last-child(2n)',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -338,9 +338,9 @@ describe('positional pseudo class selectors', function() {
         {
           selector: 'li:nth-last-child(2n)',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -373,9 +373,9 @@ describe('relational pseudo class selectors', function() {
         {
           selector: 'ul:empty',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -427,9 +427,9 @@ describe('input pseudo class selectors', function() {
         {
           selector: 'input:enabled',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -448,9 +448,9 @@ describe('input pseudo class selectors', function() {
         {
           selector: 'input:disabled',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -469,9 +469,9 @@ describe('input pseudo class selectors', function() {
         {
           selector: 'input:checked',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -490,9 +490,9 @@ describe('input pseudo class selectors', function() {
         {
           selector: 'input:indeterminate',
           rules: {
-            'max-width': 'foo'
-          }
-        }
+            'max-width': 'foo',
+          },
+        },
       ]);
       fox.process({ foo: 100 });
 
@@ -522,9 +522,9 @@ describe('pseudo elements', function() {
         {
           selector: 'div:before',
           rules: {
-            content: 'foo'
-          }
-        }
+            content: 'foo',
+          },
+        },
       ]);
       expect(css(el, 'content', ':before')).not.toBe('bar');
 
@@ -540,9 +540,9 @@ describe('pseudo elements', function() {
         {
           selector: 'div:after',
           rules: {
-            content: 'foo'
-          }
-        }
+            content: 'foo',
+          },
+        },
       ]);
       expect(css(el, 'content', ':after')).not.toBe('bar');
 

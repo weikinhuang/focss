@@ -22,21 +22,21 @@ describe('toggleSelectors rules', function() {
           {
             selector: '.bar:hover',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
         this._fox.process({
           width: 20,
-          foo: 'foo'
+          foo: 'foo',
         });
       });
 
       it('creates a trace linking the selector to the specs modifying it', function() {
         expect(this._fox.traces).toEqual({
           hover1: {
-            width: true
-          }
+            width: true,
+          },
         });
       });
 
@@ -58,21 +58,21 @@ describe('toggleSelectors rules', function() {
           {
             selector: '.bar:hover, .bar:active',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
         this._fox.process({
           width: 20,
-          foo: 'foo'
+          foo: 'foo',
         });
       });
 
       it('creates a trace linking the selector to the specs modifying it', function() {
         expect(this._fox.traces).toEqual({
           hover1: {
-            width: true
-          }
+            width: true,
+          },
         });
       });
 
@@ -94,21 +94,21 @@ describe('toggleSelectors rules', function() {
           {
             selector: '.bar.__sent',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
         this._fox.process({
           width: 20,
-          foo: 'foo'
+          foo: 'foo',
         });
       });
 
       it('creates a trace linking the selector to the specs modifying it', function() {
         expect(this._fox.traces).toEqual({
           __sent1: {
-            width: true
-          }
+            width: true,
+          },
         });
       });
 
@@ -130,21 +130,21 @@ describe('toggleSelectors rules', function() {
           {
             selector: '.bar.__sent:before',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
         this._fox.process({
           width: 20,
-          foo: 'foo'
+          foo: 'foo',
         });
       });
 
       it('creates a trace linking the selector to the specs modifying it', function() {
         expect(this._fox.traces).toEqual({
           __sent1: {
-            width: true
-          }
+            width: true,
+          },
         });
       });
 
@@ -171,30 +171,30 @@ describe('toggleSelectors rules', function() {
           {
             selector: '%forEach(foo, .bar[data-id="%id%"]:hover)',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
         this._fox.process({
           foo: [
             { id: -1, width: 100 },
             { id: 4, width: 200 },
-            { id: 5, width: 300 }
-          ]
+            { id: 5, width: 300 },
+          ],
         });
       });
 
       it('creates a trace linking the selector to the specs modifying it', function() {
         expect(this._fox.traces).toEqual({
           'hover1_id_-1': {
-            'foo.0.width': true
+            'foo.0.width': true,
           },
           hover1_id_4: {
-            'foo.1.width': true
+            'foo.1.width': true,
           },
           hover1_id_5: {
-            'foo.2.width': true
-          }
+            'foo.2.width': true,
+          },
         });
       });
 
@@ -203,20 +203,20 @@ describe('toggleSelectors rules', function() {
           foo: [
             { id: 4, width: 200 },
             { id: -1, width: 100 },
-            { id: 5, width: 300 }
-          ]
+            { id: 5, width: 300 },
+          ],
         });
 
         expect(this._fox.traces).toEqual({
           hover1_id_4: {
-            'foo.0.width': true
+            'foo.0.width': true,
           },
           'hover1_id_-1': {
-            'foo.1.width': true
+            'foo.1.width': true,
           },
           hover1_id_5: {
-            'foo.2.width': true
-          }
+            'foo.2.width': true,
+          },
         });
       });
 
@@ -260,8 +260,8 @@ describe('toggleSelectors rules', function() {
           foo: [
             { id: 4, width: 200 },
             { id: -1, width: 100 },
-            { id: 5, width: 300 }
-          ]
+            { id: 5, width: 300 },
+          ],
         });
         expect(css(this._el, 'max-width')).toBe('100px');
         expect(css(this._el2, 'max-width')).toBe('200px');

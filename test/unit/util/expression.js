@@ -10,7 +10,7 @@ describe('expression parser', function() {
       var res = expression.parse('foo');
       expect(res).toEqual(jasmine.objectContaining({
         body: jasmine.any(String),
-        artifacts: jasmine.any(Object)
+        artifacts: jasmine.any(Object),
       }));
     });
 
@@ -66,7 +66,7 @@ describe('expression parser', function() {
       var res = expression.compileSpec({
         alpha: 'o + 1',
         beta: 'o + 2',
-        gamma: 'o + 3'
+        gamma: 'o + 3',
       });
       expect(res).toEqual(jasmine.any(Function));
     });
@@ -75,12 +75,12 @@ describe('expression parser', function() {
       var res = expression.compileSpec({
         alpha: 'o + 1',
         beta: 'o + 2',
-        gamma: 'o + 3'
+        gamma: 'o + 3',
       });
       expect(res({ o: 0 })).toEqual(jasmine.objectContaining({
         alpha: 1,
         beta: 2,
-        gamma: 3
+        gamma: 3,
       }));
     });
   });

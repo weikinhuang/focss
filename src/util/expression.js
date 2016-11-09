@@ -147,8 +147,8 @@ function treeParse(expr, scope, callPrefix) {
             node: {
               type: 'ArrayExpression',
               isArgs: true,
-              elements: current.node.arguments
-            }
+              elements: current.node.arguments,
+            },
           });
           break;
         }
@@ -171,7 +171,7 @@ function treeParse(expr, scope, callPrefix) {
       obj[symbol.join('.')] = true;
       return obj;
     }, {}),
-    body
+    body,
   };
 }
 
@@ -231,5 +231,5 @@ export default {
 
     return (this._cache[expr] = treeParse(expr, base, callbase));
   },
-  _cache: {}
+  _cache: {},
 };

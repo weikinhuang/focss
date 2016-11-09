@@ -35,7 +35,7 @@ describe('Engine', function() {
     it('runs individual rule.process()', function() {
       spyOn(Rule.prototype, 'process');
       const payload = {
-        foo: 'bar'
+        foo: 'bar',
       };
       const rule = this._engine.insert('selector', {});
       this._engine.process(payload);
@@ -48,7 +48,7 @@ describe('Engine', function() {
       this.payload = {
         a: 100,
         b: 200,
-        c: 300
+        c: 300,
       };
     });
 
@@ -58,13 +58,13 @@ describe('Engine', function() {
 
     it('returns processed styles in the order in which they are inserted', function() {
       this._engine.insert('.foo', {
-        'max-width': 'a + b'
+        'max-width': 'a + b',
       });
       this._engine.insert('.bar', {
-        width: 'c'
+        width: 'c',
       });
       this._engine.insert('.baz', {
-        height: 'a + c'
+        height: 'a + c',
       });
       expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;}.bar{width:300px;}.baz{height:400px;}');
     });
@@ -73,18 +73,18 @@ describe('Engine', function() {
       this._engine.insert('.foo', {
         'max-width': 'a + b',
         width: 'b - a',
-        height: 'a + c'
+        height: 'a + c',
       });
       expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;width:100px;height:400px;}');
     });
 
     it('does not delete previously inserted rules when called', function() {
       this._engine.insert('.foo', {
-        'max-width': 'a + b'
+        'max-width': 'a + b',
       });
       expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;}');
       this._engine.insert('.bar', {
-        width: 'c'
+        width: 'c',
       });
       expect(this._engine.toString(this.payload)).toEqual('.foo{max-width:300px;}.bar{width:300px;}');
     });

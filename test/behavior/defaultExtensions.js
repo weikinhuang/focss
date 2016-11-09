@@ -23,13 +23,13 @@ describe('default extensions', function() {
         {
           selector: '.foo',
           rules: {
-            'max-width': 'Math.floor(width)'
-          }
-        }
+            'max-width': 'Math.floor(width)',
+          },
+        },
       ]);
 
       fox.process({
-        width: 100.6
+        width: 100.6,
       });
 
       expect(css(this._el, 'max-width')).toBe('100px');
@@ -42,13 +42,13 @@ describe('default extensions', function() {
         {
           selector: '.foo',
           rules: {
-            'max-width': 'Number.parseInt(width)'
-          }
-        }
+            'max-width': 'Number.parseInt(width)',
+          },
+        },
       ]);
 
       fox.process({
-        width: '123'
+        width: '123',
       });
 
       expect(css(this._el, 'max-width')).toBe('123px');

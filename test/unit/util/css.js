@@ -22,7 +22,7 @@ describe('css helper', function() {
 
       css.apply(div[0], {
         width: '10px',
-        height: '20px'
+        height: '20px',
       });
 
       expect(div.width()).toEqual(10);
@@ -37,7 +37,7 @@ describe('css helper', function() {
         height: 5,
         'z-index': 1,
         // required for z-index to come back as 1 in Chrome
-        position: 'absolute'
+        position: 'absolute',
       });
 
       expect(div.css('width')).toEqual('4px');

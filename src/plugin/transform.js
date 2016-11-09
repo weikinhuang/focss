@@ -23,7 +23,7 @@ export default function transform(ast, variables = {}) {
       node.walkRules((ruleNode) => {
         const ruleDescriptor = {
           selector: replaceVariables(ruleNode, ruleNode.selector.replace(/\n/g, ' '), variables),
-          rules: {}
+          rules: {},
         };
 
         ruleNode.walkDecls((declNode) => {

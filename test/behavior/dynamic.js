@@ -22,9 +22,9 @@ describe('dynamic rules', function() {
         {
           selector: '%forEach(foo, .bar[data-id="%id%"])',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
 
       expect(fox.engine.getArrayRuleDescriptors().length).toBe(1);
@@ -36,9 +36,9 @@ describe('dynamic rules', function() {
         {
           selector: '%filterEach(foo, true, .bar[data-id="%id%"])',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
 
       expect(fox.engine.rules.getArrayRuleDescriptors().length).toBe(1);
@@ -60,9 +60,9 @@ describe('dynamic rules', function() {
           {
             selector: '%forEach(foo, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         expect(css(this._el, 'max-width')).toBe('none');
@@ -74,15 +74,15 @@ describe('dynamic rules', function() {
           {
             selector: '%forEach(foo, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
           foo: [
-            { id: 3, width: 100 }
-          ]
+            { id: 3, width: 100 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -92,8 +92,8 @@ describe('dynamic rules', function() {
         fox.process({
           foo: [
             { id: 3, width: 100 },
-            { id: 4, width: 300 }
-          ]
+            { id: 4, width: 300 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -102,8 +102,8 @@ describe('dynamic rules', function() {
         fox.process({
           foo: [
             { id: 3, width: 100 },
-            { id: 4, width: 350 }
-          ]
+            { id: 4, width: 350 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -117,9 +117,9 @@ describe('dynamic rules', function() {
           {
             selector: '%forEach(foo, .baz[data-id="%id%"], .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
@@ -127,7 +127,7 @@ describe('dynamic rules', function() {
             { id: 3, width: 100 },
             { id: 4, width: 200 },
             { id: 5, width: 300 },
-          ]
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -141,9 +141,9 @@ describe('dynamic rules', function() {
           {
             selector: '%forEach(foo, .bar[data-id="%id%"]:nth-child(odd))',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
@@ -151,7 +151,7 @@ describe('dynamic rules', function() {
             { id: 3, width: 100 },
             { id: 4, width: 200 },
             { id: 5, width: 300 },
-          ]
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -161,20 +161,20 @@ describe('dynamic rules', function() {
       });
 
       it('can evaluate selector with nested property lookup from spec', function() {
-        var artifacts  = fox.insert([
+        var artifacts = fox.insert([
           {
             selector: '%forEach(foo, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'data.width'
-            }
-          }
+              'max-width': 'data.width',
+            },
+          },
         ]);
 
         fox.process({
           foo: [
             { id: 3, data: { width: 100 } },
             { id: 4, data: { width: 200 } },
-          ]
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -183,20 +183,20 @@ describe('dynamic rules', function() {
       });
 
       it('can evaluate selector with missing property lookup from spec', function() {
-        var artifacts  = fox.insert([
+        var artifacts = fox.insert([
           {
             selector: '%forEach(foo, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
           foo: [
             { id: 3, width: 100 },
-            { id: 4 }
-          ]
+            { id: 4 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -205,20 +205,20 @@ describe('dynamic rules', function() {
       });
 
       it('can evaluate selector with extension use in the spec', function() {
-        var artifacts  = fox.insert([
+        var artifacts = fox.insert([
           {
             selector: '%forEach(foo, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'Math.floor(width)'
-            }
-          }
+              'max-width': 'Math.floor(width)',
+            },
+          },
         ]);
 
         fox.process({
           foo: [
             { id: 3, width: 100 },
-            { id: 4 }
-          ]
+            { id: 4 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -227,20 +227,20 @@ describe('dynamic rules', function() {
       });
 
       it('can evaluate selector with expressions from spec', function() {
-        var artifacts  = fox.insert([
+        var artifacts = fox.insert([
           {
             selector: '%forEach(foo, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width + padding'
-            }
-          }
+              'max-width': 'width + padding',
+            },
+          },
         ]);
 
         fox.process({
           foo: [
             { id: 3, width: 100, padding: 100 },
-            { id: 4 }
-          ]
+            { id: 4 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('200px');
@@ -254,18 +254,18 @@ describe('dynamic rules', function() {
           {
             selector: '%forEach(foo.baz, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'data.width'
-            }
-          }
+              'max-width': 'data.width',
+            },
+          },
         ]);
 
         fox.process({
           foo: {
             baz: [
               { id: 3 },
-              { id: 4 }
-            ]
-          }
+              { id: 4 },
+            ],
+          },
         });
 
         expect(css(this._el, 'max-width')).toBe('none');
@@ -278,18 +278,18 @@ describe('dynamic rules', function() {
           {
             selector: '%forEach(foo.baz, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
           foo: {
             baz: [
               { id: 3, width: 100 },
-              { id: 4, width: 200 }
-            ]
-          }
+              { id: 4, width: 200 },
+            ],
+          },
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -304,18 +304,18 @@ describe('dynamic rules', function() {
             width: 500,
             baz: [
               { id: 3, width: 100 },
-              { id: 4, width: 200 }
-            ]
-          }
+              { id: 4, width: 200 },
+            ],
+          },
         };
 
         fox.insert([
           {
             selector: '%forEach(foo.baz, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
         fox.process(data);
 
@@ -323,9 +323,9 @@ describe('dynamic rules', function() {
           {
             selector: '.my-rule',
             rules: {
-              width: 'foo.width'
-            }
-          }
+              width: 'foo.width',
+            },
+          },
         ]);
         fox.process(data);
 
@@ -350,9 +350,9 @@ describe('dynamic rules', function() {
           {
             selector: '%filterEach(foo, true, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         expect(css(this._el, 'max-width')).toBe('none');
@@ -364,15 +364,15 @@ describe('dynamic rules', function() {
           {
             selector: '%filterEach(foo, true, .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
           foo: [
-            { id: 3, width: 100 }
-          ]
+            { id: 3, width: 100 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -382,8 +382,8 @@ describe('dynamic rules', function() {
         fox.process({
           foo: [
             { id: 3, width: 100 },
-            { id: 4, width: 300 }
-          ]
+            { id: 4, width: 300 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -392,8 +392,8 @@ describe('dynamic rules', function() {
         fox.process({
           foo: [
             { id: 3, width: 100 },
-            { id: 4, width: 350 }
-          ]
+            { id: 4, width: 350 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -407,9 +407,9 @@ describe('dynamic rules', function() {
           {
             selector: '%filterEach(foo, true, .baz[data-id="%id%"], .bar[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
@@ -417,7 +417,7 @@ describe('dynamic rules', function() {
             { id: 3, width: 100 },
             { id: 4, width: 200 },
             { id: 5, width: 300 },
-          ]
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -431,9 +431,9 @@ describe('dynamic rules', function() {
           {
             selector: '%filterEach(foo, type === "form", .<% classPrefix + classSuffix %>[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
@@ -442,8 +442,8 @@ describe('dynamic rules', function() {
           foo: [
             { id: 3, type: 'form', width: 100 },
             { id: 4, type: 'form', width: 200 },
-            { id: 5, type: 'form', width: 300 }
-          ]
+            { id: 5, type: 'form', width: 300 },
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -457,9 +457,9 @@ describe('dynamic rules', function() {
           {
             selector: '%filterEach(foo, true, div[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
@@ -467,7 +467,7 @@ describe('dynamic rules', function() {
             { id: 3, width: 100 },
             { id: 4, width: 200 },
             { id: 5, width: 300 },
-          ]
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('100px');
@@ -481,9 +481,9 @@ describe('dynamic rules', function() {
           {
             selector: '%filterEach(foo, false, div[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
@@ -491,7 +491,7 @@ describe('dynamic rules', function() {
             { id: 3, width: 100 },
             { id: 4, width: 200 },
             { id: 5, width: 300 },
-          ]
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('none');
@@ -505,9 +505,9 @@ describe('dynamic rules', function() {
           {
             selector: '%filterEach(foo, width > 200, div[data-id="%id%"])',
             rules: {
-              'max-width': 'width'
-            }
-          }
+              'max-width': 'width',
+            },
+          },
         ]);
 
         fox.process({
@@ -515,7 +515,7 @@ describe('dynamic rules', function() {
             { id: 3, width: 100 },
             { id: 4, width: 200 },
             { id: 5, width: 300 },
-          ]
+          ],
         });
 
         expect(css(this._el, 'max-width')).toBe('none');
@@ -534,9 +534,9 @@ describe('dynamic rules', function() {
         {
           selector: '.<% foo %>',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
 
       expect(css(el, 'max-width')).toBe('none');
@@ -550,9 +550,9 @@ describe('dynamic rules', function() {
         {
           selector: '.<% foo %>',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
       fox.process({ foo: 'bar', width: 100 });
 
@@ -568,9 +568,9 @@ describe('dynamic rules', function() {
         {
           selector: '.<% foo.baz %>',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
       fox.process({ foo: { baz: 'bar' }, width: 100 });
 
@@ -586,9 +586,9 @@ describe('dynamic rules', function() {
         {
           selector: '.<% foo %><% baz %>',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
       fox.process({ foo: 'ba', baz: 'r', width: 100 });
 
@@ -602,9 +602,9 @@ describe('dynamic rules', function() {
         {
           selector: '.<% foo %>',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
 
       fox.process({ foo: 'bar', width: 100 });
@@ -620,9 +620,9 @@ describe('dynamic rules', function() {
         {
           selector: '.<% foo %>',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
 
       fox.process({ foo: 'bar', width: 100 });
@@ -639,9 +639,9 @@ describe('dynamic rules', function() {
         {
           selector: '.bar',
           rules: {
-            'max-width': 'width'
-          }
-        }
+            'max-width': 'width',
+          },
+        },
       ]);
     });
 
@@ -673,9 +673,9 @@ describe('dynamic rules', function() {
         {
           selector: '.bar .stool',
           rules: {
-            'max-height': 'width'
-          }
-        }
+            'max-height': 'width',
+          },
+        },
       ]);
       fox.process({ width: 100 });
 

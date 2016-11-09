@@ -34,25 +34,25 @@ describe('Focss', function() {
         {
           selector: '.selector',
           rules: {
-            prop: ''
-          }
+            prop: '',
+          },
         },
         {
           selector: '.selector2',
           rules: {
-            otherProp: ''
-          }
-        }
+            otherProp: '',
+          },
+        },
       ]);
 
       expect(this._fox.engine.insert.calls.count()).toEqual(2);
       expect(this._fox.engine.insert.calls.allArgs()).toEqual([
         ['.selector', jasmine.objectContaining({
-          prop: ''
+          prop: '',
         })],
         ['.selector2', jasmine.objectContaining({
-          otherProp: ''
-        })]
+          otherProp: '',
+        })],
       ]);
     });
 
@@ -64,8 +64,8 @@ describe('Focss', function() {
       expect(() => {
         this._fox.insert({
           '.selector': {
-            prop: ''
-          }
+            prop: '',
+          },
         });
       }).toThrow(new TypeError('Inserted descriptors must be an array.'));
     });
@@ -84,16 +84,16 @@ describe('Focss', function() {
     it('returns a string of processed styles', function() {
       var payload = {
         a: 100,
-        b: 200
+        b: 200,
       };
 
       this._fox.insert([
         {
           selector: '.foo',
           rules: {
-            'max-width': 'a + b'
-          }
-        }
+            'max-width': 'a + b',
+          },
+        },
       ]);
       expect(this._fox.toString(payload)).toEqual('.foo{max-width:300px;}');
     });
@@ -120,9 +120,9 @@ describe('Focss', function() {
         {
           selector: '.foo',
           rules: {
-            width: 'bar'
-          }
-        }
+            width: 'bar',
+          },
+        },
       ]);
     });
 
@@ -130,8 +130,8 @@ describe('Focss', function() {
       expect(this._fox.rules).toEqual([jasmine.objectContaining({
         selector: '.foo',
         artifacts: {
-          bar: true
-        }
+          bar: true,
+        },
       })]);
     });
   });
@@ -142,9 +142,9 @@ describe('Focss', function() {
         {
           selector: '%forEach(foo, .bar[data-id="%id%"])',
           rules: {
-            width: 'baz'
-          }
-        }
+            width: 'baz',
+          },
+        },
       ]);
     });
 
@@ -152,8 +152,8 @@ describe('Focss', function() {
       expect(this._fox.arrayRuleDescriptors).toEqual([jasmine.objectContaining({
         selector: ' .bar[data-id="%id%"]',
         artifacts: {
-          foo: true
-        }
+          foo: true,
+        },
       })]);
     });
   });
@@ -164,17 +164,17 @@ describe('Focss', function() {
         {
           selector: 'foo:hover',
           rules: {
-            width: 'bar'
-          }
-        }
+            width: 'bar',
+          },
+        },
       ]);
     });
 
     it('returns list of rules', function() {
       expect(this._fox.traces).toEqual({
         hover1: {
-          bar: true
-        }
+          bar: true,
+        },
       });
     });
   });
