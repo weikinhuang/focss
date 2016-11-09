@@ -19,7 +19,7 @@ module.exports = function(config) {
       require.resolve('jasmine-stray-timers'),
       require.resolve('jasmine-stray-promises'),
       'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
-      'test/**/!(parser)/*.js'
+      'test/**/!(plugin)/*.js'
     ],
 
 
