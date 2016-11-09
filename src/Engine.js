@@ -41,7 +41,7 @@ export default class {
     // @see: http://stackoverflow.com/questions/23050001/insert-multiple-css-rules-into-a-stylesheet
     if (hasDom && otherPrefixRegex.test(selector)) {
       return {
-        artifacts: {}
+        artifacts: {},
       };
     }
 

@@ -1,5 +1,5 @@
 export default {
   Math,
-  Number
+  Number,
 };
 

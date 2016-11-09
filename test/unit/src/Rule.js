@@ -5,7 +5,7 @@ describe('Rule', function() {
   it('is a constructor', function() {
     rule = new Rule({
       selector: 'section',
-      spec: {}
+      spec: {},
     });
 
     expect(rule).toBeDefined();
@@ -14,7 +14,7 @@ describe('Rule', function() {
   it('normalizes CSS2 pseudo-element selectors', function() {
     rule = new Rule({
       selector: 'section:after, section:before, section:first-line, section:first-letter',
-      spec: {}
+      spec: {},
     });
 
     expect(rule.selector).toBe('section::after, section::before, section::first-line, section::first-letter');
@@ -28,14 +28,14 @@ describe('Rule', function() {
     expect(function() {
       rule = new Rule({
         selector: [],
-        spec: {}
+        spec: {},
       });
     }).toThrow();
 
     expect(function() {
       rule = new Rule({
         selector: '',
-        spec: {}
+        spec: {},
       });
     }).not.toThrow();
   });
@@ -44,7 +44,7 @@ describe('Rule', function() {
     it('does not add traces if no toggle keys are provided', function() {
       rule = new Rule({
         selector: '.foo',
-        spec: {}
+        spec: {},
       });
 
       expect(rule.traces).toBeUndefined();
@@ -55,15 +55,15 @@ describe('Rule', function() {
         rule = new Rule({
           selector: '.foo:hover',
           spec: {
-            width: 'bar'
+            width: 'bar',
           },
-          toggleKeys: ['hover1']
+          toggleKeys: ['hover1'],
         });
 
         expect(rule.traces).toEqual({
           hover1: {
-            bar: true
-          }
+            bar: true,
+          },
         });
       });
 
@@ -71,17 +71,17 @@ describe('Rule', function() {
         rule = new Rule({
           selector: '.foo:hover',
           spec: {
-            width: 'bar'
+            width: 'bar',
           },
           arrayMemberExpr: 'baz[0]',
           toggleKeys: ['hover1'],
-          togglePrefix: 'baz.0.'
+          togglePrefix: 'baz.0.',
         });
 
         expect(rule.traces).toEqual({
           hover1: {
-            'baz.0.bar': true
-          }
+            'baz.0.bar': true,
+          },
         });
       });
 
@@ -89,18 +89,18 @@ describe('Rule', function() {
         rule = new Rule({
           selector: '.foo:hover .__fake',
           spec: {
-            width: 'bar'
+            width: 'bar',
           },
-          toggleKeys: ['hover1', '__fake2']
+          toggleKeys: ['hover1', '__fake2'],
         });
 
         expect(rule.traces).toEqual({
           hover1: {
-            bar: true
+            bar: true,
           },
           __fake2: {
-            bar: true
-          }
+            bar: true,
+          },
         });
       });
     });
@@ -110,7 +110,7 @@ describe('Rule', function() {
     expect(function() {
       rule = new Rule({
         selector: '#<% foo %>',
-        spec: {}
+        spec: {},
       });
     }).not.toThrow();
 
@@ -122,15 +122,15 @@ describe('Rule', function() {
     rule = new Rule({
       selector: '',
       spec: {
-        marco: 'polo'
-      }
+        marco: 'polo',
+      },
     });
 
     expect(rule.body).toEqual(jasmine.any(Function));
     expect(rule.body({
-      polo: 3
+      polo: 3,
     })).toEqual(jasmine.objectContaining({
-      marco: 3
+      marco: 3,
     }));
   });
 
@@ -138,7 +138,7 @@ describe('Rule', function() {
     it('calculates static selectors', function() {
       rule = new Rule({
         selector: '.static',
-        spec: {}
+        spec: {},
       });
       rule.process();
       expect(rule.computedSelector).toBe('.static');
@@ -147,7 +147,7 @@ describe('Rule', function() {
     it('calculates computed selectors', function() {
       rule = new Rule({
         selector: '.<% dynamic %>',
-        spec: {}
+        spec: {},
       });
       rule.process({ dynamic: 'foobar' });
       expect(rule.computedSelector).toBe('.foobar');
@@ -157,8 +157,8 @@ describe('Rule', function() {
       rule = new Rule({
         selector: '.static',
         spec: {
-          foo: 'bar'
-        }
+          foo: 'bar',
+        },
       });
       rule.process({ bar: 'baz' });
       expect(rule.result).toEqual({ foo: 'baz' });
@@ -168,8 +168,8 @@ describe('Rule', function() {
       rule = new Rule({
         selector: '.extended',
         spec: {
-          foo: 'bar()'
-        }
+          foo: 'bar()',
+        },
       });
 
       var bar = jasmine.createSpy('extension').and.returnValue('baz');
@@ -183,8 +183,8 @@ describe('Rule', function() {
       rule = new Rule({
         selector: '.extended',
         spec: {
-          foo: 'bar()'
-        }
+          foo: 'bar()',
+        },
       });
 
       var bar = jasmine.createSpy('extension').and.returnValues('bar', 'baz');
@@ -200,8 +200,8 @@ describe('Rule', function() {
       rule = new Rule({
         selector: '.extended',
         spec: {
-          foo: 'bar()'
-        }
+          foo: 'bar()',
+        },
       });
       rule.process({});
 
@@ -212,8 +212,8 @@ describe('Rule', function() {
       rule = new Rule({
         selector: '.static',
         spec: {
-          foo: 'bar'
-        }
+          foo: 'bar',
+        },
       });
       rule.process({ bar: 'baz' });
       expect(rule.process({ bar: 'bar' })).toEqual({ foo: 'bar' });
@@ -223,8 +223,8 @@ describe('Rule', function() {
       rule = new Rule({
         selector: '.static',
         spec: {
-          foo: 'bar'
-        }
+          foo: 'bar',
+        },
       });
       rule.process({ bar: 'baz' });
       expect(rule.process({ bar: 'baz' })).toEqual(null);
@@ -235,7 +235,7 @@ describe('Rule', function() {
     it('returns all selector parts', function() {
       rule = new Rule({
         selector: '.foo1,.foo2,.foo3',
-        spec: {}
+        spec: {},
       });
       rule.process();
 

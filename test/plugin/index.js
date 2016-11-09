@@ -8,7 +8,7 @@ import plugin from '../../src/plugin';
 import Focss from '../../src';
 
 function parse(styles, variables = {}) {
-  return  postcss([plugin({ variables })]).process(styles, { parser });
+  return postcss([plugin({ variables })]).process(styles, { parser });
 }
 
 describe('plugin', function() {
@@ -54,14 +54,14 @@ describe('plugin', function() {
       {
         selector: '.foo',
         rules: {
-          'max-width': 'bar'
-        }
+          'max-width': 'bar',
+        },
       },
       {
         selector: '.baz',
         rules: {
-          width: 'qux'
-        }
+          width: 'qux',
+        },
       },
       {
         selector: '@media screen and (max-width: 300px)',
@@ -69,11 +69,11 @@ describe('plugin', function() {
           {
             selector: '.foo',
             rules: {
-              'max-width': 'a === b ? c : ""'
-            }
-          }
-        ]
-      }
+              'max-width': 'a === b ? c : ""',
+            },
+          },
+        ],
+      },
     ];
 
     it('when parsed with parse', function(done) {
@@ -101,8 +101,8 @@ describe('plugin', function() {
       {
         selector: '.foo',
         rules: {
-          'max-width': 'bar'
-        }
+          'max-width': 'bar',
+        },
       },
       {
         selector: '@media screen and (max-width: 300px)',
@@ -110,17 +110,17 @@ describe('plugin', function() {
           {
             selector: '.foo',
             rules: {
-              'max-width': 'a + b'
-            }
-          }
-        ]
+              'max-width': 'a + b',
+            },
+          },
+        ],
       },
       {
         selector: '.baz',
         rules: {
-          width: 'qux'
-        }
-      }
+          width: 'qux',
+        },
+      },
     ];
 
     it('when parsed with parse', function(done) {
@@ -141,9 +141,9 @@ describe('plugin', function() {
         {
           selector: '.foo',
           rules: {
-            'max-width': 'bar'
-          }
-        }
+            'max-width': 'bar',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -168,11 +168,11 @@ describe('plugin', function() {
             {
               selector: '.foo',
               rules: {
-                'max-width': 'bar'
-              }
-            }
-          ]
-        }
+                'max-width': 'bar',
+              },
+            },
+          ],
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -192,9 +192,9 @@ describe('plugin', function() {
         {
           selector: '.<% foo %>1',
           rules: {
-            'max-width': 'bar'
-          }
-        }
+            'max-width': 'bar',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -214,9 +214,9 @@ describe('plugin', function() {
         {
           selector: '%forEach(foo, .bar[data-id="%id%"])',
           rules: {
-            'max-width': 'bar'
-          }
-        }
+            'max-width': 'bar',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -236,9 +236,9 @@ describe('plugin', function() {
         {
           selector: '%filterEach(foo, true, .bar[data-id="%id%"])',
           rules: {
-            'max-width': 'bar'
-          }
-        }
+            'max-width': 'bar',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -258,9 +258,9 @@ describe('plugin', function() {
         {
           selector: '.foo',
           rules: {
-            'max-width': 'a === "bar" ? c : null'
-          }
-        }
+            'max-width': 'a === "bar" ? c : null',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -280,9 +280,9 @@ describe('plugin', function() {
         {
           selector: '.foo',
           rules: {
-            'max-width': ''
-          }
-        }
+            'max-width': '',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -303,9 +303,9 @@ describe('plugin', function() {
           selector: '.foo',
           rules: {
             width: 'bar',
-            'max-width': 'baz'
-          }
-        }
+            'max-width': 'baz',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -338,27 +338,27 @@ describe('plugin', function() {
         {
           selector: '.test-static',
           rules: {
-            prop: '(600 * 2) + \'px\''
-          }
+            prop: '(600 * 2) + \'px\'',
+          },
         },
         {
           selector: '.test-method',
           rules: {
-            prop: 'darken(\'#123ABC\', 16)'
-          }
+            prop: 'darken(\'#123ABC\', 16)',
+          },
         },
         {
           selector: '.test-jquery',
           rules: {
-            prop: '$.extend(true, {}, some.data)'
-          }
+            prop: '$.extend(true, {}, some.data)',
+          },
         },
         {
           selector: '.test-regex',
           rules: {
-            prop: '/^test$/.test(some.other.data) ? foo : bar'
-          }
-        }
+            prop: '/^test$/.test(some.other.data) ? foo : bar',
+          },
+        },
       ];
 
       it('when parsed with parse', function(done) {
@@ -417,12 +417,12 @@ describe('plugin', function() {
             { id: 1, num1: 1, num2: 4, num3: 2, float: 'left' },
             { id: 2, num1: 2, num2: 3, num3: 3, float: 'right' },
             { id: 3, num1: 3, num2: 6, num3: 4, float: 'none' },
-            { id: 4, num1: 4, num2: 2, num3: 1, float: 'left' }
+            { id: 4, num1: 4, num2: 2, num3: 1, float: 'left' },
           ],
           baz: [
             { id: 1, width: 400 },
-            { id: 2, width: 600 }
-          ]
+            { id: 2, width: 600 },
+          ],
         };
 
         fox.insert(descriptors);
@@ -454,12 +454,12 @@ describe('plugin', function() {
             { id: 1, num1: 1, num2: 4, num3: 2, float: 'left' },
             { id: 2, num1: 2, num2: 3, num3: 3, float: 'right' },
             { id: 3, num1: 3, num2: 6, num3: 4, float: 'none' },
-            { id: 4, num1: 4, num2: 2, num3: 1, float: 'left' }
+            { id: 4, num1: 4, num2: 2, num3: 1, float: 'left' },
           ],
           baz: [
             { id: 1, width: 400 },
-            { id: 2, width: 600 }
-          ]
+            { id: 2, width: 600 },
+          ],
         };
 
         fox.insert(descriptors);

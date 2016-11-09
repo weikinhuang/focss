@@ -23,23 +23,23 @@ describe('MediaQuery', function() {
         {
           selector: '.class1',
           rules: {
-            color: 'foo'
-          }
+            color: 'foo',
+          },
         },
         {
           selector: '.class2',
           rules: {
-            width: 'bar'
-          }
-        }
+            width: 'bar',
+          },
+        },
       ]);
       expect(mediaQuery.rules.getRules()).toEqual([
         jasmine.objectContaining({
-          selector: '.class1'
+          selector: '.class1',
         }),
         jasmine.objectContaining({
-          selector: '.class2'
-        })
+          selector: '.class2',
+        }),
       ]);
     });
 
@@ -48,20 +48,20 @@ describe('MediaQuery', function() {
         {
           selector: '.class1',
           rules: {
-            color: 'bar'
-          }
+            color: 'bar',
+          },
         },
         {
           selector: '.class2',
           rules: {
-            width: 'baz'
-          }
-        }
+            width: 'baz',
+          },
+        },
       ]);
       expect(mediaQuery.artifacts).toEqual({
         foo: true,
         bar: true,
-        baz: true
+        baz: true,
       });
     });
   });
@@ -84,15 +84,15 @@ describe('MediaQuery', function() {
         {
           selector: '.class1',
           rules: {
-            color: 'foo'
-          }
+            color: 'foo',
+          },
         },
         {
           selector: '.class2',
           rules: {
-            width: 'bar'
-          }
-        }
+            width: 'bar',
+          },
+        },
       ]);
       mediaQuery.process({ foo: 'red', bar: 100 });
       expect(mediaQuery.result).toEqual('.class1{color:red;}.class2{width:100px;}');
@@ -103,15 +103,15 @@ describe('MediaQuery', function() {
         {
           selector: '.class1',
           rules: {
-            color: 'foo'
+            color: 'foo',
           },
         },
         {
           selector: '.class2',
           rules: {
-            width: 'Math.floor(bar)'
-          }
-        }
+            width: 'Math.floor(bar)',
+          },
+        },
       ]);
       mediaQuery.process({ foo: 'red', bar: 100.4 }, defaultExtensions);
       expect(mediaQuery.result).toEqual('.class1{color:red;}.class2{width:100px;}');
@@ -122,15 +122,15 @@ describe('MediaQuery', function() {
         {
           selector: '.class1',
           rules: {
-            color: 'foo'
-          }
+            color: 'foo',
+          },
         },
         {
           selector: '.class2',
           rules: {
-            width: 'bar'
-          }
-        }
+            width: 'bar',
+          },
+        },
       ]);
       mediaQuery.process({ foo: 'red', bar: 100 });
       expect(mediaQuery.process({ foo: 'blue', bar: 102 })).toEqual('.class1{color:blue;}.class2{width:102px;}');
@@ -141,15 +141,15 @@ describe('MediaQuery', function() {
         {
           selector: '.class1',
           rules: {
-            color: 'foo'
-          }
+            color: 'foo',
+          },
         },
         {
           selector: '.class2',
           rules: {
-            width: 'bar'
-          }
-        }
+            width: 'bar',
+          },
+        },
       ]);
       mediaQuery.process({ foo: 'red', bar: 100 });
       expect(mediaQuery.process({ foo: 'red', bar: 100 })).toEqual(null);

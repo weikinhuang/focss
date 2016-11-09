@@ -9,9 +9,9 @@ function insertSpecs(selector) {
       {
         selector,
         rules: {
-          'max-width': 'width'
-        }
-      }
+          'max-width': 'width',
+        },
+      },
     ]);
 
     fox.process({ width: 100 });
@@ -24,9 +24,9 @@ function insertSpecs(selector) {
       {
         selector,
         rules: {
-          'max-width': 'width'
-        }
-      }
+          'max-width': 'width',
+        },
+      },
     ]);
 
     fox.process({ width: 100 });
@@ -43,9 +43,9 @@ function insertSpecs(selector) {
       {
         selector,
         rules: {
-          'max-width': 'width'
-        }
-      }
+          'max-width': 'width',
+        },
+      },
     ]);
     fox.process({ width: 100 });
 
@@ -57,9 +57,9 @@ function insertSpecs(selector) {
       {
         selector,
         rules: {
-          'max-width': 'width'
-        }
-      }
+          'max-width': 'width',
+        },
+      },
     ]);
     fox.process({ width: 100 });
 
@@ -121,9 +121,9 @@ describe('static rules', function() {
         {
           selector: 'input, input::-' + incorrectPrefix + '-input-placeholder',
           rules: {
-            'font-size': 'size'
-          }
-        }
+            'font-size': 'size',
+          },
+        },
       ]);
 
       fox.process({ size: '20px' });

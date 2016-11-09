@@ -45,28 +45,28 @@ describe('RuleList', function() {
   describe('#getTraces', function() {
     it('returns traces from inserted rule descriptors', function() {
       this._rules.insert('.foo:hover', {
-        width: 'baz'
+        width: 'baz',
       });
       this._rules.insert('.bar:hover', {
-        width: 'qux'
+        width: 'qux',
       });
 
       expect(this._rules.getTraces()).toEqual({
         hover1: {
-          baz: true
+          baz: true,
         },
         hover2: {
-          qux: true
-        }
+          qux: true,
+        },
       });
     });
 
     it('returns empty object if no traces exist', function() {
       this._rules.insert('.foo', {
-        width: 'baz'
+        width: 'baz',
       });
       this._rules.insert('.bar', {
-        width: 'qux'
+        width: 'qux',
       });
 
       expect(this._rules.getTraces()).toEqual({});
@@ -76,7 +76,7 @@ describe('RuleList', function() {
   describe('#generateArrayRules', function() {
     beforeEach(function() {
       this._rules.insert('%forEach(foo, .bar[data-id="%id%"])', {
-        width: 'baz'
+        width: 'baz',
       });
 
       expect(this._rules.rules.length).toEqual(0);
@@ -84,8 +84,8 @@ describe('RuleList', function() {
         foo: [
           { id: 1, baz: 100 },
           { id: 2, baz: 200 },
-          { id: 3, baz: 300 }
-        ]
+          { id: 3, baz: 300 },
+        ],
       });
     });
 
@@ -109,8 +109,8 @@ describe('RuleList', function() {
         foo: [
           { id: 3, baz: 100 },
           { id: 4, baz: 200 },
-          { id: 5, baz: 300 }
-        ]
+          { id: 5, baz: 300 },
+        ],
       });
 
       expect(this._rules.rules.length).toEqual(3);
@@ -136,15 +136,15 @@ describe('RuleList', function() {
             selector: '.class1',
             rules: {
               width: 'foo',
-              color: 'bar'
-            }
+              color: 'bar',
+            },
           },
           {
             selector: '%forEach(baz, .class2[data-id="%id%"])',
             rules: {
-              'max-width': 'qux'
-            }
-          }
+              'max-width': 'qux',
+            },
+          },
         ]);
       });
 
@@ -157,7 +157,7 @@ describe('RuleList', function() {
         expect(this._rules.mediaQueries[0].artifacts).toEqual({
           foo: true,
           bar: true,
-          baz: true
+          baz: true,
         });
       });
     });
@@ -165,7 +165,7 @@ describe('RuleList', function() {
     describe('%forEach', function() {
       beforeEach(function() {
         this._rules.insert('%forEach(foo, .bar[data-id="%id%"])', {
-          width: 'baz'
+          width: 'baz',
         });
       });
 
@@ -176,7 +176,7 @@ describe('RuleList', function() {
 
       it('contains the correct artifacts', function() {
         expect(this._rules.arrayRuleDescriptors[0].artifacts).toEqual({
-          foo: true
+          foo: true,
         });
       });
     });
@@ -184,7 +184,7 @@ describe('RuleList', function() {
     describe('%filterEach', function() {
       beforeEach(function() {
         this._rules.insert('%filterEach(foo, baz > 100, .bar[data-id="%id%"])', {
-          width: 'baz'
+          width: 'baz',
         });
       });
 
@@ -195,7 +195,7 @@ describe('RuleList', function() {
 
       it('contains the correct artifacts', function() {
         expect(this._rules.arrayRuleDescriptors[0].artifacts).toEqual({
-          foo: true
+          foo: true,
         });
       });
     });
@@ -203,7 +203,7 @@ describe('RuleList', function() {
     describe('static selectors', function() {
       beforeEach(function() {
         this._rules.insert('.foo', {
-          width: 'bar'
+          width: 'bar',
         });
       });
 
@@ -214,7 +214,7 @@ describe('RuleList', function() {
 
       it('contains the correct artifacts', function() {
         expect(this._rules.rules[0].artifacts).toEqual({
-          bar: true
+          bar: true,
         });
       });
     });
@@ -222,7 +222,7 @@ describe('RuleList', function() {
     describe('toggle selectors', function() {
       it('inserts a rule descriptor with a toggle selector', function() {
         this._rules.insert('.foo.__fake', {
-          width: 'bar'
+          width: 'bar',
         });
 
         expect(this._rules.rules).toBeDefined();
@@ -232,7 +232,7 @@ describe('RuleList', function() {
       describe('toggle selector classes', function() {
         beforeEach(function() {
           this._rules.insert('.foo.__fake', {
-            width: 'bar'
+            width: 'bar',
           });
         });
 
@@ -243,7 +243,7 @@ describe('RuleList', function() {
         it('contains the correct artifacts', function() {
           expect(this._rules.rules[0].artifacts).toEqual({
             bar: true,
-            '__toggled__.__fake1': true
+            '__toggled__.__fake1': true,
           });
         });
       });
@@ -252,7 +252,7 @@ describe('RuleList', function() {
         describe(':hover', function() {
           beforeEach(function() {
             this._rules.insert('.foo:hover', {
-              width: 'bar'
+              width: 'bar',
             });
           });
 
@@ -263,7 +263,7 @@ describe('RuleList', function() {
           it('contains the correct artifacts', function() {
             expect(this._rules.rules[0].artifacts).toEqual({
               bar: true,
-              '__toggled__.hover1': true
+              '__toggled__.hover1': true,
             });
           });
         });
@@ -271,7 +271,7 @@ describe('RuleList', function() {
         describe(':active', function() {
           beforeEach(function() {
             this._rules.insert('.foo:active', {
-              width: 'bar'
+              width: 'bar',
             });
           });
 
@@ -282,7 +282,7 @@ describe('RuleList', function() {
           it('contains the correct artifacts', function() {
             expect(this._rules.rules[0].artifacts).toEqual({
               bar: true,
-              '__toggled__.active1': true
+              '__toggled__.active1': true,
             });
           });
         });

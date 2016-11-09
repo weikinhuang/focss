@@ -17,7 +17,7 @@ var isUnitlessNumber = {
   zoom: true,
   // SVG-related properties
   'fill-opacity': true,
-  'stroke-opacity': true
+  'stroke-opacity': true,
 };
 
 export default {
@@ -81,5 +81,5 @@ export default {
     }
     result += '}';
     return result.trim();
-  }
+  },
 };

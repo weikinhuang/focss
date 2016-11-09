@@ -101,7 +101,7 @@ export default class RuleList {
     return this._insert({
       selector,
       spec,
-      toggleKeys
+      toggleKeys,
     });
   }
 
@@ -118,7 +118,7 @@ export default class RuleList {
 
     return {
       selector,
-      toggleKeys
+      toggleKeys,
     };
   }
 
@@ -164,7 +164,7 @@ export default class RuleList {
         spec,
         toggleKeys,
         arrayMemberExpr: `${descriptor.expr}[${index}]`,
-        togglePrefix: `${descriptor.expr}.${index}.`
+        togglePrefix: `${descriptor.expr}.${index}.`,
       });
     });
   }
