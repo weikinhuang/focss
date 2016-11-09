@@ -2,10 +2,16 @@
 
 import path from 'path';
 import fs from 'fs';
-import { parse, parseSync } from '../../src/parser';
+import postcss from 'postcss';
+import parser from '../../src/parser';
+import plugin from '../../src/plugin';
 import Focss from '../../src';
 
-describe('parser', function() {
+function parse(styles, variables = {}) {
+  return  postcss([plugin({ variables })]).process(styles, { parser });
+}
+
+describe('plugin', function() {
   describe('should return an array of parsed Focss descriptors and object of variables', function() {
     function checkDescriptors({ descriptors, variables }) {
       const varsIsObject = variables !== null && typeof variables === 'object' && !Array.isArray(variables);
@@ -29,11 +35,6 @@ describe('parser', function() {
         checkDescriptors(focss);
       })
       .then(done, done.fail);
-    });
-
-    it('when parsed with parseSync', function() {
-      const parsedDescriptors = parseSync(styles);
-      checkDescriptors(parsedDescriptors);
     });
   });
 
@@ -82,11 +83,6 @@ describe('parser', function() {
       })
       .then(done, done.fail);
     });
-
-    it('when parsed with parseSync', function() {
-      const { descriptors } = parseSync(styles);
-      expect(descriptors).toEqual(result);
-    });
   });
 
   describe('should retain the original order of the file contents when reordered', function() {
@@ -134,11 +130,6 @@ describe('parser', function() {
       })
       .then(done, done.fail);
     });
-
-    it('when parsed with parseSync', function() {
-      const { descriptors } = parseSync(styles);
-      expect(descriptors).toEqual(result);
-    });
   });
 
   describe('should return Focss descriptors containing', function() {
@@ -161,11 +152,6 @@ describe('parser', function() {
           expect(descriptors).toEqual(result);
         })
         .then(done, done.fail);
-      });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
       });
     });
 
@@ -196,11 +182,6 @@ describe('parser', function() {
         })
         .then(done, done.fail);
       });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
-      });
     });
 
     describe('computed selectors', function() {
@@ -222,11 +203,6 @@ describe('parser', function() {
           expect(descriptors).toEqual(result);
         })
         .then(done, done.fail);
-      });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
       });
     });
 
@@ -250,11 +226,6 @@ describe('parser', function() {
         })
         .then(done, done.fail);
       });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
-      });
     });
 
     describe('%filterEach selectors', function() {
@@ -276,11 +247,6 @@ describe('parser', function() {
           expect(descriptors).toEqual(result);
         })
         .then(done, done.fail);
-      });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
       });
     });
 
@@ -304,11 +270,6 @@ describe('parser', function() {
         })
         .then(done, done.fail);
       });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
-      });
     });
 
     describe('empty rule declaration values', function() {
@@ -330,11 +291,6 @@ describe('parser', function() {
           expect(descriptors).toEqual(result);
         })
         .then(done, done.fail);
-      });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
       });
     });
 
@@ -359,12 +315,8 @@ describe('parser', function() {
         })
         .then(done, done.fail);
       });
-
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
-      });
     });
+
     describe('Focss variables', function() {
       const styles = `$foo: 600;
                       $bar: '#123ABC';
@@ -417,11 +369,6 @@ describe('parser', function() {
         .then(done, done.fail);
       });
 
-      it('when parsed with parseSync', function() {
-        const { descriptors } = parseSync(styles);
-        expect(descriptors).toEqual(result);
-      });
-
       describe('should throw an error when a variable is not defined before use', function() {
         const styles = `.missing-var {
                                      prop: $not-defined;
@@ -434,12 +381,6 @@ describe('parser', function() {
             expect(message).toEqual(errMsg);
             done();
           });
-        });
-
-        it('when parsed with parseSync', function() {
-          expect(() => {
-            parseSync(styles);
-          }).toThrowError(errMsg);
         });
       });
 
@@ -457,19 +398,13 @@ describe('parser', function() {
             done();
           });
         });
-
-        it('when parsed with parseSync', function() {
-          expect(() => {
-            parseSync(styles);
-          }).toThrow();
-        });
       });
     });
   });
 
   describe('calling toString() should return processed styles', function() {
     describe('when global variables are provided', function() {
-      function processAndValidate({ descriptors }, result) {
+      function processAndValidate(descriptors, result) {
         const fox = new Focss();
         const data = {
           className: 'foo',
@@ -501,19 +436,13 @@ describe('parser', function() {
       it('when inserted descriptors are parsed with parse', function(done) {
         parse(variables)
         .then(({ focss: { variables: parsedVars } }) => parse(styles, parsedVars))
-        .then(({ focss: parsedDescriptors }) => processAndValidate(parsedDescriptors, result))
+        .then(({ focss: { descriptors } }) => processAndValidate(descriptors, result))
         .then(done, done.fail);
-      });
-
-      it('when inserted descriptors are parsed with parseSync', function() {
-        const { variables: parsedVars } = parseSync(variables);
-        const parsedDescriptors = parseSync(styles, parsedVars);
-        processAndValidate(parsedDescriptors, result);
       });
     });
 
     describe('when no global variables are provided', function() {
-      function processAndValidate({ descriptors }, result) {
+      function processAndValidate(descriptors, result) {
         const fox = new Focss();
         const data = {
           width1: 200,
@@ -542,13 +471,8 @@ describe('parser', function() {
 
       it('when inserted descriptors are parsed with parse', function(done) {
         parse(styles)
-        .then(({ focss: parsedDescriptors }) => processAndValidate(parsedDescriptors, result))
+        .then(({ focss: { descriptors } }) => processAndValidate(descriptors, result))
         .then(done, done.fail);
-      });
-
-      it('when inserted descriptors are parsed with parseSync', function() {
-        const parsedDescriptors = parseSync(styles);
-        processAndValidate(parsedDescriptors, result);
       });
     });
   });
