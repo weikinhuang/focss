@@ -1,8 +1,8 @@
 import postcss from 'postcss';
 import transform from './transform';
 
-export default postcss.plugin('behance-postcss-focss-transform', (opts = {}) => {
+export default postcss.plugin('behance-postcss-focss-transform', () => {
   return function(root, result) {
-    result.focss = transform(root, opts.variables);
+    result.focssDescriptors = transform(root);
   };
 });

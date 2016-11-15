@@ -1,8 +1,8 @@
 import { replaceVariables } from './util';
 
-export default function transform(ast, variables = {}) {
+export default function transform(ast) {
   const descriptors = [];
-  variables = Object.assign({}, variables);
+  const variables = {};
 
   ast.each((node) => {
     const definedVarRegex = /^\$[\w\d-]+/;
@@ -45,6 +45,6 @@ export default function transform(ast, variables = {}) {
     descriptors.push(descriptor);
   });
 
-  return { descriptors, variables };
+  return descriptors;
 }
 
