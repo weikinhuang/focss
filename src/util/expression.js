@@ -1,5 +1,7 @@
 import jsep from 'jsep';
 
+const ROOT_REGEX = /\$\["__root"\]/g;
+
 /**
  * AST tree parse/compilation
  */
@@ -211,7 +213,9 @@ export default {
 
       innerBody = inner.body;
       if (arrayMemberExpr) {
-        innerBody = innerBody.replace(/\$/g, '$.' + arrayMemberExpr);
+        innerBody = ROOT_REGEX.test(innerBody)
+          ? innerBody.replace(ROOT_REGEX, '$')
+          : innerBody.replace(/\$/g, `$.${arrayMemberExpr}`);
       }
 
       return '_["' + property + '"]' + '=' + innerBody + (unit ? '+"' + unit + '"' : '');
