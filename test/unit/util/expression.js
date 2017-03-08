@@ -83,5 +83,49 @@ describe('expression parser', function() {
         gamma: 3,
       }));
     });
+
+    describe('array member expressions', function() {
+      it('should evaluate in the context of the array member expression', function() {
+        const res = expression.compileSpec({
+          width: 'bar',
+        }, 'foo[1]');
+
+        const data = {
+          foo: [
+            { bar: 1 },
+            { bar: 2 },
+          ],
+        };
+
+        expect(res(data)).toEqual(jasmine.objectContaining({
+          width: 2,
+        }));
+      });
+
+      it('should evaluate using root level data', function() {
+        const res = expression.compileSpec({
+          width: 'bar',
+          'max-width': '__root.baz.qux',
+          height: '__root.baz.qux + __root.baz.quux',
+        }, 'foo[1]');
+
+        const data = {
+          foo: [
+            { bar: 1 },
+            { bar: 2 },
+          ],
+          baz: {
+            qux: 3,
+            quux: 4,
+          },
+        };
+
+        expect(res(data)).toEqual(jasmine.objectContaining({
+          width: 2,
+          'max-width': 3,
+          height: 7,
+        }));
+      });
+    });
   });
 });

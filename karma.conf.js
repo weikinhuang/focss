@@ -1,6 +1,5 @@
 /* eslint-env node */
-// Karma configuration
-// Generated on Tue Jan 27 2015 12:55:07 GMT-0500 (EST)
+
 module.exports = function(config) {
   config.set({
 
@@ -19,7 +18,7 @@ module.exports = function(config) {
       require.resolve('jasmine-stray-timers'),
       require.resolve('jasmine-stray-promises'),
       'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
-      'test/**/!(plugin)/*.js'
+      'test/**/!(plugin)/*.js',
     ],
 
 
@@ -31,7 +30,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js': ['webpack']
+      'test/**/*.js': ['webpack'],
     },
 
 
@@ -71,13 +70,13 @@ module.exports = function(config) {
     coverageReporter: {
       reporters: [
         {
-          type: 'text-summary'
+          type: 'text-summary',
         },
         {
           type: 'html',
-          dir: 'coverage/'
-        }
-      ]
+          dir: 'coverage/',
+        },
+      ],
     },
 
     // Make webpack output less verbose
@@ -88,21 +87,21 @@ module.exports = function(config) {
         version: false,
         assets: false,
         chunks: false,
-        chunkModules: false
-      }
+        chunkModules: false,
+      },
     },
 
 
     webpack: {
       module: {
-        loaders: [
+        rules: [
           {
             test: /(\.js)$/,
             exclude: /node_modules/,
-            loader: 'babel'
-          }
-        ]
-      }
-    }
+            loader: 'babel-loader',
+          },
+        ],
+      },
+    },
   });
 };
