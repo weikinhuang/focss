@@ -50,6 +50,7 @@ export default class {
 
   process(payload) {
     if (!hasDom) {
+      console.error('Focss#process uses the DOM. To generate a string of styles in a Node environment, use Focss#toString.');
       return;
     }
 
