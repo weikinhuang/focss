@@ -10,6 +10,7 @@
     "test:node": "NODE_ENV=test jasmine JASMINE_CONFIG_PATH=test/jasmine.json",
     "test:dev": "NODE_ENV=test karma start --reporters mocha",
     "lint": "eslint src test '*.js'",
+    "lint:fix": "npm run lint -- --fix",
     "build": "babel src -d lib"
   },
   "repository": {
@@ -28,7 +29,6 @@
   "homepage": "https://github.com/behance/focss",
   "dependencies": {
     "jsep": "^0.3.0",
-    "nbd": "^1.1.0",
     "postcss": "^5.1.2"
   },
   "devDependencies": {

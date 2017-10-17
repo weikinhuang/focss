@@ -1,4 +1,4 @@
-import diff from 'nbd/util/diff';
+import diff from './util/diff';
 import expression from './util/expression';
 
 export const computedExpression = /<%\s*(.*?)\s*%>/ig;
